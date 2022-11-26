@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
+
 
 class StandardScreen extends StatefulWidget {
   const StandardScreen({Key? key}) : super(key: key);
@@ -8,8 +10,31 @@ class StandardScreen extends StatefulWidget {
 }
 
 class _StandardScreenState extends State<StandardScreen> {
-  String text = '20*30';
+  String userInput = '(20+30)*2';
   String resultText = '600';
+  bool flag=true;
+  final List<String> buttons = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'C',
+    '+/-',
+    '%',
+    'DEL',
+    '/',
+    'x',
+    '-',
+    '.',
+    '=',
+    '+',
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +60,7 @@ class _StandardScreenState extends State<StandardScreen> {
                         width: double.infinity,
                         child: FittedBox(
                           child: SelectableText(
-                            text,
+                            userInput,
                             cursorColor: Colors.black,
                             textAlign: TextAlign.right,
                             style: const TextStyle(fontSize: 32),
@@ -90,121 +115,218 @@ class _StandardScreenState extends State<StandardScreen> {
                   ),
                   children: [
                     //Row 1
+                    // AC Button
                     textButton(
                       child: 'AC',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput = '';
+                          resultText = '0';
+                        });
+                      },
                     ),
+                    // Delete Button
                     iconButton(
                         child: const Icon(Icons.backspace_outlined),
                         color: Colors.white,
                         bgColor: Colors.teal[200],
-                        onPressed: () {}),
+                        onPressed: () {
+                          setState(() {
+                            userInput =
+                                userInput.substring(0, userInput.length - 1);
+                          });
+                        }),
                     textButton(
                       child: '%',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='%';
+                        });
+                      },
                     ),
                     textButton(
                       child: '/',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      onPressed: () {},
+                      onPressed: () {setState(() {
+                        userInput +='/';
+                      });},
                     ),
                     textButton(
                       child: '7',
                       color: Colors.black,
                       bgColor: Colors.grey[200],
-                      onPressed: () {},
+                      onPressed: () {setState(() {
+                        userInput +='7';
+                      });},
                     ),
                     textButton(
                       child: '8',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='8';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '9',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='9';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     iconButton(
                         child: const Icon(Icons.close),
                         color: Colors.white,
                         bgColor: Colors.teal[200],
-                        onPressed: () {}),
+                        onPressed: () {
+                          setState(() {
+                            userInput +='x';
+                          });
+                        }),
                     textButton(
                       child: '4',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='4';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '5',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                        userInput +='5';
+                      });},
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '6',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='6';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     iconButton(
                       child: const Icon(Icons.minimize),
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='-';
+                        });
+                      },
                     ),
                     textButton(
                       child: '1',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='1';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '2',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='2';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '3',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='3';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     iconButton(
                         child: const Icon(Icons.add),
                         color: Colors.white,
                         bgColor: Colors.teal[200],
-                        onPressed: () {}),
+                        onPressed: () {
+                          setState(() {
+                            userInput +='+';
+                          });
+                        }),
                     textButton(
                       child: '0',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='0';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '.',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          userInput +='.';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '+/-',
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {setState(() {
+
+                        if(flag) {
+                          userInput += '+';
+                          flag=false;
+                        }
+                        else {
+                          userInput += '-';
+                          flag = true;
+                        }
+                      });},
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
                       child: '=',
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          String finaluserinput = userInput;
+                          finaluserinput = userInput.replaceAll('x', '*');
+
+                          Parser p = Parser();
+                          try {
+                            Expression exp = p.parse("7+((20+5)/3)*2");
+                            ContextModel cm = ContextModel();
+                            double eval = exp.evaluate(EvaluationType.REAL, cm);
+                            resultText = eval.toString();
+                          } catch (e) {
+                            resultText = "math error";
+                          }
+
+                        });
+                      },
                       bgColor: Colors.redAccent,
                     ),
                   ],
@@ -224,6 +346,7 @@ class _StandardScreenState extends State<StandardScreen> {
     required Function onPressed,
   }) {
     return Padding(
+
       padding: const EdgeInsets.all(5.0),
       child: ElevatedButton(
         onPressed: () => onPressed(),
