@@ -10,7 +10,7 @@ class StandardScreen extends StatefulWidget {
 }
 
 class _StandardScreenState extends State<StandardScreen> {
-  String userInput = '(20+30)*2';
+  String userInput = '20*30';
   String resultText = '600';
   bool flag=true;
   final List<String> buttons = [
@@ -317,7 +317,7 @@ class _StandardScreenState extends State<StandardScreen> {
 
                           Parser p = Parser();
                           try {
-                            Expression exp = p.parse("7+((20+5)/3)*2");
+                            Expression exp = p.parse(finaluserinput);
                             ContextModel cm = ContextModel();
                             double eval = exp.evaluate(EvaluationType.REAL, cm);
                             resultText = eval.toString();
