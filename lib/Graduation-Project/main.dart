@@ -1,28 +1,34 @@
+import 'package:calculator/Graduation-Project/home.dart';
+import 'package:calculator/Graduation-Project/signUn.dart';
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
-import 'package:number_system/number_system.dart';
-import 'home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'loginScreen.dart';
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp( MyApp());
+}
 
+class MyApp extends StatelessWidget {
+  final _auth=FirebaseAuth.instance;
 
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
 
-void main()=>runApp(const HomePage());
-// void main(){
-//   // 1100 AND 0101 OR 0111
-//   // print((~12).decToBinary());
-//   // print((~(12&5)).decToBinary());
-//   // print(1100&0101);
-//   // String x;
-//   // x.
-//   var x = "${12&55|4&8}";
-//
-//
-//
-//   print("sadsa ${x}");
-//   //    12&  5
-//   //      4
-//   //print(5<<2);
-// }
-
-
-
-
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute:_auth.currentUser!=null?'Home_Screen':'login_Screen' ,
+      routes: {
+        'login_Screen':(context) => loginScreen(),
+        'signUP_Screen':(context) => appscreen(),
+        'Home_Screen':(context) => HomePage()
+        },
+    );
+  }
+}

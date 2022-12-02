@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'loginScreen.dart';
 import 'standard.dart';
 import 'programmer.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+ final _auth=FirebaseAuth.instance;
   /*Brightness? _brightness;
 
   @override
@@ -117,8 +119,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               actions: [
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.history,),
+                  onPressed: () {
+                    _auth.signOut();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) {
+                          return const loginScreen();
+                        }));
+                  },
+                  icon: const Icon(Icons.history,color: Colors.red,),
 
                 ),
                 Padding(
