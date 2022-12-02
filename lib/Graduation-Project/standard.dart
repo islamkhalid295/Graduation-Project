@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-
 class StandardScreen extends StatefulWidget {
   const StandardScreen({Key? key}) : super(key: key);
 
@@ -10,9 +9,9 @@ class StandardScreen extends StatefulWidget {
 }
 
 class _StandardScreenState extends State<StandardScreen> {
-  String userInput = '20*30';
-  String resultText = '600';
-  bool flag=true;
+  String userInput = '';
+  String resultText = '';
+  bool flag = true;
   final List<String> buttons = [
     '0',
     '1',
@@ -35,6 +34,7 @@ class _StandardScreenState extends State<StandardScreen> {
     '=',
     '+',
   ];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,7 +63,7 @@ class _StandardScreenState extends State<StandardScreen> {
                             userInput,
                             cursorColor: Colors.black,
                             textAlign: TextAlign.right,
-                            style: const TextStyle(fontSize: 32),
+                            style: Theme.of(context).textTheme.headline2,
                           ),
                         ),
                       )),
@@ -72,22 +72,38 @@ class _StandardScreenState extends State<StandardScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const FittedBox(
+                        Expanded(
+                          flex: 1,
                           child: Text(
                             '=',
                             style: TextStyle(
-                                color: Colors.teal,
-                                fontSize: 42,
-                                fontWeight: FontWeight.bold),
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .fontSize,
+                              fontWeight: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .fontWeight,
+                              color: Colors.teal,
+                            ),
                             textAlign: TextAlign.left,
                           ),
                         ),
-                        FittedBox(
-                          child: SelectableText(
-                            resultText,
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(
-                                fontSize: 42, fontWeight: FontWeight.bold),
+                        Expanded(
+                          flex: 5,
+                          child: Container(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: FittedBox(
+                              child: SelectableText(
+                                resultText,
+                                textAlign: TextAlign.right,
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .headline1,
+                              ),
+                            ),
                           ),
                         )
                       ],
@@ -144,7 +160,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       bgColor: Colors.teal[200],
                       onPressed: () {
                         setState(() {
-                          userInput +='%';
+                          userInput += '%';
                         });
                       },
                     ),
@@ -152,24 +168,28 @@ class _StandardScreenState extends State<StandardScreen> {
                       child: '/',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      onPressed: () {setState(() {
-                        userInput +='/';
-                      });},
+                      onPressed: () {
+                        setState(() {
+                          userInput += '/';
+                        });
+                      },
                     ),
                     textButton(
                       child: '7',
                       color: Colors.black,
                       bgColor: Colors.grey[200],
-                      onPressed: () {setState(() {
-                        userInput +='7';
-                      });},
+                      onPressed: () {
+                        setState(() {
+                          userInput += '7';
+                        });
+                      },
                     ),
                     textButton(
                       child: '8',
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='8';
+                          userInput += '8';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -179,7 +199,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='9';
+                          userInput += '9';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -190,7 +210,7 @@ class _StandardScreenState extends State<StandardScreen> {
                         bgColor: Colors.teal[200],
                         onPressed: () {
                           setState(() {
-                            userInput +='x';
+                            userInput += 'x';
                           });
                         }),
                     textButton(
@@ -198,7 +218,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='4';
+                          userInput += '4';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -208,8 +228,9 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                        userInput +='5';
-                      });},
+                          userInput += '5';
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
@@ -217,7 +238,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='6';
+                          userInput += '6';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -228,7 +249,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       bgColor: Colors.teal[200],
                       onPressed: () {
                         setState(() {
-                          userInput +='-';
+                          userInput += '-';
                         });
                       },
                     ),
@@ -237,7 +258,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='1';
+                          userInput += '1';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -247,7 +268,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='2';
+                          userInput += '2';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -257,7 +278,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='3';
+                          userInput += '3';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -268,7 +289,7 @@ class _StandardScreenState extends State<StandardScreen> {
                         bgColor: Colors.teal[200],
                         onPressed: () {
                           setState(() {
-                            userInput +='+';
+                            userInput += '+';
                           });
                         }),
                     textButton(
@@ -276,7 +297,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='0';
+                          userInput += '0';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -286,7 +307,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
-                          userInput +='.';
+                          userInput += '.';
                         });
                       },
                       bgColor: Colors.grey[200],
@@ -294,17 +315,17 @@ class _StandardScreenState extends State<StandardScreen> {
                     textButton(
                       child: '+/-',
                       color: Colors.black,
-                      onPressed: () {setState(() {
-
-                        if(flag) {
-                          userInput += '+';
-                          flag=false;
-                        }
-                        else {
-                          userInput += '-';
-                          flag = true;
-                        }
-                      });},
+                      onPressed: () {
+                        setState(() {
+                          if (flag) {
+                            userInput += '+';
+                            flag = false;
+                          } else {
+                            userInput += '-';
+                            flag = true;
+                          }
+                        });
+                      },
                       bgColor: Colors.grey[200],
                     ),
                     textButton(
@@ -324,7 +345,6 @@ class _StandardScreenState extends State<StandardScreen> {
                           } catch (e) {
                             resultText = "math error";
                           }
-
                         });
                       },
                       bgColor: Colors.redAccent,
@@ -346,7 +366,6 @@ class _StandardScreenState extends State<StandardScreen> {
     required Function onPressed,
   }) {
     return Padding(
-
       padding: const EdgeInsets.all(5.0),
       child: ElevatedButton(
         onPressed: () => onPressed(),
@@ -363,7 +382,10 @@ class _StandardScreenState extends State<StandardScreen> {
             fit: BoxFit.fill,
             child: Text(
               child,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             )),
       ),
     );
