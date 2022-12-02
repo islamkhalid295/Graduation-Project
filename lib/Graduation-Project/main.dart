@@ -5,8 +5,8 @@ import 'home.dart';
 
 
 
-void main()=>runApp(const HomePage());
-// void main(){
+// void main()=>runApp(const HomePage());
+void main(){
 //   // 1100 AND 0101 OR 0111
 //   // print((~12).decToBinary());
 //   // print((~(12&5)).decToBinary());
@@ -21,7 +21,21 @@ void main()=>runApp(const HomePage());
 //   //    12&  5
 //   //      4
 //   //print(5<<2);
-// }
+//   1      2         3
+// ~ , (& , |) , (<< ,>>)
+
+String input = "1010&1001|1101";
+/*
+
+<E> -> <E> weak <T> | <T>
+<T> -> <T> strong <F> | <F>
+<F> -> ~ E | <Q>
+<Q> -> (<E>) | <diget>
+<diget> = 1 ~ 9 , a ~ f
+
+*/
+
+}
 
 
 
