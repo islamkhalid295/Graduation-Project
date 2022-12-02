@@ -3,13 +3,17 @@ import 'package:math_expressions/math_expressions.dart';
 
 
 class StandardScreen extends StatefulWidget {
-  const StandardScreen({Key? key}) : super(key: key);
-
+  StandardScreen({Key? key,required this.dark}) : super(key: key);
+  bool  dark;
   @override
-  State<StandardScreen> createState() => _StandardScreenState();
+  State<StandardScreen> createState() => _StandardScreenState(dark);
 }
 
 class _StandardScreenState extends State<StandardScreen> {
+
+  _StandardScreenState(this.isDark);
+
+  bool isDark ;
   String userInput = '20*30';
   String resultText = '600';
   bool flag=true;
@@ -101,8 +105,8 @@ class _StandardScreenState extends State<StandardScreen> {
             flex: 3,
             child: Container(
               padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey : Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
               ),
               child: LayoutBuilder(
@@ -322,7 +326,7 @@ class _StandardScreenState extends State<StandardScreen> {
                             double eval = exp.evaluate(EvaluationType.REAL, cm);
                             resultText = eval.toString();
                           } catch (e) {
-                            resultText = "math error";
+                            resultText = "Math Error";
                           }
 
                         });
@@ -392,4 +396,5 @@ class _StandardScreenState extends State<StandardScreen> {
       ),
     );
   }
+
 }

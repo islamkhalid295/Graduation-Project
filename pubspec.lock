@@ -333,6 +333,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  number_system:
+    dependency: "direct main"
+    description:
+      name: number_system
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5+7"
   package_config:
     dependency: transitive
     description:

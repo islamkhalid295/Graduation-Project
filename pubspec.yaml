@@ -34,6 +34,7 @@ dependencies:
   flutter_eval: ^0.5.3
   dart_eval: ^0.5.4
   math_expressions: ^2.3.1
+  number_system: ^0.0.5+7
 
 
 
