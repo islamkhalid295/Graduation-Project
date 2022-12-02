@@ -1,6 +1,40 @@
-# calculator
+# Digieator
+Requirements:
 
-A new Flutter project.
+• Conversions between number system in binary, decimal, octal and
+hexadecimal.
+
+• Provide logical operations (AND, OR, XOR, NAND, NOR, XNOR and NOT).
+
+• guide to tell the user how to use the app.
+
+• multicolor keyboard calculator.
+
+• support for different screen sizes.
+
+• detailed explanation of the answer for the user’s understanding.
+
+• Provide different modes (dark, light).
+
+• Support arithmetic operation (addition, subtraction, division and
+multiplication)??.
+
+• Fast responsive.
+
+• viewing previous calculation.
+
+• Support logic shift left, and logic shift right.
+
+• Support brackets??.
+
+• Characterized by Red bit in binary number which is the least significant bit
+(lsb).
+
+• Support copy, paste and share result.
+
+• Adaptive text size
+
+
 
 ## Getting Started
 

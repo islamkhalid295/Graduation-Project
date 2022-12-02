@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'standard.dart';
+import 'programmer.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -51,13 +53,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           brightness: Brightness.light,
         primarySwatch: Colors.teal,
         canvasColor: Colors.grey[100],
+        textTheme: const TextTheme(
+          headline1: TextStyle(
+            fontSize: 42,
+            fontWeight: FontWeight.bold,
+          ),
+          headline2: TextStyle(
+            fontSize: 32,
+          ),
+          headline3: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          headline4: TextStyle(
+            fontSize: 18,
+          ),
+        ),
         tabBarTheme: TabBarTheme(
           indicatorSize: TabBarIndicatorSize.label,
+
           unselectedLabelColor: Colors.white.withOpacity(0.8),
           labelColor: Colors.white,
         )
         /* light theme settings */
-      ),
+        ),
+
       // theme: ThemeData(
       //   brightness: _brightness,
       //   /* light theme settings */
@@ -99,6 +119,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.history,),
+
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 5.0),
@@ -115,7 +136,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         }
                       });
                     },
-                    icon: const Icon(Icons.dark_mode_outlined,),
+                    icon: const Icon(Icons.dark_mode_outlined,)
                   ),
                 )
               ],
@@ -134,8 +155,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )),
           body: TabBarView(
             children: [
+
               standerScreen,
-              Text('This Is Programmer'),
+              ProgrammerScreen(),
+
             ],
           ),
         ),
