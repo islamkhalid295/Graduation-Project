@@ -1,99 +1,622 @@
 import 'package:flutter/material.dart';
 
-class StandardScreen extends StatefulWidget {
-  const StandardScreen({Key? key}) : super(key: key);
+class ProgrammerScreen extends StatefulWidget {
+  const ProgrammerScreen({Key? key}) : super(key: key);
 
   @override
-  State<StandardScreen> createState() => _StandardScreenState();
+  State<ProgrammerScreen> createState() => _ProgrammerScreenState();
 }
 
-class _StandardScreenState extends State<StandardScreen> {
-  TextEditingController controller = TextEditingController();
+class _ProgrammerScreenState extends State<ProgrammerScreen> {
+  String currentNumberSystem = 'dic';
 
   @override
   Widget build(BuildContext context) {
-    controller.text = '20*30';
     return Container(
       padding: const EdgeInsets.all(10),
       width: double.infinity,
       height: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 1,
+      child: Column(children: [
+        //==================================== Expression & Result ====================================//
+        Expanded(
+          flex: 1,
+          child: Column(
+            children: [
+              //==================================== Expression ====================================//
+              Expanded(
+                flex: 1,
+                child: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: FittedBox(
+                    child: SelectableText(
+                      '00000000000000000000000000000000',
+                      textAlign: TextAlign.right,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .headline2,
+                    ),
+                  ),
+                ),
+              ),
+              //==================================== Result ====================================//
+              Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        '=',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize:
+                          Theme
+                              .of(context)
+                              .textTheme
+                              .headline1!
+                              .fontSize,
+                          fontWeight:
+                          Theme
+                              .of(context)
+                              .textTheme
+                              .headline1!
+                              .fontWeight,
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: FittedBox(
+                          child: SelectableText(
+                            '00000000000000000000000000000000',
+                            textAlign: TextAlign.right,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headline1,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        //==================================== Convert Part ====================================//
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Container(
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(15),
+              alignment: AlignmentDirectional.center,
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.zero,
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    flex: 3,
-                    child: TextField(
-                      style: const TextStyle(fontSize: 18),
-                      controller: controller,
-                      maxLines: 3,
-                      maxLength: 200,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          signed: true, decimal: true),
-                      decoration: InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(style: BorderStyle.none),
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(style: BorderStyle.none),
-                          borderRadius: BorderRadius.circular(10),
+                    child: Material(
+                      color: (currentNumberSystem == 'bin')?Colors.grey[400]:Colors.white,
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          currentNumberSystem = 'bin';
+                        }),
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: FittedBox(
+                                  child: Text(
+                                    'BIN\t',
+                                    textAlign: TextAlign.left,
+                                    style:
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .headline3,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: FittedBox(
+                                    child: Text(
+                                      '00000000000000000000000000000000',
+                                      style:
+                                      Theme
+                                          .of(context)
+                                          .textTheme
+                                          .headline4,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 1,
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: FittedBox(
-                            child: Text(
-                              '=',
-                              style: TextStyle(color: Colors.teal),
-                              textAlign: TextAlign.left,
-                            ),
+                    child: Material(
+                      color: (currentNumberSystem == 'dic')?Colors.grey[400]:Colors.white,
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          currentNumberSystem = 'dic';
+                        }),
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: FittedBox(
+                                  child: Text(
+                                    'DIC\t',
+                                    textAlign: TextAlign.left,
+                                    style:
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .headline3,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: FittedBox(
+                                    child: Text(
+                                      '00000000000000000000000000000000',
+                                      style:
+                                      Theme
+                                          .of(context)
+                                          .textTheme
+                                          .headline4,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Expanded(
-                          child: FittedBox(
-                            child: SelectableText(
-                              '600',
-                              textAlign: TextAlign.right,
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
-                  )
+                  ),
+                  Expanded(
+                    child: Material(
+                      color: (currentNumberSystem == 'oct')?Colors.grey[400]:Colors.white,
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          currentNumberSystem = 'oct';
+                        }),
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: FittedBox(
+                                  child: Text(
+                                    'OCT\t',
+                                    textAlign: TextAlign.left,
+                                    style:
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .headline3,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: FittedBox(
+                                    child: Text(
+                                      '00000000000000000000000000000000',
+                                      style:
+                                      Theme
+                                          .of(context)
+                                          .textTheme
+                                          .headline4,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Material(
+                      color: (currentNumberSystem == 'hex')?Colors.grey[400]:Colors.white,
+                      child: InkWell(
+                        onTap: () => setState(() {
+                          currentNumberSystem = 'hex';
+                        }),
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: FittedBox(
+                                  child: Text(
+                                    'HEX\t',
+                                    textAlign: TextAlign.left,
+                                    style:
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .headline3,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: FittedBox(
+                                    child: Text(
+                                      '00000000000000000000000000000000',
+                                      style:
+                                      Theme
+                                          .of(context)
+                                          .textTheme
+                                          .headline4,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              ),
+        ),
+        //==================================== Keyboard Part ====================================//
+        Expanded(
+          flex: 4,
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.zero,
+            ),
+            child: LayoutBuilder(
+              builder: (ctx, constraints) =>
+                  GridView(
+                    padding: const EdgeInsets.all(0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                      mainAxisExtent: constraints.maxHeight * (1 / 8),
+                    ),
+                    children: [
+                      //================ 1st Row ================//
+                      createButton(
+                        child: 'AC',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: Icons.backspace_outlined,
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: 'Simplify',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: false,
+                      ),
+                      createButton(
+                        child: 'EXPL',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: false,
+                      ),
+                      createButton(
+                        child: 'MS',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: false,
+                      ),
+                      //================ 2nd Row ================//
+                      createButton(
+                        child: 'A',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: 'AND',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: 'OR',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: 'XOR',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '+/-',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 3rd Row ================//
+                      createButton(
+                        child: 'B',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: 'NOT',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: 'NAND',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: 'NOR',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: Icons.add,
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 4th Row ================//
+                      createButton(
+                        child: 'C',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: '<<',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '>>',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '1st C',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: Icons.maximize,
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 5th Row ================//
+                      createButton(
+                        child: 'D',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: '(',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: ')',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '2nd C',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: Icons.close,
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 6th Row ================//
+                      createButton(
+                        child: 'E',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: '7',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '8',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '9',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '/',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 7th Row ================//
+                      createButton(
+                        child: 'F',
+                        color: Colors.white,
+                        bgColor: Colors.blueAccent,
+                        isEnabled: (currentNumberSystem == 'hex'),
+                      ),
+                      createButton(
+                        child: '4',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '5',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '6',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '%',
+                        color: Colors.white,
+                        bgColor: Colors.teal[200],
+                        isEnabled: true,
+                      ),
+                      //================ 8th Row ================//
+                      createButton(
+                        child: '0',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '1',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: true,
+                      ),
+                      createButton(
+                        child: '2',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '3',
+                        color: Colors.black,
+                        bgColor: Colors.grey[200],
+                        isEnabled: (currentNumberSystem == 'hex' ||
+                            currentNumberSystem == 'oct' ||
+                            currentNumberSystem == 'dic'),
+                      ),
+                      createButton(
+                        child: '=',
+                        color: Colors.white,
+                        bgColor: Colors.red,
+                        isEnabled: true,
+                      ),
+                    ],
+                  ),
             ),
           ),
-        ],
-      ),
+        ),
+      ]),
+    );
+  }
+
+  Widget createButton({
+    required dynamic child,
+    required Color? color,
+    required Color? bgColor,
+    required bool isEnabled,
+    Function? onPressed,
+  }) {
+    if (onPressed == null) {
+      onPressed = () {};
+    }
+    return ElevatedButton(
+      onPressed: (isEnabled) ? () => onPressed!() : null,
+      style: ButtonStyle(
+
+          padding: MaterialStateProperty.all(const EdgeInsets.all(5)),
+          foregroundColor: MaterialStateProperty.all((isEnabled)?color:Colors.grey),
+          backgroundColor: MaterialStateProperty.all((isEnabled)?bgColor:bgColor!.withOpacity(0.5)),
+          elevation: MaterialStateProperty.all(0),
+          shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+            side: BorderSide(
+                color: Colors.white, width: 1, style: BorderStyle.solid),
+          ))),
+      child: FittedBox(
+          child: (child is String)
+              ? Text(
+            child,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+              : Icon(child)),
     );
   }
 }
