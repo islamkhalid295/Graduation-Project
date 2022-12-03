@@ -129,13 +129,6 @@ class _appscreenState extends State<appscreen> {
                   MaterialButton(
                     color: Colors.blue,
                     padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
-                    child: Text(
-                      'sign up',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold),
-                    ),
                     shape: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: const BorderSide(color: Colors.white10, width: 1.0)),
@@ -170,6 +163,13 @@ class _appscreenState extends State<appscreen> {
                         print(e);
                       }
                     },
+                    child: Text(
+                      'sign up',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const SizedBox(height: double.maxFinite ),
 
