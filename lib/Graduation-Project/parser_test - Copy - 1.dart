@@ -22,7 +22,7 @@ class MyParser {
   // <fields>
   String input = "";
   String currentNumberSystem = "";
-  List <String> operator = ['&','|','~','(',')','<<','>>'];
+  List <String> operator = ['&','|','~','(',')'];
   String intBuffer = '';
 
   MyParser(); // <constructors>
@@ -101,7 +101,7 @@ class MyParser {
 }
 
 enum Token {
-  PLUS_SY, minus_SY ,SL_SY, SR_SY,AND_SY,OR_SY,NOT_SY ,NUMBER_SY, END_SOURCE_SY, ERROR_SY, LB_SY, RB_SY
+  PLUS_SY, minus_SY ,SL_SY, SR_SY,AND_SY,OR_SY,NOT_SY ,NUMBER_SY, END_SOURCE_SY, ERROR_SY
 
   /*PROGRAM_SY, IS_SY, BEGIN_SY, END_SY, VAR_SY, INTEGER_SY, BOOL_SY, SKIP_SY, READ_SY, WRITE_SY, WHILE_SY, DO_SY, IF_SY, THEN_SY
 	, ELSE_SY, LPARN_SY, RPARN_SY, OR_SY, AND_SY, TRUE_SY, FALSE_SY, NOT_SY, ID, LEQ_SY, LTHAN_SY, EQUAL_SY, COLON_SY, GTHAN_SY, GEQ_SY, NOTEQ_SY, PLUS_SY, MINUS_SY, SL_SY
@@ -129,8 +129,7 @@ class Parser {
   String input="";
   MyToken? current_token;
   MyToken? previous_token;
-  bool error = false;
-  List <String> operator = ['&','|','~','(',')','<<','>>'];
+  List <String> operator = ['&','|','~','(',')'];
   RuneIterator? iter;
   Parser(this.input) {
     iter = input.runes.iterator;
@@ -158,55 +157,37 @@ class Parser {
     if (eof) {
       return MyToken(Token.END_SOURCE_SY);
     }
+
     else if (ch == '&') {
       return MyToken(Token.AND_SY);
     }
     else if (ch == '|') {
       return MyToken(Token.OR_SY);
     }
-    else if (ch == '~') {
-      return MyToken(Token.NOT_SY);
-    }
-    else if (ch == '(') {
-      return MyToken(Token.LB_SY);
-    }
-    else if (ch == ')') {
-      return MyToken(Token.RB_SY);
-    }
-    else if (ch == '<') {
-      iter!.moveNext();
-      ch = iter!.currentAsString;
-      if(ch == '<'){
-        return MyToken(Token.SL_SY);
-      }else{
-        iter!.movePrevious();
-        return MyToken(Token.ERROR_SY);
-      }
-    } else if (ch == '>') {
-      iter!.moveNext();
-      ch = iter!.currentAsString;
-      if(ch == '>'){
-        return MyToken(Token.SR_SY);
-      }else{
-        iter!.movePrevious();
-        return MyToken(Token.ERROR_SY);
-      }
+    else if (ch == '<<') {
+      return MyToken(Token.SL_SY);
+    } else if (ch == '>>') {
+      return MyToken(Token.SR_SY);
     }else if (isDigit(ch)) {
       s = ch;
-      if(iter!.moveNext()) {
-        ch = iter!.currentAsString;
-        while (isDigit(ch)) {
-          if (iter!.rawIndex == input.length - 1) {
-            break;
-          } else {
-            s += ch;
-            iter!.moveNext();
-            ch = iter!.currentAsString;
-          }
-        }
-         if (!isDigit(ch))
-          iter!.movePrevious();
+      iter!.moveNext();
+      ch = iter!.currentAsString;
+      while (isDigit(ch)) {
 
+        if (iter!.rawIndex==input.length-1) {
+          break;
+        }
+        else {
+          s += ch;
+          iter!.moveNext();
+          ch = iter!.currentAsString;
+        }
+      }
+      if (!(iter!.rawIndex==input.length-1))
+        iter!.movePrevious();
+      else {
+        iter!.moveNext();
+        ch = iter!.currentAsString;
       }
       return MyToken(Token.NUMBER_SY,value: double.parse(s));
 
@@ -230,13 +211,9 @@ class Parser {
       case Token.NOT_SY:
         return "~";
       case Token.SR_SY:
-        return ">>";
+        return "/";
       case Token.SL_SY:
-        return "<<";
-      case Token.LB_SY:
-        return "(";
-      case Token.RB_SY:
-        return ")";
+        return "*";
       case Token.NUMBER_SY:
         return "number";
       case Token.ERROR_SY:
@@ -257,7 +234,6 @@ class Parser {
     }
     else {
       syntax_error(current_token!);
-      error = true;
     }
     current_token = getToken();
   }
@@ -269,12 +245,12 @@ class Parser {
   }
   // s: s + e | e
   //1 s: e x
-  // void s() {
-  //   e();
-  //   x();
-  // }
-  //2 x: ‘+’e x | €
   void s() {
+    e();
+    x();
+  }
+  //2 x: ‘+’e x | €
+  void x() {
     e();
     while (current_token?.name == Token.AND_SY || current_token?.name == Token.OR_SY)
     {
@@ -288,19 +264,18 @@ class Parser {
       e();
 
     }
-    // if(current_token?.name == Token.NUMBER_SY)
-    //   e();
+    if(current_token?.name == Token.NUMBER_SY)
+      e();
 
   }
   // e: e * t | t
   // e: t w
-  // void e() {
-  //   t();
-  //   w();
-  // }
-  //w: * t w | #
   void e() {
     t();
+    w();
+  }
+  //w: * t w | #
+  void w() {
     while (current_token?.name == Token.SL_SY || current_token?.name == Token.SR_SY)
     {
       if(current_token?.name == Token.SL_SY) {
@@ -310,18 +285,16 @@ class Parser {
       }
       t();
     }
-    // if(current_token?.name == Token.NUMBER_SY)
-    //   e();
+    if(current_token?.name == Token.NUMBER_SY)
+      e();
 
   }
   // <t> -> ~ E | <Q>
   // <Q> -> (<E>) | <digit>
   // t: C B t    | D B t  | '-'  B t | B |€  ;
   void t() {
-    if (current_token?.name == Token.NOT_SY) {
-      match(MyToken(Token.NOT_SY));
-      e();
-    } else q();
+    if (current_token?.name == Token.NOT_SY) e();
+    else q();
   }
 
   void q() {
@@ -329,9 +302,16 @@ class Parser {
   }
 
 }
+// int main() {
+//   String filename = "data.txt";
+//   Parser p(filename);
+//   p.sampleParser();
+//   system("pause");
+//   return 0;
+// }
 void main ()
 {
-  Parser p = Parser("151|182|~156");
+  Parser p = Parser("12&5||5|&&&1");
   p.sampleParser();
   // String q = p.parse("1010|10110&101","bin");// 10010<<2 01000  1001000
   // //print(p.isAlpha('q'));
