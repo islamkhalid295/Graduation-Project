@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class StandardScreen extends StatefulWidget {
   StandardScreen({Key? key,required this.dark}) : super(key: key);
   bool  dark;
@@ -9,8 +10,10 @@ class StandardScreen extends StatefulWidget {
 }
 
 class _StandardScreenState extends State<StandardScreen> {
-
-
+  final _auth=FirebaseAuth.instance;
+  late User signedINUser; //this get current user
+  final  _history = FirebaseFirestore.instance.collection('history');
+ // String? historyText="1-3-2"; //this will give user history
   _StandardScreenState(this.isDark);
   bool isDark ;
   String userInput = '';
@@ -40,6 +43,33 @@ class _StandardScreenState extends State<StandardScreen> {
     '+',
   ];
 
+  void iniState()  {
+    super.initState();
+    getCurentUser();
+  }
+  void getCurentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signedINUser = user;
+        print(signedINUser.email);
+      }
+    }
+    catch (e){
+      print('eeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    }
+  }
+  Future<void> addUserHistory(String xtext) {
+
+    // Call the user's CollectionReference to add a new user
+    return _history
+        .add({
+      'operation': xtext ,// add history
+     // 'user':signedINUser.email //currentuser
+    })
+        .then((value) => print("User History Added"))
+        .catchError((error) => print("Failed to add user History: $error"));
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -333,10 +363,12 @@ class _StandardScreenState extends State<StandardScreen> {
                       },
                       bgColor: Colors.grey[200],
                     ),
+
                     textButton(
                       child: '=',
                       color: Colors.white,
                       onPressed: () {
+                        addUserHistory(userInput);
                         setState(() {
                           String finaluserinput = userInput;
                           finaluserinput = userInput.replaceAll('x', '*');
