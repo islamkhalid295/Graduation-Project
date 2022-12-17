@@ -1,3 +1,4 @@
+import 'package:calculator/Graduation-Project/digital_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:number_system/number_system.dart';
 
@@ -16,13 +17,19 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String decResult = "";
   String hexResult = "";
   String octResult = "";
+  MyParser p = MyParser();
+  List <String> operator = ['&','|','~','(',')'];
+
+bool isOperator (String s){
+    return operator.contains(s);
+  }
 
 void check()
 {
-  switch ( currentNumberSystem) {
+  switch (currentNumberSystem) {
     case "bin": {
       binResult = input;
-      decResult = input.binaryToDec().toString();
+      decResult = p.parse(binResult, currentNumberSystem);
       hexResult = int.parse(decResult).decToHex().toString();
       octResult = int.parse(decResult).decToOctal().toString();
     } break;
@@ -788,12 +795,12 @@ void check()
                         color: Colors.black,
                         bgColor: Colors.grey[200],
                         isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '1';
-                              check();
-                            });
-                          }
+                        onPressed: (){
+                          setState(() {
+                            input += '1';
+                            check();
+                          });
+                        }
                       ),
                       createButton(
                         child: '2',
@@ -816,18 +823,24 @@ void check()
                         isEnabled: (currentNumberSystem == 'hex' ||
                             currentNumberSystem == 'oct' ||
                             currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '3';
-                              check();
-                            });
-                          }
+                        onPressed: (){
+                          setState(() {
+                            input += '3';
+                            check();
+                          });
+                        }
                       ),
                       createButton(
                         child: '=',
                         color: Colors.white,
                         bgColor: Colors.red,
                         isEnabled: true,
+                        onPressed: (){
+                          setState(() {
+                            MyParser p = MyParser();
+                            result = p.parse(input, currentNumberSystem);
+                          });
+                        }
                       ),
                     ],
                   ),
@@ -845,9 +858,7 @@ void check()
     required bool isEnabled,
     Function? onPressed,
   }) {
-    if (onPressed == null) {
-      onPressed = () {};
-    }
+    onPressed ??= () {};
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3 ,vertical: 3),
       child: ElevatedButton(

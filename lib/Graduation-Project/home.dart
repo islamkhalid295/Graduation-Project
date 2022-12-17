@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'loginScreen.dart';
 import 'standard.dart';
 import 'programmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
  final _auth=FirebaseAuth.instance;
+
 
   /*Brightness? _brightness;
 
@@ -46,6 +48,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   CupertinoThemeData get _darkTheme => CupertinoThemeData(brightness: Brightness.dark, /* dark theme settings */);
 */
+
   bool isDark = false;
   ThemeMode themeMode=ThemeMode.light;
   @override
@@ -105,7 +108,50 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
-          drawer: const Drawer(),
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                const UserAccountsDrawerHeader(
+                  accountName: Text("Islam Khalid"),
+                  accountEmail: Text("islamkhalid295@gmail.com"),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.orange,
+                    child: Text(
+                      "I",
+                      style: TextStyle(fontSize: 40.0),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text("Logout"),
+                  onTap: () {
+                    _auth.signOut();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) {
+                          return const loginScreen();
+                        }));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text("About"),
+                  onTap: () {
+                    //Navigator.of(context).pushNamed(DrawerAbout.routename);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.contacts),
+                  title: const Text("Contact Us"),
+                  onTap: () {
+                    //Navigator.of(context).pushNamed(DrawerContact.routename);
+                  },
+                ),
+              ],
+            ),
+          ),
           appBar: AppBar(
               //backgroundColor: Colors.grey[100],
               elevation: 5,
@@ -121,14 +167,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               actions: [
                 IconButton(
-                  onPressed: () {
-                    _auth.signOut();
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) {
-                          return const loginScreen();
-                        }));
-                  },
-                  icon: const Icon(Icons.history,color: Colors.red,),
+                  onPressed: () {},
+                  icon: const Icon(Icons.history),
 
                 ),
                 Padding(
