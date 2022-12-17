@@ -309,7 +309,9 @@ class Parser {
 }
 void main ()
 {
-  //& | << >> ~ ( )
-  Parser p = Parser("15|(2&6>>(5|(6<<7)))");
+  //& | ^ << >> ~ ( )
+  //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
+  Parser p = Parser("12|(14|~15&5<<2)");
   p.sampleParser();
+
 }
