@@ -1,5 +1,13 @@
 import 'package:number_system/number_system.dart';
 /*
+
+Precedence	Operator	Associativity
+1	~(Bitwise negation)	Right to left
+2	<<(Bitwise LeftShift) , >>(Bitwise RightShift)	Left to Right
+3	& (Bitwise AND)	Left to Right
+4	^(Bitwise XOR)	Left to Right
+5	| (Bitwise Or)	Left to Right
+
 1100&1101 + 1111
 <E> -> <E> weak <T> | <T>
 \\<E> -> e<T> x<E'>
@@ -100,13 +108,14 @@ enum Token {
 class MyToken {
 //data members
   Token? name;
-  double? value;
+  int? value;
 //constractor
   MyToken(this.name, {this.value});
 }
 class Parser {
   //data members
   String input="";
+  String currentNumberSystem="";
   MyToken? current_token;
   MyToken? previous_token;
   bool error = false;
@@ -114,7 +123,7 @@ class Parser {
   RuneIterator? iter;
 
   //Constractor
-  Parser(this.input) {
+  Parser(this.input,this.currentNumberSystem) {
     iter = input.runes.iterator;
   }
 
@@ -179,6 +188,7 @@ class Parser {
         ch = iter!.currentAsString;
         while (isDigit(ch)) {
           if (iter!.rawIndex == input.length - 1) {
+            s += ch;
             break;
           } else {
             s += ch;
@@ -190,8 +200,24 @@ class Parser {
           iter!.movePrevious();
 
       }
-      return MyToken(Token.NUMBER_SY,value: double.parse(s));
-
+      switch (currentNumberSystem) {
+        case "bin":
+        {
+          return MyToken(Token.NUMBER_SY, value: s.binaryToDec());
+        }
+        case "hex":
+        {
+          return MyToken(Token.NUMBER_SY, value: s.hexToDEC());
+        }
+        case "oct":
+        {
+          return MyToken(Token.NUMBER_SY, value: int.parse(s).octalToDec());
+        }
+        default:
+        {
+          return MyToken(Token.NUMBER_SY, value: int.parse(s));
+        }
+      }
     }
     else {
       return MyToken(Token.ERROR_SY);
@@ -246,64 +272,69 @@ class Parser {
     current_token = getToken();
   }
   // sampleParser : s EOF
-  void sampleParser() {
+  int sampleParser() {
     current_token = getToken();
-    s();
+    int tmp = s();
     match(MyToken(Token.END_SOURCE_SY));
+    return tmp;
   }
   // s: s + e | e
   //1 s: e x
   //2 x: ‘+’e x | €
   //
-  void s() {
-    e();
+  int s() {
+    int tmp = e();//2
     while (current_token?.name == Token.AND_SY || current_token?.name == Token.OR_SY)
     {
       if (current_token?.name == Token.AND_SY) {
         match(MyToken(Token.AND_SY));
+        tmp =tmp & e();
       } else {
         match(MyToken(Token.OR_SY));
+        tmp =tmp | e();
       }
-      e();
     }
+    return tmp;
   }
   // e: e << t | t
   // e: t w
   //w: << t w | #
-  void e() {
-    t();
+  int e() {
+    int tmp1= t();
     while (current_token?.name == Token.SL_SY || current_token?.name == Token.SR_SY)
     {
       if(current_token?.name == Token.SL_SY) {
         match(MyToken(Token.SL_SY));
+        tmp1 =tmp1 << t();
       } else {
         match(MyToken(Token.SR_SY));
+        tmp1 =tmp1 >> t();
       }
-      t();
     }
+    return tmp1;
     // if(current_token?.name == Token.NUMBER_SY)
     //   e();
 
   }
   // <t> -> ~ E | <Q>
-  void t() {
+  int t() {
     if (current_token?.name == Token.NOT_SY) {
       match(MyToken(Token.NOT_SY));
-      e();
-    } else q();
+      return ~e();
+    } else return q();
   }
-// <Q> -> (<E>) | <digit>
-  void q() {
+// <Q> -> (<S>) | <digit>
+  int q() {
     if(current_token?.name == Token.LB_SY)
     {
       match(MyToken(Token.LB_SY));
-      s();
+      int tmp = s();
       match(MyToken(Token.RB_SY));
-    }else
+      return tmp;
+    }else {
       match(MyToken(Token.NUMBER_SY));
-  }
-  void o(){
-    match(MyToken(Token.NUMBER_SY));
+      return previous_token?.value ?? 0;
+    }
   }
 
 }
@@ -311,7 +342,10 @@ void main ()
 {
   //& | ^ << >> ~ ( )
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
-  Parser p = Parser("12|(14|~15&5<<2)");
-  p.sampleParser();
+  Parser p = Parser("5|22&20","dec");
+  //Parser p = Parser("1001|0110&101<<10","bin");
+
+  print(p.sampleParser());
+  print(5|22&20);
 
 }

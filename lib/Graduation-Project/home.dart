@@ -4,6 +4,8 @@ import 'standard.dart';
 import 'programmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -13,6 +15,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
  final _auth=FirebaseAuth.instance;
+
+
+  /*Brightness? _brightness;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addObserver(this);
+    _brightness = WidgetsBinding.instance?.window.platformBrightness;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    if (mounted) {
+      setState(() {
+        _brightness = WidgetsBinding.instance?.window.platformBrightness;
+      });
+    }
+
+    super.didChangePlatformBrightness();
+  }
+
+  CupertinoThemeData get _lightTheme =>
+      CupertinoThemeData(brightness: Brightness.light, /* light theme settings */);
+
+  CupertinoThemeData get _darkTheme => CupertinoThemeData(brightness: Brightness.dark, /* dark theme settings */);
+*/
+
   bool isDark = false;
   ThemeMode themeMode=ThemeMode.light;
   @override
