@@ -2,6 +2,7 @@ import 'package:number_system/number_system.dart';
 /*
 
 Precedence	Operator	Associativity
+0 (  )
 1	~(Bitwise negation)	Right to left
 2	<<(Bitwise LeftShift) , >>(Bitwise RightShift)	Left to Right
 3	& (Bitwise AND)	Left to Right
@@ -103,7 +104,7 @@ class MyParser {
 }
 
 enum Token {
-  PLUS_SY, minus_SY ,SL_SY, SR_SY,AND_SY,OR_SY,NOT_SY ,NUMBER_SY, END_SOURCE_SY, ERROR_SY, LB_SY, RB_SY
+  PLUS_SY, minus_SY ,SL_SY, SR_SY,AND_SY,OR_SY,NOT_SY ,NUMBER_SY, END_SOURCE_SY, ERROR_SY, LB_SY, RB_SY, XOR_SY
 }
 class MyToken {
 //data members
@@ -151,6 +152,9 @@ class Parser {
     }
     else if (ch == '&') {
       return MyToken(Token.AND_SY);
+    }
+    else if (ch == '^') {
+      return MyToken(Token.XOR_SY);
     }
     else if (ch == '|') {
       return MyToken(Token.OR_SY);
@@ -237,6 +241,8 @@ class Parser {
         return "|";
       case Token.NOT_SY:
         return "~";
+        case Token.XOR_SY:
+        return "^";
       case Token.SR_SY:
         return ">>";
       case Token.SL_SY:
@@ -274,7 +280,7 @@ class Parser {
   // sampleParser : s EOF
   int sampleParser() {
     current_token = getToken();
-    int tmp = s();
+    int tmp = z();
     match(MyToken(Token.END_SOURCE_SY));
     return tmp;
   }
@@ -282,9 +288,27 @@ class Parser {
   //1 s: e x
   //2 x: ‘+’e x | €
   //
+  int z() {
+    int tmp = o();//2
+    while (current_token?.name == Token.OR_SY)
+    {
+      match(MyToken(Token.OR_SY));
+      tmp =tmp | o();
+    }
+    return tmp;
+  }
+  int o() {
+    int tmp = s();//2
+    while (current_token?.name == Token.XOR_SY)
+    {
+        match(MyToken(Token.XOR_SY));
+        tmp =tmp ^ s();
+    }
+    return tmp;
+  }
   int s() {
     int tmp = e();//2
-    while (current_token?.name == Token.AND_SY || current_token?.name == Token.OR_SY)
+    while (current_token?.name == Token.AND_SY )
     {
       if (current_token?.name == Token.AND_SY) {
         match(MyToken(Token.AND_SY));
@@ -342,10 +366,17 @@ void main ()
 {
   //& | ^ << >> ~ ( )
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
-  Parser p = Parser("5|22&20","dec");
+  //Parser p = Parser("9<<~8","dec");
+  try {
+    Parser p = Parser("101^110","bin");
+    print(p.sampleParser());
+  } catch (e) {
+    print("Result not defined");
+  }
+  //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
 
-  print(p.sampleParser());
-  print(5|22&20);
+
+  print(5^8);
 
 }
