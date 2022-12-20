@@ -199,9 +199,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           }
                         });
                       },
-                      icon: const Icon(
-                        Icons.dark_mode_outlined,
-                      )),
+                      icon: (isDark)
+                          ? const Icon(
+                              Icons.light_mode_outlined,
+                            )
+                          : const Icon(
+                              Icons.dark_mode_outlined,
+                            )),
                 )
               ],
               centerTitle: true,

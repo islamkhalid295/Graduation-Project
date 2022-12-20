@@ -1,4 +1,5 @@
 //this screen for sign Up new user
+import 'package:calculator/Graduation-Project/home.dart';
 import 'package:flutter/material.dart';
 import 'package:calculator/Graduation-Project/signUn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +15,17 @@ class appscreen extends StatefulWidget {
 
 class _appscreenState extends State<appscreen> {
   final _auth = FirebaseAuth.instance;
-  late String Email;
-  late String Password;
+  TextEditingController passwordcontroller=TextEditingController();
+  TextEditingController Emailcontroller=TextEditingController();
+  TextEditingController confirmPasswoerdcon=TextEditingController();
   late String confirmPassword;
+  String? emailerror = null;
+  String? passworderror = null;
+  String? confirmPassworderror = null;
   bool showSpinner = false;
   bool pass = true;
-  Icon ic = const Icon(Icons.remove_red_eye_outlined, color: Colors.red);
+  bool confirmPass = true;
+  Icon ic = const Icon(Icons.remove_red_eye_outlined, color: Colors.blue);
 
   @override
   Widget build(BuildContext context) {
@@ -59,26 +65,27 @@ class _appscreenState extends State<appscreen> {
                         decoration: InputDecoration(
                           hintText: 'enter your email ',
                           labelText: "Emile",
-                          labelStyle:
-                              const TextStyle(fontSize: 15, color: Colors.red),
+                          labelStyle:const TextStyle(fontSize: 15, color: Colors.blue),
+                          errorText: emailerror,
+                          errorStyle: const TextStyle(color: Colors.red),
                           prefixIcon: const Icon(Icons.email),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
+                                  color: Colors.blue, width: 1.5)
+                          ),
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
-//------------------------
+                                  color: Colors.red, width: 1.5)
+                          ),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
+                                  color: Colors.red, width: 1.5)
+                          ),
                         ),
-                        onChanged: (value) {
-                          Email = value;
-                        },
+                        controller: Emailcontroller,
                       ),
 //****************password*****************
                       const SizedBox(height: 20),
@@ -90,9 +97,10 @@ class _appscreenState extends State<appscreen> {
                         //----------------
                         decoration: InputDecoration(
                           labelText: "password",
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.red),
+                          labelStyle:const TextStyle(fontSize: 15, color: Colors.blue),
                           hintText: "enter your password ",
+                          errorText: passworderror,
+                          errorStyle: const TextStyle(color: Colors.red),
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
@@ -104,7 +112,7 @@ class _appscreenState extends State<appscreen> {
                                   } else {
                                     ic = const Icon(
                                         Icons.remove_red_eye_outlined,
-                                        color: Colors.red);
+                                        color: Colors.blue);
                                   }
                                 });
                               },
@@ -113,7 +121,7 @@ class _appscreenState extends State<appscreen> {
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
+                                  color: Colors.blue, width: 1.5)),
                           //----------------------
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -125,21 +133,20 @@ class _appscreenState extends State<appscreen> {
                               borderSide: const BorderSide(
                                   color: Colors.red, width: 1.5)),
                         ),
-                        onChanged: (value) {
-                          Password = value;
-                        },
+                        controller: passwordcontroller,
                       ),
                       const SizedBox(height: 20),
 //*************confirm password************
                       TextField(
                         //لجعل الباسورد مخفي -----
-                        obscureText: pass,
+                        obscureText: confirmPass,
                         textInputAction: TextInputAction.search,
                         //----------------
                         decoration: InputDecoration(
                           labelText: "confirm password",
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.red),
+                          labelStyle:const  TextStyle(fontSize: 15, color: Colors.blue),
+                          errorText: confirmPassworderror,
+                          errorStyle: const TextStyle(color: Colors.red),
                           hintText: "enter your cofirm password ",
                           suffixIcon: IconButton(
                               onPressed: () {
@@ -152,7 +159,7 @@ class _appscreenState extends State<appscreen> {
                                   } else {
                                     ic = const Icon(
                                         Icons.remove_red_eye_outlined,
-                                        color: Colors.red);
+                                        color: Colors.blue);
                                   }
                                 });
                               },
@@ -161,7 +168,7 @@ class _appscreenState extends State<appscreen> {
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
+                                  color: Colors.blue, width: 1.5)),
                           //----------------------
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -173,26 +180,15 @@ class _appscreenState extends State<appscreen> {
                               borderSide: const BorderSide(
                                   color: Colors.red, width: 1.5)),
                         ),
-                        onChanged: (value) {
-                          confirmPassword = value;
-                        },
+                        controller: confirmPasswoerdcon,
                       ),
 //---login------------------------
 
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20, ),
                       MaterialButton(
                           color: Colors.blue,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 80, vertical: 20),
-                          child: Text(
-                            'sign up',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.bold),
-                          ),
                           shape: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
@@ -200,23 +196,53 @@ class _appscreenState extends State<appscreen> {
                           onPressed: () async {
                             setState(() {
                               showSpinner = true;
+                              if(passwordcontroller.text.isEmpty){
+                                passworderror="password can not be empty";
+                              }
+                              else{
+                                passworderror=null;
+                              }
+                              if (Emailcontroller.text.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(Emailcontroller.text)) {
+                                emailerror = "Enter correct Email";
+                              } else {
+                                emailerror = null;
+                                //return null;
+                              }
+                              if(confirmPasswoerdcon.text.isEmpty)
+                              {
+                                confirmPassworderror="enter confirm password";
+                              }
+                              else if(passwordcontroller.text!=confirmPasswoerdcon.text){
+                                confirmPassworderror="not equal password";
+                              }
+                              else{
+                                confirmPassworderror=null;
+                              }
                             });
+                            if(confirmPassworderror==null) {
                               try {
                                 await _auth.createUserWithEmailAndPassword
-                                  (email: Email, password: Password);
+                                  (email: Emailcontroller.text,
+                                    password: passwordcontroller.text);
                                 Navigator.of(context).push(
                                     MaterialPageRoute(builder: (context) {
-                                      return const loginScreen();
+                                      return const HomePage();
                                     }));
-                                setState(() {
-                                  showSpinner = false;
-                                });
+                              }
+                              on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  passworderror =
+                                  'The password provided is too weak.';
+                                } else if (e.code == 'email-already-in-use') {
+                                  emailerror =
+                                  'The account already exists for that email.';
+                                }
                               }
                               catch (e) {
-                                setState(() {
-                                  showSpinner = false;
-                                });
-                                showDialog(
+
+                                /*    showDialog(
                                     context: context,
                                     builder: (context) =>
                                         AlertDialog(
@@ -225,7 +251,7 @@ class _appscreenState extends State<appscreen> {
                                               .textTheme
                                               .headline6,),
                                           content: Text(
-                                            e.toString(), style: Theme
+                                            "email or passwoed not been initialized", style: Theme
                                               .of(context)
                                               .textTheme
                                               .subtitle1,),
@@ -236,9 +262,23 @@ class _appscreenState extends State<appscreen> {
                                           ],
                                         )
                                 );
+
+                             */
                                 print(e);
                               }
                             }
+
+                            setState(() {
+                              showSpinner = false;
+                            });
+                            },
+                          child: const Text(
+                            'sign up',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.bold),
+                          )
                             ),
                     ],
 

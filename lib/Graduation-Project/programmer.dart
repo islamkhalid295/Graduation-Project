@@ -12,11 +12,11 @@ class ProgrammerScreen extends StatefulWidget {
 class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String currentNumberSystem = 'dec';
   String input = "";
-  String result = "";
-  String binResult = "";
-  String decResult = "";
-  String hexResult = "";
-  String octResult = "";
+  String result = "0";
+  String binResult = "0";
+  String decResult = "0";
+  String hexResult = "#0";
+  String octResult = "0";
   int tmp = 0;
   List<String> operator = ['&', '|', '~', '(', ')'];
 
@@ -27,10 +27,17 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   void check() {
     Parser p = Parser(input, currentNumberSystem);
     tmp = p.sampleParser();
-    binResult = tmp.decToBinary().toString();
-    decResult = tmp.toString();
-    hexResult = tmp.decToHex().toString();
-    octResult = tmp.decToOctal().toString();
+    if (p.error){
+      binResult = "Math Error";
+      decResult = "Math Error";
+      hexResult = "Math Error";
+      octResult = "Math Error";
+    }else {
+      binResult = tmp.decToBinary().toString();
+      decResult = tmp.toString();
+      hexResult = tmp.decToHex().toString();
+      octResult = tmp.decToOctal().toString();
+    }
     // switch (currentNumberSystem) {
     //   case "bin":
     //     {
@@ -788,27 +795,30 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         setState(() {
                           Parser p = Parser(input, currentNumberSystem);
                           tmp = p.sampleParser();
-                          switch (currentNumberSystem) {
-                            case "bin":
-                              {
-                                result = tmp.decToBinary();
-                              }
-                              break;
-                            case "hex":
-                              {
-                                result = tmp.decToHex();
-                              }
-                              break;
-                            case "oct":
-                              {
-                                result = tmp.decToOctal().toString();
-                              }
-                              break;
-                            default:
-                              {
-                                result = tmp.toString();
-                              }
-                          }
+                          if (!(p.error)) {
+                            switch (currentNumberSystem) {
+                              case "bin":
+                                {
+                                  result = tmp.decToBinary();
+                                }
+                                break;
+                              case "hex":
+                                {
+                                  result = tmp.decToHex();
+                                }
+                                break;
+                              case "oct":
+                                {
+                                  result = tmp.decToOctal().toString();
+                                }
+                                break;
+                              default:
+                                {
+                                  result = tmp.toString();
+                                }
+                            }
+                          }else
+                            result ="Math Error";
                         });
                       }),
                 ],

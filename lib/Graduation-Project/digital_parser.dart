@@ -21,87 +21,87 @@ Precedence	Operator	Associativity
 <digit> = 1 ~ 9 , a ~ f
 */
 
-class MyParser {
-  // <fields>
-  String input = "";
-  String currentNumberSystem = "";
-  List <String> operator = ['&','|','~','(',')','<<','>>'];
-  String intBuffer = '';
-
-  MyParser(); // <constructors>
-
-
-  // <functions>
-  bool isOperator (String s){
-    return operator.contains(s);
-  }
-
-  bool isAlpha(String ch){
-    return( (ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) && ch.codeUnitAt(0) <= 'z'.codeUnitAt(0)) || (ch.codeUnitAt(0) >= 'A'.codeUnitAt(0) && ch.codeUnitAt(0) <= 'Z'.codeUnitAt(0)));
-  }
-  bool isNum(String ch){
-    return( (ch.codeUnitAt(0) >= '0'.codeUnitAt(0) && ch.codeUnitAt(0) <= '9'.codeUnitAt(0)));
-  }
-  bool isDigit(String ch){
-    return(isAlpha(ch)||isNum(ch));
-  }
-
-  String parse (String input, String currentNumberSystem)
-  {
-    intBuffer = '';
-    String clearstring = input.replaceAll(' ', '').trim();
-    RuneIterator iter = input.runes.iterator;
-    String result="";
-
-    if(currentNumberSystem == "dec") return input;
-
-    while (iter.moveNext()) {
-      final String ch = iter.currentAsString;
-
-      if(isOperator(ch) || iter.rawIndex == input.length-1){
-        int? w = input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).indexOf(ch)+1;
-        if(iter.rawIndex == input.length-1) {
-          intBuffer += ch;
-          w = null;
-        }
-        switch (currentNumberSystem) {
-          case "bin":
-            {
-              result += input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).substring(0,w);
-              if(iter.rawIndex == input.length-1) return result;
-              input = input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).substring(w??=1);
-              iter = input.runes.iterator;
-              intBuffer="";
-            }
-            break;
-          case "hex":
-            {
-              result = input.replaceFirst(intBuffer,intBuffer.hexToDEC().toString());
-              intBuffer="";
-            }
-            break;
-          case "oct":
-            {
-              result = input.replaceFirst(intBuffer,int.parse(intBuffer).octalToDec().toString());
-              intBuffer="";
-            }
-            break;
-
-        }
-      }
-      else if(isDigit(ch)){
-        intBuffer += ch;
-      }else{
-        return "enter valid expressions";
-      }
-    }
-    // while(!(input.isEmpty)){
-    //   if(input[1].)
-    //
-    // }
-    return result;
-  }
-}
+// class MyParser {
+//   // <fields>
+//   String input = "";
+//   String currentNumberSystem = "";
+//   List <String> operator = ['&','|','~','(',')','<<','>>'];
+//   String intBuffer = '';
+//
+//   MyParser(); // <constructors>
+//
+//
+//   // <functions>
+//   bool isOperator (String s){
+//     return operator.contains(s);
+//   }
+//
+//   bool isAlpha(String ch){
+//     return( (ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) && ch.codeUnitAt(0) <= 'z'.codeUnitAt(0)) || (ch.codeUnitAt(0) >= 'A'.codeUnitAt(0) && ch.codeUnitAt(0) <= 'Z'.codeUnitAt(0)));
+//   }
+//   bool isNum(String ch){
+//     return( (ch.codeUnitAt(0) >= '0'.codeUnitAt(0) && ch.codeUnitAt(0) <= '9'.codeUnitAt(0)));
+//   }
+//   bool isDigit(String ch){
+//     return(isAlpha(ch)||isNum(ch));
+//   }
+//
+//   String parse (String input, String currentNumberSystem)
+//   {
+//     intBuffer = '';
+//     String clearstring = input.replaceAll(' ', '').trim();
+//     RuneIterator iter = input.runes.iterator;
+//     String result="";
+//
+//     if(currentNumberSystem == "dec") return input;
+//
+//     while (iter.moveNext()) {
+//       final String ch = iter.currentAsString;
+//
+//       if(isOperator(ch) || iter.rawIndex == input.length-1){
+//         int? w = input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).indexOf(ch)+1;
+//         if(iter.rawIndex == input.length-1) {
+//           intBuffer += ch;
+//           w = null;
+//         }
+//         switch (currentNumberSystem) {
+//           case "bin":
+//             {
+//               result += input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).substring(0,w);
+//               if(iter.rawIndex == input.length-1) return result;
+//               input = input.replaceFirst(intBuffer,intBuffer.binaryToDec().toString()).substring(w??=1);
+//               iter = input.runes.iterator;
+//               intBuffer="";
+//             }
+//             break;
+//           case "hex":
+//             {
+//               result = input.replaceFirst(intBuffer,intBuffer.hexToDEC().toString());
+//               intBuffer="";
+//             }
+//             break;
+//           case "oct":
+//             {
+//               result = input.replaceFirst(intBuffer,int.parse(intBuffer).octalToDec().toString());
+//               intBuffer="";
+//             }
+//             break;
+//
+//         }
+//       }
+//       else if(isDigit(ch)){
+//         intBuffer += ch;
+//       }else{
+//         return "enter valid expressions";
+//       }
+//     }
+//     // while(!(input.isEmpty)){
+//     //   if(input[1].)
+//     //
+//     // }
+//     return result;
+//   }
+// }
 
 enum Token {
   PLUS_SY, minus_SY ,SL_SY, SR_SY,AND_SY,OR_SY,NOT_SY ,NUMBER_SY, END_SOURCE_SY, ERROR_SY, LB_SY, RB_SY, XOR_SY
