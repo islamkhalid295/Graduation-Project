@@ -18,7 +18,6 @@ class _appscreenState extends State<appscreen> {
   TextEditingController passwordcontroller=TextEditingController();
   TextEditingController Emailcontroller=TextEditingController();
   TextEditingController confirmPasswoerdcon=TextEditingController();
-  late String confirmPassword;
   String? emailerror = null;
   String? passworderror = null;
   String? confirmPassworderror = null;
@@ -151,8 +150,8 @@ class _appscreenState extends State<appscreen> {
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  pass = !pass;
-                                  if (pass == false) {
+                                  confirmPass = !confirmPass;
+                                  if (confirmPass == false) {
                                     ic = const Icon(
                                         Icons.real_estate_agent_rounded,
                                         color: Colors.red);

@@ -14,9 +14,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final _auth = FirebaseAuth.instance;
 
-  /*Brightness? _brightness;
+ final _auth=FirebaseAuth.instance;
+ late User signInUser;
+ @override
+ void initState() {
+   // TODO: implement initState
+   super.initState();
+   getCurrentUser();
+ }
+ void getCurrentUser(){
+   try {
+     final user = _auth.currentUser;
+     if (user != null) {
+       signInUser = user;
+       print(signInUser.email);
+     }
+   }catch(e){
+     print(e);
+   }
+ }
+
+ /*Brightness? _brightness;
+
 
   @override
   void initState() {
