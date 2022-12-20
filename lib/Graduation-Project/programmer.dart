@@ -148,7 +148,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
               padding: const EdgeInsets.all(5),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.zero,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: Column(
                 children: [
@@ -352,7 +352,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
             padding: const EdgeInsets.all(5),
             decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
             ),
             child: LayoutBuilder(
               builder: (ctx, constraints) => GridView(

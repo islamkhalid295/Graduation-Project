@@ -14,8 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
- final _auth=FirebaseAuth.instance;
-
+  final _auth = FirebaseAuth.instance;
 
   /*Brightness? _brightness;
 
@@ -50,7 +49,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 */
 
   bool isDark = false;
-  ThemeMode themeMode=ThemeMode.light;
+  ThemeMode themeMode = ThemeMode.light;
+
   @override
   Widget build(BuildContext context) {
     StandardScreen standerScreen = StandardScreen(dark: isDark);
@@ -58,47 +58,63 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       title: 'Digieator',
       theme: ThemeData(
           brightness: Brightness.light,
-        primarySwatch: Colors.teal,
-        canvasColor: Colors.grey[100],
-        textTheme: const TextTheme(
-          headline1: TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.bold,
+          primarySwatch: Colors.teal,
+          canvasColor: Colors.grey[100],
+          textTheme: const TextTheme(
+            headline1: TextStyle(
+              fontSize: 42,
+              fontWeight: FontWeight.bold,
+            ),
+            headline2: TextStyle(
+              fontSize: 32,
+            ),
+            headline3: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            headline4: TextStyle(
+              fontSize: 18,
+            ),
           ),
-          headline2: TextStyle(
-            fontSize: 32,
+          tabBarTheme: TabBarTheme(
+            indicatorSize: TabBarIndicatorSize.label,
+            unselectedLabelColor: Colors.white.withOpacity(0.8),
+            labelColor: Colors.white,
+          )
+          /* light theme settings */
           ),
-          headline3: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          headline4: TextStyle(
-            fontSize: 18,
-          ),
-        ),
-        tabBarTheme: TabBarTheme(
-          indicatorSize: TabBarIndicatorSize.label,
-
-          unselectedLabelColor: Colors.white.withOpacity(0.8),
-          labelColor: Colors.white,
-        )
-        /* light theme settings */
-        ),
 
       // theme: ThemeData(
       //   brightness: _brightness,
       //   /* light theme settings */
       // ),
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        appBarTheme: AppBarTheme(foregroundColor: Colors.tealAccent),
-        tabBarTheme: TabBarTheme(
-          indicatorSize: TabBarIndicatorSize.label,
-          unselectedLabelColor: Colors.tealAccent.withOpacity(0.5),
-          labelColor: Colors.tealAccent,
-        )
-        /* dark theme settings */
-      ),
+          brightness: Brightness.dark,
+          textTheme: const TextTheme(
+            headline1: TextStyle(
+              fontSize: 42,
+              fontWeight: FontWeight.bold,
+            ),
+            headline2: TextStyle(
+              fontSize: 32,
+            ),
+            headline3: TextStyle(
+              fontSize: 18,
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+            ),
+            headline4: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          appBarTheme: AppBarTheme(foregroundColor: Colors.tealAccent),
+          tabBarTheme: TabBarTheme(
+            indicatorSize: TabBarIndicatorSize.label,
+            unselectedLabelColor: Colors.tealAccent.withOpacity(0.5),
+            labelColor: Colors.tealAccent,
+          )
+          /* dark theme settings */
+          ),
       themeMode: themeMode,
       /* ThemeMode.system to follow system theme,
          ThemeMode.light for light theme,
@@ -129,10 +145,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   title: const Text("Logout"),
                   onTap: () {
                     _auth.signOut();
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) {
-                          return const loginScreen();
-                        }));
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return const loginScreen();
+                    }));
                   },
                 ),
                 ListTile(
@@ -155,44 +171,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           appBar: AppBar(
               //backgroundColor: Colors.grey[100],
               elevation: 5,
-              leading: Builder(
-                builder: (ctx) {
-                  return IconButton(
-                    icon: const Icon(Icons.menu,
+              leading: Builder(builder: (ctx) {
+                return IconButton(
+                  icon: const Icon(
+                    Icons.menu,
                     //color: Colors.red,
-                    ),
-                    onPressed: ()=>Scaffold.of(ctx).openDrawer(),
-                  );
-                }
-              ),
+                  ),
+                  onPressed: () => Scaffold.of(ctx).openDrawer(),
+                );
+              }),
               actions: [
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.history),
-
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 5.0),
                   child: IconButton(
-                    onPressed: () {
-                      setState(() {
-
-                        if (isDark){
-                          themeMode = ThemeMode.light;
-                          isDark = false;
-                        }else if(!isDark) {
-                          themeMode = ThemeMode.dark;
-                          isDark = true;
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.dark_mode_outlined,)
-                  ),
+                      onPressed: () {
+                        setState(() {
+                          if (isDark) {
+                            themeMode = ThemeMode.light;
+                            isDark = false;
+                          } else if (!isDark) {
+                            themeMode = ThemeMode.dark;
+                            isDark = true;
+                          }
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.dark_mode_outlined,
+                      )),
                 )
               ],
               centerTitle: true,
-
               title: const TabBar(
+                labelPadding: EdgeInsets.symmetric(horizontal: 3),
                 //indicatorColor: Colors.teal,
                 tabs: [
                   Tab(
@@ -205,10 +219,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )),
           body: TabBarView(
             children: [
-
               standerScreen,
               ProgrammerScreen(),
-
             ],
           ),
         ),
