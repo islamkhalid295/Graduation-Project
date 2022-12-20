@@ -1,9 +1,8 @@
 import 'package:calculator/Graduation-Project/digital_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:number_system/number_system.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class ProgrammerScreen extends StatefulWidget {
   const ProgrammerScreen({Key? key}) : super(key: key);
 
@@ -12,50 +11,32 @@ class ProgrammerScreen extends StatefulWidget {
 }
 
 class _ProgrammerScreenState extends State<ProgrammerScreen> {
-  String currentNumberSystem = 'dec';
-  String input = "";
-
-  String result = "";
-  String binResult = "";
-  String decResult = "";
-  String hexResult = "";
-  String octResult = "";
-  MyParser p = MyParser();
-  List <String> operator = ['&','|','~','(',')'];
   final _auth=FirebaseAuth.instance;
-  late User signInUser; //this get current user
+  late User signedINUser; //this get current user
   final  _history = FirebaseFirestore.instance.collection('history');
-  @override
-  /* void initState() {
-    // TODO: implement initState
-    super.initState();
-    getCurrentUser();
-  }
-  void getCurrentUser(){
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        signInUser = user;
-        print(user.email);
-      }
-    }catch(e){
-      print(e);
-    }
-  }
-
-  */
   Future<void> addUserHistory(String xtext) {
+
+    // Call the user's CollectionReference to add a new user
     return _history
         .add({
       'operation': xtext ,// add history
-      'user':_auth.currentUser?.email //currentuser
-      ,'type':'programmer'
+      'user':signedINUser.email //currentuser
+      ,'type':'standard'
     })
         .then((value) => print("User History Added"))
         .catchError((error) => print("Failed to add user History: $error"));
   }
-bool isOperator (String s){
-
+  String currentNumberSystem = 'dec';
+  String input = "";
+  String result = "0";
+  String binResult = "0";
+  String decResult = "0";
+  String hexResult = "#0";
+  String octResult = "0";
+  int tmp = 0;
+  List<String> operator = ['&', '|', '~', '(', ')'];
+//sdada
+  bool isOperator(String s) {
     return operator.contains(s);
   }
 
@@ -397,484 +378,46 @@ bool isOperator (String s){
               borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
             ),
             child: LayoutBuilder(
-
-              builder: (ctx, constraints) =>
-                  GridView(
-                    padding: const EdgeInsets.all(0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
-                      mainAxisExtent: constraints.maxHeight * (1 / 8),
-                    ),
-                    children: [
-                      //================ 1st Row ================//
-                      createButton(
-                        child: 'AC',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: true,
-                        onPressed: () {
-                          setState(() {
-                            input = '';
-                            result = '0';
-                            binResult = '0';
-                            hexResult = '0';
-                            octResult = '0';
-                            decResult = '0';
-                          });
-                        },
-                      ),
-                      createButton(
-                        child: Icons.backspace_outlined,
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: true,
-                        onPressed: () {
-                          setState(() {
-                            input =input.substring(0, input.length - 1);
-                            check();
-                          });
-                        }
-                      ),
-                      createButton(
-                        child: 'Simplify',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: false,
-                      ),
-                      createButton(
-                        child: 'EXPL',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: false,
-                      ),
-                      createButton(
-                        child: 'MS',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: false,
-                          onPressed: (){
-                            setState(() {
-                            });
-                          }
-                      ),
-                      //================ 2nd Row ================//
-                      createButton(
-                        child: 'A',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                        onPressed: (){
-                          setState(() {
-                            input += "A";
-                            check();
-                          });
-                        }
-                      ),
-                      createButton(
-                        child: 'AND',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += "&";
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: 'OR',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += "|";
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: 'XOR',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '^';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '.',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '.';
-                            });
-                          }
-                      ),
-                      //================ 3rd Row ================//
-                      createButton(
-                        child: 'B',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                          onPressed: (){
-                            setState(() {
-                              input += "B";
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: 'NOT',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '~';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: 'NAND',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += "~&";
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: 'NOR',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += "~^";
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: Icons.add,
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '+';
-
-                            });
-                          }
-                      ),
-                      //================ 4th Row ================//
-                      createButton(
-                        child: 'C',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                          onPressed: (){
-                            setState(() {
-                              input += "C";
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '<<',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '<<';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '>>',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '>>';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '1st C',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                      ),
-                      createButton(
-                        child: Icons.minimize,
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '-';
-
-                            });
-                          }
-                      ),
-                      //================ 5th Row ================//
-                      createButton(
-                        child: 'D',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                          onPressed: (){
-                            setState(() {
-                              input += 'D';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '(',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '(';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: ')',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += ')';
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '2nd C',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                      ),
-                      createButton(
-                        child: Icons.close,
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '*';
-                            });
-                          }
-                      ),
-                      //================ 6th Row ================//
-                      createButton(
-                        child: 'E',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                          onPressed: (){
-                            setState(() {
-                              input += 'E';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '7',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '7';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '8',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '8';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '9',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '9';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '/',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '/';
-                            });
-                          }
-                      ),
-                      //================ 7th Row ================//
-                      createButton(
-                        child: 'F',
-                        color: Colors.white,
-                        bgColor: Colors.blueAccent,
-                        isEnabled: (currentNumberSystem == 'hex'),
-                          onPressed: (){
-                            setState(() {
-                              input += 'F';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '4',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '4';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '5',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '5';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '6',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '6';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '%',
-                        color: Colors.white,
-                        bgColor: Colors.teal[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '%';
-                            });
-                          }
-                      ),
-                      //================ 8th Row ================//
-                      createButton(
-                        child: '0',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: true,
-                          onPressed: (){
-                            setState(() {
-                              input += '0';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '1',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: true,
-                        onPressed: (){
-                          setState(() {
-                            input += '1';
-                            check();
-                          });
-                        }
-                      ),
-                      createButton(
-                        child: '2',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                          onPressed: (){
-                            setState(() {
-                              input += '2';
-                              check();
-                            });
-                          }
-                      ),
-                      createButton(
-                        child: '3',
-                        color: Colors.black,
-                        bgColor: Colors.grey[200],
-                        isEnabled: (currentNumberSystem == 'hex' ||
-                            currentNumberSystem == 'oct' ||
-                            currentNumberSystem == 'dec'),
-                        onPressed: (){
-                          setState(() {
-                            input += '3';
-                            check();
-                          });
-                        }
-                      ),
-                      createButton(
-                        child: '=',
-                        color: Colors.white,
-                        bgColor: Colors.red,
-                        isEnabled: true,
-                        onPressed: (){
-                          addUserHistory(input);
-                          setState(() {
-                            MyParser p = MyParser();
-                            result = p.parse(input, currentNumberSystem);
-                          });
-                        }
-                      ),
-                    ],
-
+              builder: (ctx, constraints) => GridView(
+                padding: const EdgeInsets.all(0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  mainAxisExtent: constraints.maxHeight * (1 / 8),
+                ),
+                children: [
+                  //================ 1st Row ================//
+                  createButton(
+                    child: 'AC',
+                    color: Colors.white,
+                    bgColor: Colors.blueAccent,
+                    isEnabled: true,
+                    onPressed: () {
+                      setState(() {
+                        input = '';
+                        result = '0';
+                        binResult = '0';
+                        hexResult = '0';
+                        octResult = '0';
+                        decResult = '0';
+                      });
+                    },
+                  ),
+                  createButton(
+                      child: Icons.backspace_outlined,
+                      color: Colors.white,
+                      bgColor: Colors.blueAccent,
+                      isEnabled: true,
+                      onPressed: () {
+                        setState(() {
+                          input = input.substring(0, input.length - 1);
+                          check();
+                        });
+                      }),
+                  createButton(
+                    child: 'Simplify',
+                    color: Colors.white,
+                    bgColor: Colors.blueAccent,
+                    isEnabled: false,
                   ),
                   createButton(
                     child: 'EXPL',

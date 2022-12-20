@@ -1,7 +1,6 @@
 //this screen for sign Up new user
 import 'package:calculator/Graduation-Project/home.dart';
 import 'package:flutter/material.dart';
-import 'package:calculator/Graduation-Project/signUn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'loginScreen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -18,6 +17,7 @@ class _appscreenState extends State<appscreen> {
   TextEditingController passwordcontroller=TextEditingController();
   TextEditingController Emailcontroller=TextEditingController();
   TextEditingController confirmPasswoerdcon=TextEditingController();
+  late String confirmPassword;
   String? emailerror = null;
   String? passworderror = null;
   String? confirmPassworderror = null;
@@ -151,10 +151,12 @@ class _appscreenState extends State<appscreen> {
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
+
                                   confirmPass = !confirmPass;
                                   if (confirmPass == false) {
                                     confirmic = const Icon(
                                         Icons.visibility_off,
+
                                         color: Colors.red);
                                   } else {
                                     confirmic = const Icon(
