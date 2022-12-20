@@ -8,12 +8,39 @@ class StandardScreen extends StatefulWidget {
   @override
   State<StandardScreen> createState() => _StandardScreenState(dark);
 }
-
 class _StandardScreenState extends State<StandardScreen> {
   final _auth=FirebaseAuth.instance;
-  late User signedINUser; //this get current user
+  late User signInUser; //this get current user
   final  _history = FirebaseFirestore.instance.collection('history');
- // String? historyText="1-3-2"; //this will give user history
+  @override
+ /* void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+  void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+
+  */
+  Future<void> addUserHistory(String xtext) {
+    return _history
+        .add({
+      'operation': xtext ,// add history
+      'user':_auth.currentUser?.email //currentuser
+      ,'type':'standard'
+    })
+        .then((value) => print("User History Added"))
+        .catchError((error) => print("Failed to add user History: $error"));
+  }
   _StandardScreenState(this.isDark);
   bool isDark ;
   String userInput = '';
@@ -43,33 +70,6 @@ class _StandardScreenState extends State<StandardScreen> {
     '+',
   ];
 
-  void iniState()  {
-    super.initState();
-    getCurentUser();
-  }
-  void getCurentUser(){
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        signedINUser = user;
-        print(signedINUser.email);
-      }
-    }
-    catch (e){
-      print('eeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrr');
-    }
-  }
-  Future<void> addUserHistory(String xtext) {
-
-    // Call the user's CollectionReference to add a new user
-    return _history
-        .add({
-      'operation': xtext ,// add history
-     // 'user':signedINUser.email //currentuser
-    })
-        .then((value) => print("User History Added"))
-        .catchError((error) => print("Failed to add user History: $error"));
-  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -368,6 +368,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       child: '=',
                       color: Colors.white,
                       onPressed: () {
+                        //add user history
                         addUserHistory(userInput);
                         setState(() {
                           String finaluserinput = userInput;

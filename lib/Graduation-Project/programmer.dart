@@ -1,6 +1,8 @@
 import 'package:calculator/Graduation-Project/digital_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:number_system/number_system.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProgrammerScreen extends StatefulWidget {
   const ProgrammerScreen({Key? key}) : super(key: key);
@@ -19,7 +21,38 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String octResult = "";
   MyParser p = MyParser();
   List <String> operator = ['&','|','~','(',')'];
+  final _auth=FirebaseAuth.instance;
+  late User signInUser; //this get current user
+  final  _history = FirebaseFirestore.instance.collection('history');
+  @override
+  /* void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+  void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
 
+  */
+  Future<void> addUserHistory(String xtext) {
+    return _history
+        .add({
+      'operation': xtext ,// add history
+      'user':_auth.currentUser?.email //currentuser
+      ,'type':'programmer'
+    })
+        .then((value) => print("User History Added"))
+        .catchError((error) => print("Failed to add user History: $error"));
+  }
 bool isOperator (String s){
     return operator.contains(s);
   }
@@ -836,6 +869,7 @@ void check()
                         bgColor: Colors.red,
                         isEnabled: true,
                         onPressed: (){
+                          addUserHistory(input);
                           setState(() {
                             MyParser p = MyParser();
                             result = p.parse(input, currentNumberSystem);
