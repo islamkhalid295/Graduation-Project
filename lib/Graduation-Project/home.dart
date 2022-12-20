@@ -4,6 +4,7 @@ import 'standard.dart';
 import 'programmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,8 +16,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
  final _auth=FirebaseAuth.instance;
-
-
   /*Brightness? _brightness;
 
   @override
