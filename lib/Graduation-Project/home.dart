@@ -63,11 +63,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               fontSize: 18,
             ),
           ),
-          tabBarTheme: TabBarTheme(
-            indicatorSize: TabBarIndicatorSize.label,
-            unselectedLabelColor: Colors.white.withOpacity(0.8),
-            labelColor: Colors.white,
-          )),
+      ),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           textTheme: const TextTheme(
@@ -90,19 +86,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               fontSize: 18,
             ),
           ),
-          appBarTheme: AppBarTheme(foregroundColor: Colors.tealAccent),
-          tabBarTheme: TabBarTheme(
-            indicatorSize: TabBarIndicatorSize.label,
-            unselectedLabelColor: Colors.tealAccent.withOpacity(0.5),
-            labelColor: Colors.tealAccent,
-          )
-
+          appBarTheme: const AppBarTheme(foregroundColor: Colors.tealAccent),
           ),
       themeMode: themeMode,
-
       debugShowCheckedModeBanner: false,
-      home: DefaultTabController(
-        length: 2,
+      home: SafeArea(
         child: Scaffold(
           drawer: Drawer(
             child: ListView(
@@ -117,7 +105,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     backgroundColor: Colors.orange,
                     child: Text(
                       signInUser.email![0],
-                      style: TextStyle(fontSize: 40.0),
+                      style: const TextStyle(fontSize: 40.0),
                     ),
                   ),
                 ),
@@ -150,64 +138,49 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
           ),
           appBar: AppBar(
-              //backgroundColor: Colors.grey[100],
-              elevation: 5,
-              leading: Builder(builder: (ctx) {
-                return IconButton(
-                  icon: const Icon(
-                    Icons.menu,
-                    //color: Colors.red,
-                  ),
-                  onPressed: () => Scaffold.of(ctx).openDrawer(),
-                );
-              }),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.history),
+            //backgroundColor: Colors.grey[100],
+            elevation: 5,
+            leading: Builder(builder: (ctx) {
+              return IconButton(
+                icon: const Icon(
+                  Icons.menu,
+                  //color: Colors.red,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (isDark) {
-                            themeMode = ThemeMode.light;
-                            isDark = false;
-                          } else if (!isDark) {
-                            themeMode = ThemeMode.dark;
-                            isDark = true;
-                          }
-                        });
-                      },
-                      icon: (isDark)
-                          ? const Icon(
-                              Icons.light_mode_outlined,
-                            )
-                          : const Icon(
-                              Icons.dark_mode_outlined,
-                            )),
-                )
-              ],
-              centerTitle: true,
-              title: const TabBar(
-                labelPadding: EdgeInsets.symmetric(horizontal: 3),
-                //indicatorColor: Colors.teal,
-                tabs: [
-                  Tab(
-                    text: 'Standard',
-                  ),
-                  Tab(
-                    text: 'Programmer',
-                  ),
-                ],
-              )),
-          body: TabBarView(
-            children: [
-              standerScreen,
-              ProgrammerScreen(),
+                onPressed: () => Scaffold.of(ctx).openDrawer(),
+              );
+            }),
+            actions: [
+              const IconButton(
+                onPressed: null,
+                icon: Icon(Icons.history),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0),
+                child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        if (isDark) {
+                          themeMode = ThemeMode.light;
+                          isDark = false;
+                        } else if (!isDark) {
+                          themeMode = ThemeMode.dark;
+                          isDark = true;
+                        }
+                      });
+                    },
+                    icon: (isDark)
+                        ? const Icon(
+                            Icons.light_mode_outlined,
+                          )
+                        : const Icon(
+                            Icons.dark_mode_outlined,
+                          )),
+              )
             ],
+            centerTitle: true,
+            title: const Text('Digieator'),
           ),
+          body: const ProgrammerScreen(),
         ),
       ),
     );
