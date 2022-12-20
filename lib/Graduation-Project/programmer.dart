@@ -19,7 +19,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String octResult = "0";
   int tmp = 0;
   List<String> operator = ['&', '|', '~', '(', ')'];
-
+//sdada
   bool isOperator(String s) {
     return operator.contains(s);
   }
