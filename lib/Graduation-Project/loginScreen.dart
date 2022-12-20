@@ -11,23 +11,22 @@ class loginScreen extends StatefulWidget {
   State<loginScreen> createState() => _loginScreenState();
 }
 class _loginScreenState extends State<loginScreen> {
+  TextEditingController passwordcontroller=TextEditingController();
+  TextEditingController Emailcontroller=TextEditingController();
   final _auth = FirebaseAuth.instance;
-  late String email;
-  late String sheckEmail;
+  String? loginError;
   String? emailerror = null;
+  String? passworderror = null;
   late String password;
   String sheckPassword = "enter password";
   bool showSpinner = false;
   bool pass = true;
   Icon ic = const Icon(
     Icons.remove_red_eye_outlined,
-    color: Colors.red,
+    color: Colors.blue,
   );
-  final _formkey = GlobalKey<FormState>();
-
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _formkey,
         backgroundColor: Colors.white,
         body: LayoutBuilder(builder: (context, constraint) {
           return ModalProgressHUD(
@@ -52,21 +51,10 @@ class _loginScreenState extends State<loginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      TextFormField(
+                      TextField(
                         //-----لجعل لوحه المفتيح مخصصه لادخال الايميل زياده
                         keyboardType: TextInputType.emailAddress,
                         //-----
-                        validator: (value) {
-                          if (value!.isEmpty ||
-                              !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(value!)) {
-                            emailerror = "Enter correct Email";
-                            //  return "Enter correct Email";
-                          } else {
-                            emailerror = null;
-                            //return null;
-                          }
-                        },
                         decoration: InputDecoration(
                           // fillColor: Colors.black,
                           // filled: true,
@@ -74,47 +62,32 @@ class _loginScreenState extends State<loginScreen> {
                           errorStyle: const TextStyle(color: Colors.red),
                           hintText: 'enter your email ',
                           labelText: "Emile",
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.red),
+                          labelStyle:const TextStyle(fontSize: 15, color: Colors.blue),
                           prefixIcon: const Icon(Icons.email),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide:
-                                  BorderSide(color: Colors.red, width: 1.5)),
+                              borderSide:const BorderSide(color: Colors.blueAccent, width: 1.5)),
                           //----------------------
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide:
-                                  BorderSide(color: Colors.red, width: 1.5)),
+                              borderSide:const BorderSide(color: Colors.red, width: 1.5)),
 //------------------------
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide:
-                                  BorderSide(color: Colors.red, width: 1.5)),
+                              borderSide:const BorderSide(color: Colors.red, width: 1.5)),
                         ),
-                        onChanged: (Value) {
-                          email = Value;
-                        },
+                        controller: Emailcontroller,
                       ),
 //--------password---------------------
                       const SizedBox(height: 30),
-                      TextFormField(
+                      TextField(
                         //لجعل الباسورد مخفي -----
                         obscureText: pass,
-                        //----------------
-
-                        // validator: (value) => value.length< 6?'password must be larger than 6 characters':null,
-                        validator: (value) {
-                          if (value!.length < 6) {
-                            return 'password must be larger than 6 characters';
-                          } else {
-                            return null;
-                          }
-                        },
                         decoration: InputDecoration(
                           labelText: "password",
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.red),
+                          labelStyle:const TextStyle(fontSize: 15, color: Colors.blue),
+                          errorText: passworderror,
+                          errorStyle: const TextStyle(color: Colors.red),
                           hintText: sheckPassword,
                           suffixIcon: IconButton(
                               onPressed: () {
@@ -128,7 +101,7 @@ class _loginScreenState extends State<loginScreen> {
                                   } else {
                                     ic = const Icon(
                                         Icons.remove_red_eye_outlined,
-                                        color: Colors.red);
+                                        color: Colors.blue);
                                   }
                                 });
                               },
@@ -137,7 +110,7 @@ class _loginScreenState extends State<loginScreen> {
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 1.5)),
+                                  color: Colors.blue, width: 1.5)),
                           //----------------------
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -149,38 +122,39 @@ class _loginScreenState extends State<loginScreen> {
                               borderSide: const BorderSide(
                                   color: Colors.red, width: 1.5)),
                         ),
-                        onChanged: (value) {
-                          password = value;
-                        },
+                        controller: passwordcontroller,
+
                       ),
 //---login------------------------
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20,),
                       MaterialButton(
                           color: Colors.blue,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 80, vertical: 20),
-                          child: const Text(
-                            'login',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.bold),
-                          ),
                           shape: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
                                   color: Colors.white10, width: 1.0)),
-                          onPressed: () async {
+                          onPressed: ()  {
                             setState(() {
                               showSpinner = true;
+                              if(passwordcontroller.text.isEmpty){
+                                passworderror="password can not be empty";
+                              }
+                              else{
+                                passworderror=null;
+                              }
+                              if (Emailcontroller.text.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(Emailcontroller.text)) {
+                                emailerror = "Enter correct Email";
+                              } else {
+                                emailerror = null;
+                              }
                             });
-
                             try {
-                              final userlogin = await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: email, password: password);
+                              final userlogin =  _auth.signInWithEmailAndPassword(
+                                      email: Emailcontroller.text, password: passwordcontroller.text);
                               if (userlogin != null) {
                                 setState(() {
                                   showSpinner = false;
@@ -194,60 +168,26 @@ class _loginScreenState extends State<loginScreen> {
                               setState(() {
                                 showSpinner = false;
                               });
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: Text(
-                                          'error !',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6,
-                                        ),
-                                        content: Text(
-                                          e.code,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('OK'))
-                                        ],
-                                      ));
+                              if (e.code == 'user-not-found') {
+                               emailerror= 'No user found for that email.';
+                              } else if (e.code == 'wrong-password') {
+                                passworderror='Wrong password provided for that user.';
+                              }
+
                             } catch (e) {
                               setState(() {
                                 showSpinner = false;
                               });
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: Text(
-                                          'error !',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6,
-                                        ),
-                                        content: Text(
-                                          e.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('OK'))
-                                        ],
-                                      ));
-                            }
-                          }),
-                      const SizedBox(
-                        height: 20,
+                           }
+                          },
+                          child: const Text('login',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.bold),
+                          )
                       ),
-
+                      const SizedBox(height: 20, ),
                       GestureDetector(
                         child: const Text(
                           'forget password ?',
@@ -260,12 +200,10 @@ class _loginScreenState extends State<loginScreen> {
                           // print('forget password ?');
                         },
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20,),
                       GestureDetector(
                         child: const Text(
-                          'SIGN UP ',
+                          'sign up ',
                           style: TextStyle(
                               color: Colors.blue,
                               fontSize: 20,
@@ -288,3 +226,7 @@ class _loginScreenState extends State<loginScreen> {
         }));
   }
 }
+
+
+
+
