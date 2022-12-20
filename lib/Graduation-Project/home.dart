@@ -3,7 +3,6 @@ import 'loginScreen.dart';
 import 'standard.dart';
 import 'programmer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,57 +13,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final _auth=FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   late User signInUser;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
-  void getCurrentUser(){
+
+  void getCurrentUser() {
     try {
       final user = _auth.currentUser;
       if (user != null) {
         signInUser = user;
         print(signInUser.email);
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
-
-  /*Brightness? _brightness;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance?.addObserver(this);
-    _brightness = WidgetsBinding.instance?.window.platformBrightness;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangePlatformBrightness() {
-    if (mounted) {
-      setState(() {
-        _brightness = WidgetsBinding.instance?.window.platformBrightness;
-      });
-    }
-
-    super.didChangePlatformBrightness();
-  }
-
-  CupertinoThemeData get _lightTheme =>
-      CupertinoThemeData(brightness: Brightness.light, /* light theme settings */);
-
-  CupertinoThemeData get _darkTheme => CupertinoThemeData(brightness: Brightness.dark, /* dark theme settings */);
-*/
 
   bool isDark = false;
   ThemeMode themeMode = ThemeMode.light;
@@ -98,22 +67,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             indicatorSize: TabBarIndicatorSize.label,
             unselectedLabelColor: Colors.white.withOpacity(0.8),
             labelColor: Colors.white,
-          )
-          /* light theme settings */
-          ),
-
-      // theme: ThemeData(
-      //   brightness: _brightness,
-      //   /* light theme settings */
-      // ),
+          )),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           textTheme: const TextTheme(
             headline1: TextStyle(
+              color: Colors.white,
               fontSize: 42,
               fontWeight: FontWeight.bold,
             ),
             headline2: TextStyle(
+              color: Colors.white,
               fontSize: 32,
             ),
             headline3: TextStyle(
@@ -122,6 +86,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               fontWeight: FontWeight.bold,
             ),
             headline4: TextStyle(
+              color: Colors.black54,
               fontSize: 18,
             ),
           ),
@@ -131,13 +96,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             unselectedLabelColor: Colors.tealAccent.withOpacity(0.5),
             labelColor: Colors.tealAccent,
           )
-          /* dark theme settings */
+
           ),
       themeMode: themeMode,
-      /* ThemeMode.system to follow system theme,
-         ThemeMode.light for light theme,
-         ThemeMode.dark for dark theme
-      */
+
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
         length: 2,
@@ -147,8 +109,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: <Widget>[
-                 UserAccountsDrawerHeader(
-                  accountName: Text(signInUser.email!.substring(0,signInUser.email!.indexOf('@'))),
+                UserAccountsDrawerHeader(
+                  accountName: Text(signInUser.email!
+                      .substring(0, signInUser.email!.indexOf('@'))),
                   accountEmail: Text(signInUser.email!),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.orange,
