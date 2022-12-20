@@ -1,7 +1,8 @@
 import 'package:calculator/Graduation-Project/digital_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:number_system/number_system.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 class ProgrammerScreen extends StatefulWidget {
   const ProgrammerScreen({Key? key}) : super(key: key);
 
@@ -10,6 +11,21 @@ class ProgrammerScreen extends StatefulWidget {
 }
 
 class _ProgrammerScreenState extends State<ProgrammerScreen> {
+  final _auth=FirebaseAuth.instance;
+  late User signedINUser; //this get current user
+  final  _history = FirebaseFirestore.instance.collection('history');
+  Future<void> addUserHistory(String xtext) {
+
+    // Call the user's CollectionReference to add a new user
+    return _history
+        .add({
+      'operation': xtext ,// add history
+      'user':signedINUser.email //currentuser
+      ,'type':'standard'
+    })
+        .then((value) => print("User History Added"))
+        .catchError((error) => print("Failed to add user History: $error"));
+  }
   String currentNumberSystem = 'dec';
   String input = "";
   String result = "0";

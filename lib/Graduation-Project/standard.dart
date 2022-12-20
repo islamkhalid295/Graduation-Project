@@ -13,6 +13,7 @@ class _StandardScreenState extends State<StandardScreen> {
   final _auth=FirebaseAuth.instance;
   late User signedINUser; //this get current user
   final  _history = FirebaseFirestore.instance.collection('history');
+
  // String? historyText="1-3-2"; //this will give user history
   _StandardScreenState(this.isDark);
   bool isDark ;
@@ -65,7 +66,7 @@ class _StandardScreenState extends State<StandardScreen> {
     return _history
         .add({
       'operation': xtext ,// add history
-     // 'user':signedINUser.email //currentuser
+      'user':signedINUser.email //currentuser
     })
         .then((value) => print("User History Added"))
         .catchError((error) => print("Failed to add user History: $error"));
@@ -368,7 +369,7 @@ class _StandardScreenState extends State<StandardScreen> {
                       child: '=',
                       color: Colors.white,
                       onPressed: () {
-                        addUserHistory(userInput);
+
                         setState(() {
                           String finaluserinput = userInput;
                           finaluserinput = userInput.replaceAll('x', '*');

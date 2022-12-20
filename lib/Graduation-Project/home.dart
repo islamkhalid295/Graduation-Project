@@ -14,7 +14,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final _auth = FirebaseAuth.instance;
+  final _auth=FirebaseAuth.instance;
+  late User signInUser;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+  void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(signInUser.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
 
   /*Brightness? _brightness;
 
@@ -129,13 +147,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: <Widget>[
-                const UserAccountsDrawerHeader(
-                  accountName: Text("Islam Khalid"),
-                  accountEmail: Text("islamkhalid295@gmail.com"),
+                 UserAccountsDrawerHeader(
+                  accountName: Text(signInUser.email!.substring(0,signInUser.email!.indexOf('@'))),
+                  accountEmail: Text(signInUser.email!),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.orange,
                     child: Text(
-                      "I",
+                      signInUser.email![0],
                       style: TextStyle(fontSize: 40.0),
                     ),
                   ),

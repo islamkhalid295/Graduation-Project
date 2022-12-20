@@ -95,12 +95,12 @@ class _loginScreenState extends State<loginScreen> {
                                   pass = !pass;
                                   if (pass == false) {
                                     ic = const Icon(
-                                      Icons.real_estate_agent_rounded,
+                                      Icons.visibility_off,
                                       color: Colors.red,
                                     );
                                   } else {
                                     ic = const Icon(
-                                        Icons.remove_red_eye_outlined,
+                                        Icons.visibility,
                                         color: Colors.blue);
                                   }
                                 });
@@ -135,15 +135,10 @@ class _loginScreenState extends State<loginScreen> {
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
                                   color: Colors.white10, width: 1.0)),
-                          onPressed: ()  {
+                          onPressed: ()async  {
                             setState(() {
                               showSpinner = true;
-                              if(passwordcontroller.text.isEmpty){
-                                passworderror="password can not be empty";
-                              }
-                              else{
-                                passworderror=null;
-                              }
+
                               if (Emailcontroller.text.isEmpty ||
                                   !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                       .hasMatch(Emailcontroller.text)) {
@@ -151,34 +146,36 @@ class _loginScreenState extends State<loginScreen> {
                               } else {
                                 emailerror = null;
                               }
+                              if(passwordcontroller.text.isEmpty){
+                                passworderror="password can not be empty";
+                              }
+                              else{
+                                passworderror=null;
+                              }
                             });
                             try {
-                              final userlogin =  _auth.signInWithEmailAndPassword(
-                                      email: Emailcontroller.text, password: passwordcontroller.text);
+                              final userlogin =await  _auth.signInWithEmailAndPassword(
+                                  email: Emailcontroller.text, password: passwordcontroller.text);
                               if (userlogin != null) {
-                                setState(() {
-                                  showSpinner = false;
-                                });
+
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(builder: (context) {
                                   return const HomePage();
                                 }));
                               }
                             } on FirebaseAuthException catch (e) {
-                              setState(() {
-                                showSpinner = false;
-                              });
                               if (e.code == 'user-not-found') {
-                               emailerror= 'No user found for that email.';
+                                emailerror= 'No user found for that email.';
                               } else if (e.code == 'wrong-password') {
                                 passworderror='Wrong password provided for that user.';
                               }
-
-                            } catch (e) {
-                              setState(() {
-                                showSpinner = false;
-                              });
-                           }
+                              else if(e.code=='too-many-requests'){
+                                passworderror='too many requests';
+                              }
+                            }
+                            setState(() {
+                              showSpinner = false;
+                            });
                           },
                           child: const Text('login',
                             style: TextStyle(
@@ -188,28 +185,27 @@ class _loginScreenState extends State<loginScreen> {
                           )
                       ),
                       const SizedBox(height: 20, ),
-                      GestureDetector(
-                        child: const Text(
+                      const TextButton(
+                        onPressed: null ,
+                        child: Text(
                           'forget password ?',
                           style: TextStyle(
-                              color: Colors.blue,
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
-                        onTap: () {
+
                           // print('forget password ?');
-                        },
+
                       ),
-                      const SizedBox(height: 20,),
-                      GestureDetector(
+                      TextButton(
                         child: const Text(
                           'sign up ',
                           style: TextStyle(
                               color: Colors.blue,
-                              fontSize: 20,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold),
                         ),
-                        onTap: () {
+                        onPressed: () {
                           Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {
                             return const appscreen();
@@ -226,7 +222,6 @@ class _loginScreenState extends State<loginScreen> {
         }));
   }
 }
-
 
 
 

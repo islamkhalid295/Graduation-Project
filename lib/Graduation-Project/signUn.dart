@@ -1,7 +1,6 @@
 //this screen for sign Up new user
 import 'package:calculator/Graduation-Project/home.dart';
 import 'package:flutter/material.dart';
-import 'package:calculator/Graduation-Project/signUn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'loginScreen.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -26,6 +25,7 @@ class _appscreenState extends State<appscreen> {
   bool pass = true;
   bool confirmPass = true;
   Icon ic = const Icon(Icons.remove_red_eye_outlined, color: Colors.blue);
+  Icon confirmic = const Icon(Icons.remove_red_eye_outlined, color: Colors.blue);
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +107,11 @@ class _appscreenState extends State<appscreen> {
                                   pass = !pass;
                                   if (pass == false) {
                                     ic = const Icon(
-                                        Icons.real_estate_agent_rounded,
+                                        Icons.visibility_off,
                                         color: Colors.red);
                                   } else {
                                     ic = const Icon(
-                                        Icons.remove_red_eye_outlined,
+                                        Icons.visibility,
                                         color: Colors.blue);
                                   }
                                 });
@@ -151,19 +151,21 @@ class _appscreenState extends State<appscreen> {
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  pass = !pass;
-                                  if (pass == false) {
-                                    ic = const Icon(
-                                        Icons.real_estate_agent_rounded,
+
+                                  confirmPass = !confirmPass;
+                                  if (confirmPass == false) {
+                                    confirmic = const Icon(
+                                        Icons.visibility_off,
+
                                         color: Colors.red);
                                   } else {
-                                    ic = const Icon(
-                                        Icons.remove_red_eye_outlined,
+                                    confirmic = const Icon(
+                                        Icons.visibility,
                                         color: Colors.blue);
                                   }
                                 });
                               },
-                              icon: ic),
+                              icon: confirmic),
                           prefixIcon: const Icon(Icons.password),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
