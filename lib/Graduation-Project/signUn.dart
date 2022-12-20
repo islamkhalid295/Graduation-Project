@@ -25,6 +25,7 @@ class _appscreenState extends State<appscreen> {
   bool pass = true;
   bool confirmPass = true;
   Icon ic = const Icon(Icons.remove_red_eye_outlined, color: Colors.blue);
+  Icon confirmic = const Icon(Icons.remove_red_eye_outlined, color: Colors.blue);
 
   @override
   Widget build(BuildContext context) {
@@ -106,11 +107,11 @@ class _appscreenState extends State<appscreen> {
                                   pass = !pass;
                                   if (pass == false) {
                                     ic = const Icon(
-                                        Icons.real_estate_agent_rounded,
+                                        Icons.visibility_off,
                                         color: Colors.red);
                                   } else {
                                     ic = const Icon(
-                                        Icons.remove_red_eye_outlined,
+                                        Icons.visibility,
                                         color: Colors.blue);
                                   }
                                 });
@@ -152,17 +153,17 @@ class _appscreenState extends State<appscreen> {
                                 setState(() {
                                   confirmPass = !confirmPass;
                                   if (confirmPass == false) {
-                                    ic = const Icon(
-                                        Icons.real_estate_agent_rounded,
+                                    confirmic = const Icon(
+                                        Icons.visibility_off,
                                         color: Colors.red);
                                   } else {
-                                    ic = const Icon(
-                                        Icons.remove_red_eye_outlined,
+                                    confirmic = const Icon(
+                                        Icons.visibility,
                                         color: Colors.blue);
                                   }
                                 });
                               },
-                              icon: ic),
+                              icon: confirmic),
                           prefixIcon: const Icon(Icons.password),
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
