@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:number_system/number_system.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 class ProgrammerScreen extends StatefulWidget {
   const ProgrammerScreen({Key? key}) : super(key: key);
 
@@ -11,21 +12,23 @@ class ProgrammerScreen extends StatefulWidget {
 }
 
 class _ProgrammerScreenState extends State<ProgrammerScreen> {
-  final _auth=FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   late User signedINUser; //this get current user
-  final  _history = FirebaseFirestore.instance.collection('history');
-  Future<void> addUserHistory(String xtext) {
+  final _history = FirebaseFirestore.instance.collection('history');
 
+  Future<void> addUserHistory(String xtext) {
     // Call the user's CollectionReference to add a new user
     return _history
         .add({
-      'operation': xtext ,// add history
-      'user':signedINUser.email //currentuser
-      ,'type':'standard'
-    })
+          'operation': xtext, // add history
+          'user': signedINUser.email //currentuser
+          ,
+          'type': 'standard'
+        })
         .then((value) => print("User History Added"))
         .catchError((error) => print("Failed to add user History: $error"));
   }
+
   String currentNumberSystem = 'dec';
   String input = "";
   String result = "0";
@@ -35,6 +38,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String octResult = "0";
   int tmp = 0;
   List<String> operator = ['&', '|', '~', '(', ')'];
+
 //sdada
   bool isOperator(String s) {
     return operator.contains(s);
@@ -43,12 +47,12 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   void check() {
     Parser p = Parser(input, currentNumberSystem);
     tmp = p.sampleParser();
-    if (p.error){
+    if (p.error) {
       binResult = "Math Error";
       decResult = "Math Error";
       hexResult = "Math Error";
       octResult = "Math Error";
-    }else {
+    } else {
       binResult = tmp.decToBinary().toString();
       decResult = tmp.toString();
       hexResult = tmp.decToHex().toString();
@@ -382,7 +386,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                 padding: const EdgeInsets.all(0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5,
-                  mainAxisExtent: constraints.maxHeight * (1 / 8),
+                  mainAxisExtent: constraints.maxHeight * (1 / 7),
                 ),
                 children: [
                   //================ 1st Row ================//
@@ -414,25 +418,23 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                    child: 'Simplify',
-                    color: Colors.white,
-                    bgColor: Colors.blueAccent,
-                    isEnabled: false,
-                  ),
-                  createButton(
                     child: 'EXPL',
                     color: Colors.white,
                     bgColor: Colors.blueAccent,
                     isEnabled: false,
                   ),
                   createButton(
-                      child: 'MS',
-                      color: Colors.white,
-                      bgColor: Colors.blueAccent,
-                      isEnabled: false,
-                      onPressed: () {
-                        setState(() {});
-                      }),
+                    child: '1\'s C',
+                    color: Colors.white,
+                    bgColor: Colors.teal[200],
+                    isEnabled: false,
+                  ),
+                  createButton(
+                    child: '2\'s C',
+                    color: Colors.white,
+                    bgColor: Colors.teal[200],
+                    isEnabled: false,
+                  ),
                   //================ 2nd Row ================//
                   createButton(
                       child: 'A',
@@ -456,15 +458,17 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                      child: 'OR',
+                      child: 'ANDAND',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += "|";
-                        });
-                      }),
+                      isEnabled: false,
+                      ),
+                  createButton(
+                      child: 'NAND',
+                      color: Colors.white,
+                      bgColor: Colors.teal[200],
+                      isEnabled: false,
+                      ),
                   createButton(
                       child: 'XOR',
                       color: Colors.white,
@@ -473,16 +477,6 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                       onPressed: () {
                         setState(() {
                           input += '^';
-                        });
-                      }),
-                  createButton(
-                      child: '.',
-                      color: Colors.white,
-                      bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += '.';
                         });
                       }),
                   //================ 3rd Row ================//
@@ -498,45 +492,33 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                      child: 'NOT',
+                      child: 'OR',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
                       isEnabled: true,
                       onPressed: () {
                         setState(() {
-                          input += '~';
+                          input += "|";
                         });
                       }),
                   createButton(
-                      child: 'NAND',
-                      color: Colors.white,
-                      bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += "~&";
-                        });
-                      }),
+                    child: 'OROR',
+                    color: Colors.white,
+                    bgColor: Colors.teal[200],
+                    isEnabled: false,
+                  ),
                   createButton(
                       child: 'NOR',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += "~^";
-                        });
-                      }),
+                      isEnabled: false,
+                      ),
                   createButton(
-                      child: Icons.add,
+                      child: 'XNOR',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += '+';
-                        });
-                      }),
+                      isEnabled: false,
+                      ),
                   //================ 4th Row ================//
                   createButton(
                       child: 'C',
@@ -550,50 +532,14 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                      child: '<<',
-                      color: Colors.white,
-                      bgColor: Colors.teal[200],
-                      isEnabled: true,
+                      child: '9',
+                      color: Colors.black,
+                      bgColor: Colors.grey[200],
+                      isEnabled: (currentNumberSystem == 'hex' ||
+                          currentNumberSystem == 'dec'),
                       onPressed: () {
                         setState(() {
-                          input += '<<';
-                        });
-                      }),
-                  createButton(
-                      child: '>>',
-                      color: Colors.white,
-                      bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += '>>';
-                        });
-                      }),
-                  createButton(
-                    child: '1st C',
-                    color: Colors.white,
-                    bgColor: Colors.teal[200],
-                    isEnabled: true,
-                  ),
-                  createButton(
-                      child: Icons.minimize,
-                      color: Colors.white,
-                      bgColor: Colors.teal[200],
-                      isEnabled: true,
-                      onPressed: () {
-                        setState(() {
-                          input += '-';
-                        });
-                      }),
-                  //================ 5th Row ================//
-                  createButton(
-                      child: 'D',
-                      color: Colors.white,
-                      bgColor: Colors.blueAccent,
-                      isEnabled: (currentNumberSystem == 'hex'),
-                      onPressed: () {
-                        setState(() {
-                          input += 'D';
+                          input += '9';
                           check();
                         });
                       }),
@@ -618,30 +564,37 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                    child: '2nd C',
-                    color: Colors.white,
-                    bgColor: Colors.teal[200],
-                    isEnabled: true,
-                  ),
-                  createButton(
-                      child: Icons.close,
+                      child: 'NOT',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
                       isEnabled: true,
                       onPressed: () {
                         setState(() {
-                          input += '*';
+                          input += '~';
                         });
                       }),
-                  //================ 6th Row ================//
+                  //================ 5th Row ================//
                   createButton(
-                      child: 'E',
+                      child: 'D',
                       color: Colors.white,
                       bgColor: Colors.blueAccent,
                       isEnabled: (currentNumberSystem == 'hex'),
                       onPressed: () {
                         setState(() {
-                          input += 'E';
+                          input += 'D';
+                          check();
+                        });
+                      }),
+                  createButton(
+                      child: '6',
+                      color: Colors.black,
+                      bgColor: Colors.grey[200],
+                      isEnabled: (currentNumberSystem == 'hex' ||
+                          currentNumberSystem == 'oct' ||
+                          currentNumberSystem == 'dec'),
+                      onPressed: () {
+                        setState(() {
+                          input += '6';
                           check();
                         });
                       }),
@@ -671,36 +624,37 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                      child: '9',
-                      color: Colors.black,
-                      bgColor: Colors.grey[200],
-                      isEnabled: (currentNumberSystem == 'hex' ||
-                          currentNumberSystem == 'dec'),
-                      onPressed: () {
-                        setState(() {
-                          input += '9';
-                          check();
-                        });
-                      }),
-                  createButton(
-                      child: '/',
+                      child: '<<',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
                       isEnabled: true,
                       onPressed: () {
                         setState(() {
-                          input += '/';
+                          input += '<<';
                         });
                       }),
-                  //================ 7th Row ================//
+                  //================ 6th Row ================//
                   createButton(
-                      child: 'F',
+                      child: 'E',
                       color: Colors.white,
                       bgColor: Colors.blueAccent,
                       isEnabled: (currentNumberSystem == 'hex'),
                       onPressed: () {
                         setState(() {
-                          input += 'F';
+                          input += 'E';
+                          check();
+                        });
+                      }),
+                  createButton(
+                      child: '3',
+                      color: Colors.black,
+                      bgColor: Colors.grey[200],
+                      isEnabled: (currentNumberSystem == 'hex' ||
+                          currentNumberSystem == 'oct' ||
+                          currentNumberSystem == 'dec'),
+                      onPressed: () {
+                        setState(() {
+                          input += '3';
                           check();
                         });
                       }),
@@ -731,29 +685,27 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                      child: '6',
-                      color: Colors.black,
-                      bgColor: Colors.grey[200],
-                      isEnabled: (currentNumberSystem == 'hex' ||
-                          currentNumberSystem == 'oct' ||
-                          currentNumberSystem == 'dec'),
-                      onPressed: () {
-                        setState(() {
-                          input += '6';
-                          check();
-                        });
-                      }),
-                  createButton(
-                      child: '%',
+                      child: '>>',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
                       isEnabled: true,
                       onPressed: () {
                         setState(() {
-                          input += '%';
+                          input += '>>';
                         });
                       }),
-                  //================ 8th Row ================//
+                  //================ 7th Row ================//
+                  createButton(
+                      child: 'F',
+                      color: Colors.white,
+                      bgColor: Colors.blueAccent,
+                      isEnabled: (currentNumberSystem == 'hex'),
+                      onPressed: () {
+                        setState(() {
+                          input += 'F';
+                          check();
+                        });
+                      }),
                   createButton(
                       child: '0',
                       color: Colors.black,
@@ -789,19 +741,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                           check();
                         });
                       }),
-                  createButton(
-                      child: '3',
-                      color: Colors.black,
-                      bgColor: Colors.grey[200],
-                      isEnabled: (currentNumberSystem == 'hex' ||
-                          currentNumberSystem == 'oct' ||
-                          currentNumberSystem == 'dec'),
-                      onPressed: () {
-                        setState(() {
-                          input += '3';
-                          check();
-                        });
-                      }),
+
                   createButton(
                       child: '=',
                       color: Colors.white,
@@ -833,8 +773,8 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                                   result = tmp.toString();
                                 }
                             }
-                          }else
-                            result ="Math Error";
+                          } else
+                            result = "Math Error";
                         });
                       }),
                 ],
