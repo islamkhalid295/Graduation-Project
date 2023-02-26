@@ -29,14 +29,17 @@ enum Token {
   SL_SY,
   SR_SY,
   AND_SY,
+  NAND_SY,
   OR_SY,
+  NOR_SY,
   NOT_SY,
   NUMBER_SY,
   END_SOURCE_SY,
   ERROR_SY,
   LB_SY,
   RB_SY,
-  XOR_SY
+  XOR_SY,
+  XNOR_SY
 }
 
 class MyToken {
@@ -122,7 +125,21 @@ class Parser {
         iter!.movePrevious();
         return MyToken(Token.ERROR_SY);
       }
-    } else if (isDigit(ch)) {
+    } else if (ch == '!') {
+      iter!.moveNext();
+      ch = iter!.currentAsString;
+      switch (ch) {
+        case '&':
+          return MyToken(Token.NAND_SY);
+        case '|':
+          return MyToken(Token.NOR_SY);
+        case '^':
+          return MyToken(Token.XNOR_SY);
+        default:
+          iter!.movePrevious();
+          return MyToken(Token.ERROR_SY);
+      }}
+     else if (isDigit(ch)) {
       s = ch;
       if (iter!.moveNext()) {
         ch = iter!.currentAsString;
@@ -165,12 +182,18 @@ class Parser {
     switch (t.name) {
       case Token.AND_SY:
         return "&";
+      case Token.NAND_SY:
+        return "!&";
       case Token.OR_SY:
         return "|";
+      case Token.NOR_SY:
+        return "!|";
       case Token.NOT_SY:
         return "~";
       case Token.XOR_SY:
         return "^";
+      case Token.XNOR_SY:
+        return "!^";
       case Token.SR_SY:
         return ">>";
       case Token.SL_SY:
@@ -221,31 +244,41 @@ class Parser {
   //
   int z() {
     int tmp = o(); //2
-    while (current_token?.name == Token.OR_SY) {
-      match(MyToken(Token.OR_SY));
-      tmp = tmp | o();
+    while (current_token?.name == Token.OR_SY || current_token?.name == Token.NOR_SY) {
+      if(current_token?.name == Token.OR_SY) {
+        match(MyToken(Token.OR_SY));
+        tmp = tmp | o();
+      }else if(current_token?.name == Token.NOR_SY){
+        match(MyToken(Token.NOR_SY));
+        tmp = ~(tmp | o());
+      }
     }
     return tmp;
   }
 
   int o() {
     int tmp = s(); //2
-    while (current_token?.name == Token.XOR_SY) {
-      match(MyToken(Token.XOR_SY));
-      tmp = tmp ^ s();
+    while (current_token?.name == Token.XOR_SY || current_token?.name == Token.XNOR_SY) {
+      if(current_token?.name == Token.XOR_SY) {
+        match(MyToken(Token.XOR_SY));
+        tmp = tmp ^ s();
+      }else if(current_token?.name == Token.XNOR_SY){
+        match(MyToken(Token.XNOR_SY));
+        tmp = ~(tmp ^ s());
+      }
     }
     return tmp;
   }
 
   int s() {
     int tmp = e(); //2
-    while (current_token?.name == Token.AND_SY) {
-      if (current_token?.name == Token.AND_SY) {
+    while (current_token?.name == Token.AND_SY || current_token?.name == Token.NAND_SY ) {
+      if(current_token?.name == Token.AND_SY) {
         match(MyToken(Token.AND_SY));
         tmp = tmp & e();
-      } else {
-        match(MyToken(Token.OR_SY));
-        tmp = tmp | e();
+      }else if (current_token?.name == Token.NAND_SY){
+        match(MyToken(Token.NAND_SY));
+        tmp = ~(tmp & e());
       }
     }
     return tmp;
@@ -282,7 +315,7 @@ class Parser {
   int q() {
     if (current_token?.name == Token.LB_SY) {
       match(MyToken(Token.LB_SY));
-      int tmp = s();
+      int tmp = z();
       match(MyToken(Token.RB_SY));
       return tmp;
     } else {
@@ -297,12 +330,18 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   try {
-    Parser p = Parser("101^110", "bin");
+    //Parser p = Parser("101!&110", "bin");
+    Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
+    //                 101!&110|~11&1001!|-14
+    //                 101!&110|-4&1001!|-14
+    //                 -5|-5!|-14
+    //                 -5!|-14
+    //                 4
     print(p.sampleParser());
   } catch (e) {
     print("Result not defined");
   }
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
-  print(5 ^ 8);
+  //print(5 ^ 8);
 }
