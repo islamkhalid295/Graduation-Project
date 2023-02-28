@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    StandardScreen standerScreen = StandardScreen(dark: isDark);
+//    StandardScreen standerScreen = StandardScreen(dark: isDark);
     return MaterialApp(
       title: 'Digieator',
       theme: ThemeData(

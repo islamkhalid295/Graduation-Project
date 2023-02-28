@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
 
-import 'package:number_system/number_system.dart';
+
 /*
 
 Precedence	Operator	Associativity
@@ -158,15 +158,15 @@ class Parser {
       switch (currentNumberSystem) {
         case "bin":
           {
-            return MyToken(Token.NUMBER_SY, value: s.binaryToDec());
+            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 2));
           }
         case "hex":
           {
-            return MyToken(Token.NUMBER_SY, value: s.hexToDEC());
+            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 16));
           }
         case "oct":
           {
-            return MyToken(Token.NUMBER_SY, value: int.parse(s).octalToDec());
+            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 8));
           }
         default:
           {
@@ -326,21 +326,30 @@ class Parser {
 }
 
 void main() {
+
+
+
+  //print(~5);
+
+  print((-5).toRadixString(2));
+  print((200).toRadixString(16));
+  //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
+  //print("999999999999999999".length); //18 int
   // | ^ & << >> ~ ( )
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
-  try {
-    //Parser p = Parser("101!&110", "bin");
-    Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
-    //                 101!&110|~11&1001!|-14
-    //                 101!&110|-4&1001!|-14
-    //                 -5|-5!|-14
-    //                 -5!|-14
-    //                 4
-    print(p.sampleParser());
-  } catch (e) {
-    print("Result not defined");
-  }
+  // try {
+  //   //Parser p = Parser("101!&110", "bin");
+  //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
+  //   //                 101!&110|~11&1001!|-14
+  //   //                 101!&110|-4&1001!|-14
+  //   //                 -5|-5!|-14
+  //   //                 -5!|-14
+  //   //                 4
+  //   print(p.sampleParser());
+  // } catch (e) {
+  //   print("Result not defined");
+  // }
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
   //print(5 ^ 8);

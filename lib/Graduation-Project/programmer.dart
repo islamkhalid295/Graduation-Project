@@ -1,8 +1,9 @@
 import 'package:calculator/Graduation-Project/digital_parser.dart';
+import 'package:calculator/Graduation-Project/functions.dart';
 import 'package:flutter/material.dart';
-import 'package:number_system/number_system.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 class ProgrammerScreen extends StatefulWidget {
   const ProgrammerScreen({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
   String result = "0";
   String binResult = "0";
   String decResult = "0";
-  String hexResult = "#0";
+  String hexResult = "0";
   String octResult = "0";
   int tmp = 0;
   List<String> operator = ['&', '|', '~', '(', ')'];
@@ -44,6 +45,7 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
     return operator.contains(s);
   }
 
+  bool sigend = true;
   void check() {
     Parser p = Parser(input, currentNumberSystem);
     tmp = p.sampleParser();
@@ -53,10 +55,17 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
       hexResult = "Math Error";
       octResult = "Math Error";
     } else {
-      binResult = tmp.decToBinary().toString();
-      decResult = tmp.toString();
-      hexResult = tmp.decToHex().toString();
-      octResult = tmp.decToOctal().toString();
+      if(sigend) {
+        binResult = tmp.toRadixString(2).toString();
+        decResult = tmp.toString();
+        hexResult = tmp.toRadixString(16).toString();
+        octResult = tmp.toRadixString(8).toString();
+      }else {
+        binResult = BigInt.from(tmp).toUnsigned(64).toRadixString(2);
+        decResult = tmp.toString();
+        hexResult = BigInt.from(tmp).toUnsigned(64).toRadixString(16);
+        octResult = BigInt.from(tmp).toUnsigned(64).toRadixString(8);
+      }
     }
     // switch (currentNumberSystem) {
     //   case "bin":
@@ -418,10 +427,15 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                         });
                       }),
                   createButton(
-                    child: 'EXPL',
+                    child: 'signed',
                     color: Colors.white,
-                    bgColor: Colors.blueAccent,
-                    isEnabled: false,
+                    bgColor:sigend ? Colors.blueAccent:Colors.blueAccent[100],
+                    isEnabled: true,
+                      onPressed: () {
+                        setState(() {
+                          sigend = sigend? false : true;
+                        });
+                      }
                   ),
                   createButton(
                     child: '1\'s C',
@@ -467,8 +481,13 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                       child: 'NAND',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: false,
-                      ),
+                      isEnabled: true,
+                      onPressed: () {
+                        setState(() {
+                          input += '!&';
+                        });
+                      }),
+
                   createButton(
                       child: 'XOR',
                       color: Colors.white,
@@ -511,14 +530,24 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                       child: 'NOR',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: false,
-                      ),
+                      isEnabled: true,
+                      onPressed: () {
+                        setState(() {
+                          input += '!|';
+                        });
+                      }),
+
                   createButton(
                       child: 'XNOR',
                       color: Colors.white,
                       bgColor: Colors.teal[200],
-                      isEnabled: false,
-                      ),
+                      isEnabled: true,
+                      onPressed: () {
+                        setState(() {
+                          input += '!^';
+                        });
+                      }),
+
                   //================ 4th Row ================//
                   createButton(
                       child: 'C',
@@ -755,17 +784,17 @@ class _ProgrammerScreenState extends State<ProgrammerScreen> {
                             switch (currentNumberSystem) {
                               case "bin":
                                 {
-                                  result = tmp.decToBinary();
+                                  result = decToBinary(tmp);
                                 }
                                 break;
                               case "hex":
                                 {
-                                  result = tmp.decToHex();
+                                  result = decToHex(tmp);
                                 }
                                 break;
                               case "oct":
                                 {
-                                  result = tmp.decToOctal().toString();
+                                  result = decToOctal(tmp);
                                 }
                                 break;
                               default:
