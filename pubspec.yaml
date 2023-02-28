@@ -31,10 +31,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_eval: ^0.5.3
-  dart_eval: ^0.5.4
-  math_expressions: ^2.3.1
-  number_system: ^0.0.5+7
+#  flutter_eval: ^0.5.3
+#  dart_eval: ^0.5.4
+#  math_expressions: ^2.3.1
+#  number_system: ^0.0.5+7
+#  b: ^0.1.1+1
   firebase_core: ^2.3.0
   firebase_auth: ^4.1.4
   modal_progress_hud_nsn: ^0.3.0
