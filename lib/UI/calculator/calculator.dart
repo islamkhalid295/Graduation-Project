@@ -103,6 +103,13 @@ class Calculator extends StatelessWidget {
                         ),
                         textAlign: TextAlign.end,
                         showCursor: true,
+                        onSelectionChanged: (selection, cause) =>
+                            BlocProvider.of<CalculatorCubit>(context)
+                                .changeIndex(
+                          start: selection.start,
+                          end: selection.end,
+                        ),
+                        selectionControls: MaterialTextSelectionControls(),
                       ),
                     ),
                   ),
@@ -144,6 +151,8 @@ class Calculator extends StatelessWidget {
                               ),
                               textAlign: TextAlign.end,
                               showCursor: true,
+                              selectionControls:
+                                  MaterialTextSelectionControls(),
                             );
                           },
                         ),

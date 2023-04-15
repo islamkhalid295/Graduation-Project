@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../Models/app_config.dart';
+
 part 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
@@ -17,5 +19,6 @@ class ThemeCubit extends Cubit<ThemeState> {
       currentTheme = 'system';
       emit(ThemeStateSystem());
     }
+    UserConfig.setTheme(currentTheme);
   }
 }

@@ -102,6 +102,13 @@ class Simplification extends StatelessWidget {
                         ),
                         textAlign: TextAlign.start,
                         showCursor: true,
+                        selectionControls: MaterialTextSelectionControls(),
+                        onSelectionChanged: (selection, cause) =>
+                            BlocProvider.of<SimplificationCubit>(context)
+                                .changeIndex(
+                          start: selection.start,
+                          end: selection.end,
+                        ),
                       ),
                     ),
                   ),
@@ -137,6 +144,7 @@ class Simplification extends StatelessWidget {
                           ),
                           textAlign: TextAlign.start,
                           showCursor: true,
+                          selectionControls: MaterialTextSelectionControls(),
                         );
                       },
                     ),

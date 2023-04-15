@@ -10,6 +10,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    UserConfig().init(context);
     theme =
         checkTheme(BlocProvider.of<ThemeCubit>(context).currentTheme, context);
     return BlocConsumer<ThemeCubit, ThemeState>(
