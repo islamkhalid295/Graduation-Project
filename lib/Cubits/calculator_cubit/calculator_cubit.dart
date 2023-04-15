@@ -4,10 +4,8 @@ import 'package:meta/meta.dart';
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
-  CalculatorCubit() : super(CalculatorInitial());
-
   String expr = '';
-  String userExpr = '0';
+  String userExpr = '';
   String result = '0';
   String binResult = '0';
   String octResult = '0';
@@ -18,15 +16,30 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   bool isResultExist = false;
   bool isSigned = true;
 
-  void updateExpr(String str, String userStr) {
+  int startIndex = 0;
+  int endIndex = 0;
+
+  CalculatorCubit() : super(CalculatorInitial()) {
+    startIndex = userExpr.length;
+    endIndex = userExpr.length;
+  }
+
+  void updateExpr(String userStr) {
     isResultExist = false;
-    if (expr.isEmpty) userExpr = '';
-    expr += str;
-    userExpr += userStr;
+    String temp = userExpr.substring(endIndex);
+    userExpr = userExpr.substring(0, startIndex);
+    userExpr = userExpr + userStr;
+    startIndex = endIndex = userExpr.length;
+    userExpr = userExpr + temp;
     emit(CalculatorEprUpdate());
   }
 
+  // void generateParserExpr() {
+  //   // build body
+  // }
+
   void getResult() {
+    //generateParserExpr();
     //code
     isResultExist = true;
     emit(CalculatorResult());
@@ -35,11 +48,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void clearAll() {
     isResultExist = false;
     expr = '';
-    userExpr = '0';
+    userExpr = '';
+    startIndex = userExpr.length;
+    endIndex = userExpr.length;
     emit(CalculatorEprUpdate());
   }
 
-  void del() {}
+  void del() {
+    // build body
+  }
 
   void changeNumberSystem(String system) {
     if (system == 'bin') {
@@ -62,5 +79,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void isSignedChanger() {
     isSigned = !isSigned;
     emit(CalculatorIsSignedChange());
+  }
+
+  void changeIndex({required int start, required int end}) {
+    startIndex = start;
+    endIndex = end;
   }
 }

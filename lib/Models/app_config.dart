@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 
@@ -60,5 +60,19 @@ String checkTheme(String theme, BuildContext context) {
       return 'light';
     else
       return 'dark';
+  }
+}
+
+class UserConfig {
+  static String? theme;
+  void init(BuildContext context) async {
+    SharedPreferences? _pref = await SharedPreferences.getInstance();
+    theme = _pref.getString('theme');
+    BlocProvider.of<ThemeCubit>(context).changeTheme(theme!);
+  }
+
+  static void setTheme(String theme) async {
+    SharedPreferences? _pref = await SharedPreferences.getInstance();
+    await _pref.setString('theme', theme);
   }
 }

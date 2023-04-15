@@ -37,18 +37,9 @@ void main() {
 // ignore: must_be_immutable
 class Digeator extends StatelessWidget {
   Digeator({super.key});
-  String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ThemeCubit, ThemeState>(
-      listener: (context, state) {
-        if (state is ThemeStateLight)
-          currentTheme = 'light';
-        else if (state is ThemeStateDark)
-          currentTheme = 'dark';
-        else
-          currentTheme = 'system';
-      },
+    return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) => MaterialApp(
         title: 'Digeator',
         //home: Login(),
@@ -62,9 +53,9 @@ class Digeator extends StatelessWidget {
           fontFamily: 'RobotoCondensed',
           primarySwatch: ThemeColors.tealAc,
         ),
-        themeMode: currentTheme == 'system'
+        themeMode: BlocProvider.of<ThemeCubit>(context).currentTheme == 'system'
             ? ThemeMode.system
-            : currentTheme == 'light'
+            : BlocProvider.of<ThemeCubit>(context).currentTheme == 'light'
                 ? ThemeMode.light
                 : ThemeMode.dark,
         routes: {
