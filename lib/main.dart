@@ -10,8 +10,11 @@ import 'Models/app_config.dart';
 import 'Cubits/login_cubit/login_cubit.dart';
 import 'UI/login.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
@@ -37,9 +40,18 @@ void main() {
 // ignore: must_be_immutable
 class Digeator extends StatelessWidget {
   Digeator({super.key});
+  String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeState>(
+    return BlocConsumer<ThemeCubit, ThemeState>(
+      listener: (context, state) {
+        if (state is ThemeStateLight)
+          currentTheme = 'light';
+        else if (state is ThemeStateDark)
+          currentTheme = 'dark';
+        else
+          currentTheme = 'system';
+      },
       builder: (context, state) => MaterialApp(
         title: 'Digeator',
         //home: Login(),
@@ -53,9 +65,9 @@ class Digeator extends StatelessWidget {
           fontFamily: 'RobotoCondensed',
           primarySwatch: ThemeColors.tealAc,
         ),
-        themeMode: BlocProvider.of<ThemeCubit>(context).currentTheme == 'system'
+        themeMode: currentTheme == 'system'
             ? ThemeMode.system
-            : BlocProvider.of<ThemeCubit>(context).currentTheme == 'light'
+            : currentTheme == 'light'
                 ? ThemeMode.light
                 : ThemeMode.dark,
         routes: {

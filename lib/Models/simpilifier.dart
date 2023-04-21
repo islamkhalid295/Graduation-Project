@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Simplifier {
   late List<Map<String, dynamic>> _soms;
   late List<String> _vars;
@@ -7,7 +9,7 @@ class Simplifier {
   Simplifier({required String expr}) {
     this._vars = getExprVariables(expr);
     this._noOfVars = _vars.length;
-    this._soms = getSumOfMinterms(expr)
+    this._soms = getSumOfMinterms(expr, _vars)
         .map((v) => {
               'soms': {int.parse(v, radix: 2)},
               'som': v,
@@ -32,15 +34,43 @@ class Simplifier {
         .toList();
     _soms.sort(sortComaparable);
   }
+  bool isalpha(String ch) {
+    return ((ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
+        ch.codeUnitAt(0) <= 'f'.codeUnitAt(0)) ||
+        (ch.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
+            ch.codeUnitAt(0) <= 'F'.codeUnitAt(0)));
 
-  List<String> getExprVariables(String expr) {
-    // Enter the code of getting List of variables
-    return [];
   }
 
-  List<String> getSumOfMinterms(String expr) {
-    // Enter the code of generating sum of minterms
-    return [];
+  List<String> getExprVariables(String expr) {
+    Set<String> variables={};
+    for (int i = 0; i <expr.length; i++) {
+      if(isalpha(expr[i]))
+        variables.add(expr[i]);
+    }
+    return variables.toList();
+  }
+
+  List<String> getSumOfMinterms(String expr, List<String> variables) {
+    List<String> soms = List.empty(growable: true);
+    String binResult;
+    int len=variables.length;
+    for (int a= 0; a < pow(2, len); a++) {
+      binResult = a.toRadixString(2).toString();
+      binResult=binResult.padLeft(len,'0');
+      for (int i = 0; i <variables.length; i++) {
+        for (int j = 0; j < expr.length; j++) {
+          if (variables.elementAt(i) == expr[j]) {
+            expr = expr.replaceAll(expr[j], binResult[i]);
+          }
+        }
+      }
+      //print(expr);
+      if(true) {
+        soms.add(binResult);
+      }
+    }
+    return soms;
   }
 
   int sortComaparable(Map<String, dynamic> a, Map<String, dynamic> b) =>
