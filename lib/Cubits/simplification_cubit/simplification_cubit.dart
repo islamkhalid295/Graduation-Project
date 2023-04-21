@@ -4,6 +4,8 @@ import 'package:meta/meta.dart';
 part 'simplification_state.dart';
 
 class SimplificationCubit extends Cubit<SimplificationState> {
+  SimplificationCubit() : super(SimplificationInitial());
+
   String expr = '';
   String userExpr = '0';
   String result = 'No Result';
@@ -11,21 +13,12 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   bool isResultExist = false;
   bool isNormal = true;
 
-  int startIndex = 0;
-  int endIndex = 0;
-
-  SimplificationCubit() : super(SimplificationInitial()) {
-    startIndex = userExpr.length;
-    endIndex = userExpr.length;
-  }
-
   void updateExpr(String str, String userStr) {
     isResultExist = false;
-    String temp = userExpr.substring(endIndex);
-    userExpr = userExpr.substring(0, startIndex);
-    userExpr = userExpr + userStr;
-    startIndex = endIndex = userExpr.length;
-    userExpr = userExpr + temp;
+    result = 'No Result';
+    if (expr.isEmpty) userExpr = '';
+    expr += str;
+    userExpr += userStr;
     emit(SimplificationEprUpdate());
   }
 
@@ -38,23 +31,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   void clearAll() {
     isResultExist = false;
     expr = '';
-    userExpr = '';
-    startIndex = userExpr.length;
-    endIndex = userExpr.length;
+    userExpr = '0';
     emit(SimplificationEprUpdate());
   }
 
-  void del() {
-    // build body
-  }
+  void del() {}
 
   void isNormalChanger() {
     isNormal = !isNormal;
     emit(SimplificationIsNormalChange());
-  }
-
-  void changeIndex({required int start, required int end}) {
-    startIndex = start;
-    endIndex = end;
   }
 }

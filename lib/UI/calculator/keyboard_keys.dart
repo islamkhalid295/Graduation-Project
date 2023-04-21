@@ -53,22 +53,22 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('AND'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' AND '),
+                      .updateExpr('&', ' AND '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('OR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' OR '),
+                      .updateExpr('|', ' OR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 //========================= 2nd Row ================================//
                 createButton(
                   child: const Text('F'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('F'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('F', 'F'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -77,29 +77,29 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('NOT'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' NOT '),
+                      .updateExpr('~', ' NOT '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('NAND'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' NAND '),
+                      .updateExpr('~&', ' NAND '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('NOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' NOR '),
+                      .updateExpr(' ', ' NOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 //========================= 3rd Row ================================//
                 createButton(
                   child: const Text('E'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('E'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('E', 'E'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -108,29 +108,29 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('XOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' XOR '),
+                      .updateExpr(' ', ' XOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('XNOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' XNOR '),
+                      .updateExpr(' ', ' XNOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('LSH'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' << '),
+                      .updateExpr('<<', ' << '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 //========================= 4th Row ================================//
                 createButton(
                   child: const Text('D'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('D'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('D', 'D'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -138,8 +138,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('8'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('8'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('8', '8'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                               .curentNumerSystem !=
@@ -150,8 +150,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('9'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('9'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('9', '9'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                               .curentNumerSystem !=
@@ -163,15 +163,15 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('RSH'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' >> '),
+                      .updateExpr('>>', ' >> '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 //========================= 5th Row ================================//
                 createButton(
                   child: const Text('C'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('C'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('C', 'C'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -179,8 +179,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('5'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('5'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('5', '5'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -188,8 +188,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('6'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('6'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('6', '6'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -197,8 +197,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('7'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('7'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('7', '7'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -207,8 +207,8 @@ class KeyboardKeys extends StatelessWidget {
                 //========================= 6th Row ================================//
                 createButton(
                   child: const Text('B'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('B'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('B', 'B'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -216,8 +216,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('2'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('2'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('2', '2'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -225,8 +225,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('3'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('3'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('3', '3'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -234,8 +234,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('4'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('4'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('4', '4'),
                   type: 'num',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem !=
@@ -244,8 +244,8 @@ class KeyboardKeys extends StatelessWidget {
                 //========================= 7th Row ================================//
                 createButton(
                   child: const Text('A'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('A'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('A', 'A'),
                   type: 'hex',
                   isEnabled: BlocProvider.of<CalculatorCubit>(context)
                           .curentNumerSystem ==
@@ -253,15 +253,15 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('0'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('0'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('0', '0'),
                   type: 'num',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('1'),
-                  onPressed: () =>
-                      BlocProvider.of<CalculatorCubit>(context).updateExpr('1'),
+                  onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                      .updateExpr('1', '1'),
                   type: 'num',
                   isEnabled: true,
                 ),

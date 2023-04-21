@@ -7,7 +7,10 @@ class LoginInitial extends LoginState {}
 
 class LoginSuccess extends LoginState {}
 
-class LoginFailure extends LoginState {}
+class LoginFailure extends LoginState {
+  Map<String, String> errors;
+  LoginFailure({required this.errors}):super();
+}
 
 class LoginLoading extends LoginState {}
 

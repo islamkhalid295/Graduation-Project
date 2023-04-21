@@ -188,8 +188,8 @@ class KeyboardOptions extends StatelessWidget {
                   ),
                 ),
               ),
-              onPressed: () =>
-                  BlocProvider.of<CalculatorCubit>(context).updateExpr(' ( '),
+              onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                  .updateExpr('(', ' ( '),
             ),
           ),
           SizedBox(
@@ -218,8 +218,8 @@ class KeyboardOptions extends StatelessWidget {
                   ),
                 ),
               ),
-              onPressed: () =>
-                  BlocProvider.of<CalculatorCubit>(context).updateExpr(' ) '),
+              onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                  .updateExpr(')', ' ) '),
             ),
           ),
           SizedBox(
