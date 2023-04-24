@@ -18,11 +18,19 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   bool isResultExist = false;
   bool isSigned = true;
 
+  int startPosition = 0;
+  int endPosition = 0;
+
   void updateExpr(String str, String userStr) {
+    String temp = userExpr.substring(endPosition);
     isResultExist = false;
-    if (expr.isEmpty) userExpr = '';
-    expr += str;
+    result = 'No Result';
+    //if (expr.isEmpty) userExpr = '';
+    //expr += str;
+    userExpr = userExpr.substring(0, startPosition);
     userExpr += userStr;
+    startPosition = endPosition = userExpr.length;
+    userExpr += temp;
     emit(CalculatorEprUpdate());
   }
 
@@ -35,7 +43,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void clearAll() {
     isResultExist = false;
     expr = '';
-    userExpr = '0';
+    userExpr = '';
+    startPosition = endPosition = userExpr.length;
     emit(CalculatorEprUpdate());
   }
 
@@ -62,5 +71,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void isSignedChanger() {
     isSigned = !isSigned;
     emit(CalculatorIsSignedChange());
+  }
+
+  void changePosition(int start, int end) {
+    startPosition = start;
+    endPosition = end;
   }
 }

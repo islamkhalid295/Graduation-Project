@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SizeConfig {
   MediaQueryData? mediaQueryData;
@@ -60,5 +60,20 @@ String checkTheme(String theme, BuildContext context) {
       return 'light';
     else
       return 'dark';
+  }
+}
+
+class UserConfig {
+  static SharedPreferences? pref;
+  Future<void> init() async {
+    pref = await SharedPreferences.getInstance();
+  }
+
+  static void setTheme(String theme) {
+    pref!.setString('theme', theme);
+  }
+
+  static String? getTheme() {
+    return pref!.getString('theme');
   }
 }
