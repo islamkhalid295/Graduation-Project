@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/simplification_cubit/simplification_cubit.dart';
@@ -10,6 +12,7 @@ part 'keyboard_options.dart';
 part 'keyboard_keys.dart';
 
 class Simplification extends StatelessWidget {
+  bool showCursor = true;
   Simplification({super.key});
   String? theme;
   @override
@@ -41,9 +44,10 @@ class Simplification extends StatelessWidget {
                 EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
             child: Column(
               children: [
-                SizedBox(
-                  height: SizeConfig.heightBlock!,
-                ),
+                if (Platform.isWindows)
+                  SizedBox(
+                    height: SizeConfig.heightBlock!,
+                  ),
                 SizedBox(
                   height: SizeConfig.heightBlock! * 5,
                   child: AppBar(
@@ -100,8 +104,11 @@ class Simplification extends StatelessWidget {
                           fontSize: SizeConfig.heightBlock! * 3,
                           fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.start,
                         showCursor: true,
+                        onSelectionChanged: (selection, cause) {
+                          BlocProvider.of<SimplificationCubit>(context)
+                              .changePosition(selection.start, selection.end);
+                        },
                       ),
                     ),
                   ),
