@@ -12,9 +12,6 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    String? usertheme = UserConfig.getTheme();
-    BlocProvider.of<ThemeCubit>(context)
-        .changeTheme(usertheme == null ? 'system' : usertheme);
     theme =
         checkTheme(BlocProvider.of<ThemeCubit>(context).currentTheme, context);
     return BlocConsumer<ThemeCubit, ThemeState>(
@@ -82,6 +79,7 @@ class Login extends StatelessWidget {
                                 ? ThemeColors.lightBlackText
                                 : ThemeColors.darkWhiteText,
                           ),
+                          controller: emailController,
                           maxLines: 1,
                           keyboardType: TextInputType.emailAddress,
                           validator: (str) {},
@@ -135,7 +133,6 @@ class Login extends StatelessWidget {
                             errorStyle:
                                 const TextStyle(color: ThemeColors.redColor),
                           ),
-                          controller: emailController,
                         ),
                         SizedBox(
                           height: SizeConfig.heightBlock! * 2.5,

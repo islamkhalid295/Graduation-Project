@@ -9,10 +9,10 @@ import 'package:graduation_project/UI/simpllification/simplification.dart';
 import 'Models/app_config.dart';
 import 'Cubits/login_cubit/login_cubit.dart';
 import 'UI/login.dart';
-import 'dart:io';
+//import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +46,9 @@ class Digeator extends StatelessWidget {
   String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
+    String? usertheme = UserConfig.getTheme();
+    BlocProvider.of<ThemeCubit>(context)
+        .changeTheme(usertheme == null ? 'system' : usertheme);
     return BlocConsumer<ThemeCubit, ThemeState>(
       listener: (context, state) {
         if (state is ThemeStateLight)

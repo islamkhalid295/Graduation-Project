@@ -11,9 +11,8 @@ class LoginCubit extends Cubit<LoginState> {
     isSecured = !isSecured;
     emit(LoginPass());
   }
-  void firebaseAuth(
 
-      String email, String pass,BuildContext context) async {
+  void firebaseAuth(String email, String pass, BuildContext context) async {
     Map<String, String> errors = {
       'email': '',
       'pass': '',
@@ -23,8 +22,9 @@ class LoginCubit extends Cubit<LoginState> {
     if (email.isEmpty) {
       errors['email'] = 'Required Field';
       flag = false;
-    } else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[gmail]+\.[com]+")
-        .hasMatch(email)){
+    } else if (!RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[gmail]+\.[com]+")
+        .hasMatch(email)) {
       errors['email'] = 'Not valid email';
       flag = false;
     }
@@ -35,14 +35,13 @@ class LoginCubit extends Cubit<LoginState> {
 
     if (flag) {
       try {
-        final userlogin =await  _auth.signInWithEmailAndPassword(
+        final userlogin = await _auth.signInWithEmailAndPassword(
             email: email, password: pass);
 
         emit(LoginSuccess());
         if (userlogin != null) {
           Navigator.of(context).pushReplacementNamed('/calculator');
         }
-
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           if (errors['email']!.isEmpty) {
