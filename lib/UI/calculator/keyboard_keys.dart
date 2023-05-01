@@ -46,7 +46,7 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Icon(Icons.backspace_outlined),
-                  onPressed: () {},
+                  onPressed: BlocProvider.of<CalculatorCubit>(context).del,
                   type: 'del',
                   isEnabled: true,
                 ),
@@ -84,14 +84,14 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('NAND'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr('~&', ' NAND '),
+                      .updateExpr('!&', ' NAND '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('NOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' ', ' NOR '),
+                      .updateExpr('!|', ' NOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
@@ -108,14 +108,14 @@ class KeyboardKeys extends StatelessWidget {
                 createButton(
                   child: const Text('XOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' ', ' XOR '),
+                      .updateExpr('^', ' XOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
                 createButton(
                   child: const Text('XNOR'),
                   onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                      .updateExpr(' ', ' XNOR '),
+                      .updateExpr('!^', ' XNOR '),
                   type: 'opr',
                   isEnabled: true,
                 ),
@@ -267,7 +267,7 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('='),
-                  onPressed: () {},
+                  onPressed: BlocProvider.of<CalculatorCubit>(context).getResult,
                   type: '=',
                   isEnabled: true,
                 ),

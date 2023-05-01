@@ -79,8 +79,9 @@ class ConvertSystem extends StatelessWidget {
     return Expanded(
       child: BlocBuilder<CalculatorCubit, CalculatorState>(
         buildWhen: (previous, current) =>
-            current is CalculatorNumberSystemChange,
+            current is CalculatorEprUpdate || current is CalculatorNumberSystemChange,
         builder: (context, state) {
+          print("System : ${system} is rebuilded");
           return Material(
             borderRadius: borderRadius,
             color:
@@ -112,20 +113,14 @@ class ConvertSystem extends StatelessWidget {
                     flex: 4,
                     child: FittedBox(
                       alignment: AlignmentDirectional.centerStart,
-                      child: BlocBuilder<CalculatorCubit, CalculatorState>(
-                        buildWhen: (previous, current) =>
-                            current is CalculatorResult,
-                        builder: (context, state) {
-                          return Text(
-                            BlocProvider.of<CalculatorCubit>(context).binResult,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              color: (theme == 'light')
-                                  ? ThemeColors.lightBlackText
-                                  : ThemeColors.darkWhiteText,
-                            ),
-                          );
-                        },
+                      child: Text(
+                        str,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: (theme == 'light')
+                              ? ThemeColors.lightBlackText
+                              : ThemeColors.darkWhiteText,
+                        ),
                       ),
                     ),
                   ),

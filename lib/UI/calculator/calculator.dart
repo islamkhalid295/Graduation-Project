@@ -5,6 +5,9 @@ import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/app_config.dart';
 import 'package:graduation_project/UI/drawer.dart';
 import 'dart:io';
+
+import '../../Models/digital_parser.dart';
+import '../../Models/functions.dart';
 part 'number_system.dart';
 part 'keyboard.dart';
 part 'keyboard_options.dart';
