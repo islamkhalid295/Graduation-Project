@@ -4,7 +4,7 @@ import 'package:graduation_project/Cubits/calculator_cubit/calculator_cubit.dart
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/app_config.dart';
 import 'package:graduation_project/UI/drawer.dart';
-
+import 'dart:io';
 part 'number_system.dart';
 part 'keyboard.dart';
 part 'keyboard_options.dart';
@@ -44,9 +44,10 @@ class Calculator extends StatelessWidget {
                 EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
             child: Column(
               children: [
-                SizedBox(
-                  height: SizeConfig.heightBlock!,
-                ),
+                if (Platform.isWindows)
+                  SizedBox(
+                    height: SizeConfig.heightBlock!,
+                  ),
                 SizedBox(
                   height: SizeConfig.heightBlock! * 5,
                   child: AppBar(
@@ -105,6 +106,9 @@ class Calculator extends StatelessWidget {
                         ),
                         textAlign: TextAlign.end,
                         showCursor: true,
+                        onSelectionChanged: (selection, cause) =>
+                            BlocProvider.of<CalculatorCubit>(context)
+                                .changePosition(selection.start, selection.end),
                       ),
                     ),
                   ),

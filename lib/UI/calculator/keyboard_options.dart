@@ -21,14 +21,13 @@ class KeyboardOptions extends StatelessWidget {
         }
       },
       builder: (context, state) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             flex: 3,
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: SizeConfig.widthBlock!,
-                vertical: SizeConfig.heightBlock! * 0.5,
+                vertical: SizeConfig.heightBlock! * 0.8,
               ),
               decoration: BoxDecoration(
                   color: (theme == 'light')
