@@ -37,8 +37,12 @@ dependencies:
   flutter_bloc: ^8.1.2
   shared_preferences: ^2.1.0
   firebase_core: ^2.9.0
-  firebase_auth: ^4.4.0
-  cloud_firestore: ^4.5.0
+  firebase_auth: ^4.4.2
+  cloud_firestore: ^4.5.3
+  flutterfire_cli: ^0.2.7
+  firebase_core_desktop: ^1.0.2
+
+
 
 dev_dependencies:
   flutter_test:

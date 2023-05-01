@@ -18,7 +18,9 @@ class Calculator extends StatelessWidget {
   String? theme;
   @override
   Widget build(BuildContext context) {
-    //SizeConfig().init(context);
+    if(SizeConfig.width==null) {
+      SizeConfig().init(context);
+    }
     theme =
         checkTheme(BlocProvider.of<ThemeCubit>(context).currentTheme, context);
     return BlocConsumer<ThemeCubit, ThemeState>(
