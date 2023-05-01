@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'digital_parser.dart';
+
 class Simplifier {
   late List<Map<String, dynamic>> _soms;
   late List<String> _vars;
@@ -66,7 +68,8 @@ class Simplifier {
         }
       }
       //print(expr);
-      if(true) {
+      Parser p = Parser(expr, "bin");
+      if(p.sampleParser()==1) {
         soms.add(binResult);
       }
     }

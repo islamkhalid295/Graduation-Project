@@ -40,7 +40,7 @@ class KeyboardKeys extends StatelessWidget {
             ),
             createButton(
               child: const Icon(Icons.backspace_outlined),
-              onPressed: () {},
+              onPressed: BlocProvider.of<SimplificationCubit>(context).del,
               type: 'del',
             ),
             createButton(
@@ -59,38 +59,38 @@ class KeyboardKeys extends StatelessWidget {
             createButton(
               child: const Text('AND'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('AND', ' AND '),
+                  .updateExpr('&', ' AND '),
               type: 'opr',
             ),
             createButton(
               child: const Text('NAND'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr(' ', ' NAND '),
+                  .updateExpr('!&', ' NAND '),
               type: 'opr',
             ),
             createButton(
               child: const Text('OR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr(' ', ' OR '),
+                  .updateExpr('|', ' OR '),
               type: 'opr',
             ),
             createButton(
               child: const Text('NOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr(' ', ' NOR '),
+                  .updateExpr('!|', ' NOR '),
               type: 'opr',
             ),
             //========================= 3rd Row ================================//
             createButton(
               child: const Text('XOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('E', ' XOR '),
+                  .updateExpr('^', ' XOR '),
               type: 'opr',
             ),
             createButton(
               child: const Text('XNOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr(' ', ' XNOR '),
+                  .updateExpr('!^', ' XNOR '),
               type: 'opr',
             ),
             createButton(

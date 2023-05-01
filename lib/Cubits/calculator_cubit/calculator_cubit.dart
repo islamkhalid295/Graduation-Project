@@ -163,6 +163,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           }
       }
     }else  expr = expr.substring(0, expr.length - 1);
+    userExpr = expr.replaceAll("&", " AND ").replaceAll("|", " OR ");
+    emit(CalculatorEprUpdate());
     check();
   }
 

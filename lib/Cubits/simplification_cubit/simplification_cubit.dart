@@ -48,7 +48,57 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     emit(SimplificationEprUpdate());
   }
 
-  void del() {}
+  void del() {
+    if(expr.length>=2) {
+      switch (expr[expr.length - 2]) {
+        case "<":
+          {
+            if((expr[expr.length - 1]) == "<")
+              expr = expr.substring(0, expr.length - 2);
+            else expr = expr.substring(0, expr.length - 1);
+          }
+          break;
+        case ">":
+          {
+            if(expr.length - 1 == ">")
+              expr = expr.substring(0, expr.length - 2);
+            else expr = expr.substring(0, expr.length - 1);
+
+          }
+          break;
+        case "!":
+          {
+            switch (expr[expr.length - 1]) {
+              case "&":
+                {
+                  expr = expr.substring(
+                      0, expr.length - 2);
+                }
+                break;
+              case "|":
+                {
+                  expr = expr.substring(
+                      0, expr.length - 2);
+                }
+                break;
+              case "^":
+                {
+                  expr = expr.substring(
+                      0, expr.length - 2);
+                }
+                break;
+            }
+          }
+          break;
+        default:
+          {
+            expr = expr.substring(0, expr.length - 1);
+
+          }
+      }
+    }else  expr = expr.substring(0, expr.length - 1);
+
+  }
 
   void isNormalChanger() {
     isNormal = !isNormal;
