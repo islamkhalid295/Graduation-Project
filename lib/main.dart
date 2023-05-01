@@ -12,12 +12,19 @@ import 'UI/login.dart';
 //import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await UserConfig().init();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
@@ -46,9 +53,8 @@ class Digeator extends StatelessWidget {
   String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
-    String? usertheme = UserConfig.getTheme();
-    BlocProvider.of<ThemeCubit>(context)
-        .changeTheme(usertheme == null ? 'system' : usertheme);
+    final _auth=FirebaseAuth.instance;
+
     return BlocConsumer<ThemeCubit, ThemeState>(
       listener: (context, state) {
         if (state is ThemeStateLight)
@@ -82,7 +88,7 @@ class Digeator extends StatelessWidget {
           '/calculator': (ctx) => Calculator(),
           '/simplification': (ctx) => Simplification(),
         },
-        initialRoute: '/login',
+        initialRoute:_auth.currentUser!=null?'/calculator':'/login',
       ),
     );
   }
