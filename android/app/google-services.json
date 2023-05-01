@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "786979831390",
+    "project_id": "calculators-project",
+    "storage_bucket": "calculators-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786979831390:android:1c38367e67af116e3e3ecf",
+        "android_client_info": {
+          "package_name": "com.example.graduation_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786979831390-684gc16uts88aje2esrs00el43u7rp2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaZvpdYEsW-TaLpUCpEwekgAKYjWNE28A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786979831390-684gc16uts88aje2esrs00el43u7rp2v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786979831390-t139onr6uoh09h1lt96smc2vuulcoauk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.graduationProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
