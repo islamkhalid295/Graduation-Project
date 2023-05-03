@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/register_cubit/register_cubit.dart';
@@ -410,8 +411,11 @@ class Register extends StatelessWidget {
                             },
                             style: OutlinedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: SizeConfig.heightBlock!,
-                                    horizontal: SizeConfig.widthBlock! * 2),
+                                  vertical: (kIsWeb)
+                                      ? SizeConfig.heightBlock! * 2
+                                      : SizeConfig.heightBlock!,
+                                  horizontal: SizeConfig.widthBlock! * 2,
+                                ),
                                 textStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: SizeConfig.heightBlock! * 4,

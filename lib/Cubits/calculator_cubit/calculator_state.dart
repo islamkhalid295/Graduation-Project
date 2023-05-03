@@ -5,7 +5,7 @@ abstract class CalculatorState {}
 
 class CalculatorInitial extends CalculatorState {}
 
-class CalculatorEprUpdate extends CalculatorState {}
+class CalculatorExprUpdate extends CalculatorState {}
 
 class CalculatorResult extends CalculatorState {}
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/login_cubit/login_cubit.dart';
@@ -223,7 +224,9 @@ class Login extends StatelessWidget {
                                         passwordController.text, context),
                             style: OutlinedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: SizeConfig.heightBlock!,
+                                    vertical: (kIsWeb)
+                                        ? SizeConfig.heightBlock! * 2
+                                        : SizeConfig.heightBlock!,
                                     horizontal: SizeConfig.widthBlock! * 2),
                                 textStyle: TextStyle(
                                     fontWeight: FontWeight.bold,

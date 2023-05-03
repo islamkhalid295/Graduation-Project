@@ -77,3 +77,6 @@ class UserConfig {
     return pref!.getString('theme');
   }
 }
+
+//static test data
+List<Map<String, String>> testHistory = [];
