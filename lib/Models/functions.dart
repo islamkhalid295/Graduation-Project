@@ -38,3 +38,4 @@ String NOR (String a, String b) {
   var bdec = binaryToDec(b);
   return (decToBinary(~(adec | bdec)));
 }
+

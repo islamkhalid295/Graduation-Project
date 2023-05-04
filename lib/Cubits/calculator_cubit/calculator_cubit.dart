@@ -11,6 +11,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   String expr = '';
   String userExpr = '';
+  String pattern ='';
   String result = '0';
   String binResult = '0';
   String octResult = '0';
@@ -58,7 +59,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
-  void updateExpr(String str, String userStr) {
+  void updateExpr(String str, String userStr, String pattern) {
     String temp = userExpr.substring(endPosition);
     isResultExist = false;
     result = 'No Result';
@@ -66,6 +67,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     expr += str;
     userExpr = userExpr.substring(0, startPosition);
     userExpr += userStr;
+    this.pattern += pattern;
     startPosition = endPosition = userExpr.length;
     userExpr += temp;
     check();
@@ -107,6 +109,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void clearAll() {
     isResultExist = false;
     expr = '';
+    pattern = '';
     userExpr = '';
     startPosition = endPosition = userExpr.length;
     emit(CalculatorExprUpdate());
@@ -114,42 +117,38 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void del() {
     if (expr.length >= 2) {
-      switch (expr[expr.length - 2]) {
-        case "<":
+      if(pattern[startPosition-1]==" ")
+        startPosition--;
+      switch (pattern[startPosition-1]) {
+        case "o":
           {
-            if ((expr[expr.length - 1]) == "<")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case ">":
-          {
-            if (expr.length - 1 == ">")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case "!":
-          {
-            switch (expr[expr.length - 1]) {
-              case "&":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "|":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "^":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
+            int end = startPosition-1;
+            int start = startPosition-1;
+            while(pattern[end+1]=='o')
+            {
+              end++;
+              if(end+1>=pattern.length-1)
                 break;
             }
+            while(pattern[start-1]=='o')
+            {
+              start--;
+              if(start==0)
+                break;
+
+            }
+            userExpr = userExpr.substring(0,start-1)+ userExpr.substring(end+2,userExpr.length);
+            pattern = pattern.substring(0,start-1)+ pattern.substring(end+2,pattern.length);
+          }
+          break;
+        case "n":
+          {
+
+            if(pattern[startPosition-1]==" ")
+              startPosition--;
+
+              userExpr = userExpr.substring(0, startPosition-1) + userExpr.substring(startPosition,userExpr.length);
+              pattern = pattern.substring(0, startPosition-1) + pattern.substring(startPosition,pattern.length);
           }
           break;
         default:
@@ -160,7 +159,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
     } else
       expr = expr.substring(0, expr.length - 1);
-    userExpr = expr.replaceAll("&", " AND ").replaceAll("|", " OR ");
+
     emit(CalculatorExprUpdate());
     check();
     startPosition = endPosition = userExpr.length;
