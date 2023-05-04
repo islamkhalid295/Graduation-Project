@@ -1,7 +1,6 @@
 part of 'calculator.dart';
 
 class ConvertSystem extends StatelessWidget {
-  //double height;
   ConvertSystem({super.key});
   String? theme;
   String? currentSystem;
@@ -35,7 +34,6 @@ class ConvertSystem extends StatelessWidget {
           children: [
             numberSystem(
               system: 'bin',
-              str: BlocProvider.of<CalculatorCubit>(context).binResult,
               onTap: () => BlocProvider.of<CalculatorCubit>(context)
                   .changeNumberSystem('bin'),
               borderRadius: const BorderRadius.vertical(
@@ -44,21 +42,18 @@ class ConvertSystem extends StatelessWidget {
             ),
             numberSystem(
               system: 'oct',
-              str: BlocProvider.of<CalculatorCubit>(context).octResult,
               onTap: () => BlocProvider.of<CalculatorCubit>(context)
                   .changeNumberSystem('oct'),
               borderRadius: BorderRadius.circular(0),
             ),
             numberSystem(
               system: 'dec',
-              str: BlocProvider.of<CalculatorCubit>(context).decResult,
               onTap: () => BlocProvider.of<CalculatorCubit>(context)
                   .changeNumberSystem('dec'),
               borderRadius: BorderRadius.circular(0),
             ),
             numberSystem(
               system: 'hex',
-              str: BlocProvider.of<CalculatorCubit>(context).hexResult,
               onTap: () => BlocProvider.of<CalculatorCubit>(context)
                   .changeNumberSystem('hex'),
               borderRadius: const BorderRadius.vertical(
@@ -73,14 +68,29 @@ class ConvertSystem extends StatelessWidget {
 
   Expanded numberSystem(
       {required String system,
-      required String str,
       required void Function() onTap,
       required BorderRadius borderRadius}) {
     return Expanded(
       child: BlocBuilder<CalculatorCubit, CalculatorState>(
         buildWhen: (previous, current) =>
-            current is CalculatorEprUpdate || current is CalculatorNumberSystemChange,
+            current is CalculatorExprUpdate ||
+            current is CalculatorNumberSystemChange,
         builder: (context, state) {
+          String str = '';
+          switch (system) {
+            case 'bin':
+              str = BlocProvider.of<CalculatorCubit>(context).binResult;
+              break;
+            case 'oct':
+              str = BlocProvider.of<CalculatorCubit>(context).octResult;
+              break;
+            case 'dec':
+              str = BlocProvider.of<CalculatorCubit>(context).decResult;
+              break;
+            case 'hex':
+              str = BlocProvider.of<CalculatorCubit>(context).hexResult;
+              break;
+          }
           print("System : ${system} is rebuilded");
           return Material(
             borderRadius: borderRadius,

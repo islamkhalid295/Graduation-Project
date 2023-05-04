@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/calculator_cubit/calculator_cubit.dart';
@@ -18,7 +19,7 @@ class Calculator extends StatelessWidget {
   String? theme;
   @override
   Widget build(BuildContext context) {
-    if(SizeConfig.width==null) {
+    if (SizeConfig.width == null) {
       SizeConfig().init(context);
     }
     theme =
@@ -47,7 +48,7 @@ class Calculator extends StatelessWidget {
                 EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
             child: Column(
               children: [
-                if (Platform.isWindows)
+                if (kIsWeb || Platform.isWindows)
                   SizedBox(
                     height: SizeConfig.heightBlock!,
                   ),
@@ -97,7 +98,7 @@ class Calculator extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: BlocBuilder<CalculatorCubit, CalculatorState>(
                       buildWhen: (previous, current) =>
-                          current is CalculatorEprUpdate,
+                          current is CalculatorExprUpdate,
                       builder: (context, state) => SelectableText(
                         BlocProvider.of<CalculatorCubit>(context).userExpr,
                         style: TextStyle(

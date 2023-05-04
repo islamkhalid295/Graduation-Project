@@ -10,7 +10,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial());
 
   String expr = '';
-  String userExpr = '0';
+  String userExpr = '';
   String result = '0';
   String binResult = '0';
   String octResult = '0';
@@ -25,6 +25,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   int endPosition = 0;
 
   int tmp = 0;
+
   void check() {
     try {
       print(expr);
@@ -36,7 +37,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         hexResult = "Math Error";
         octResult = "Math Error";
       } else {
-        if(isSigned) {
+        if (isSigned) {
           binResult = tmp.toRadixString(2).toString();
           decResult = tmp.toString();
           hexResult = tmp.toRadixString(16).toString();
@@ -45,7 +46,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           print(decResult);
           print(hexResult);
           print(octResult);
-        }else {
+        } else {
           binResult = BigInt.from(tmp).toUnsigned(32).toRadixString(2);
           decResult = tmp.toString();
           hexResult = BigInt.from(tmp).toUnsigned(32).toRadixString(16);
@@ -55,9 +56,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     } catch (e) {
       result = e.toString();
     }
-
   }
-  
+
   void updateExpr(String str, String userStr) {
     String temp = userExpr.substring(endPosition);
     isResultExist = false;
@@ -69,11 +69,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     startPosition = endPosition = userExpr.length;
     userExpr += temp;
     check();
-    emit(CalculatorEprUpdate());
+    emit(CalculatorExprUpdate());
   }
 
   void getResult() {
-    //code
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -101,7 +100,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     } else
       result = "Math Error";
 
-
     isResultExist = true;
     emit(CalculatorResult());
   }
@@ -111,25 +109,26 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     expr = '';
     userExpr = '';
     startPosition = endPosition = userExpr.length;
-    emit(CalculatorEprUpdate());
+    emit(CalculatorExprUpdate());
   }
 
   void del() {
-    if(expr.length>=2) {
+    if (expr.length >= 2) {
       switch (expr[expr.length - 2]) {
         case "<":
           {
-            if((expr[expr.length - 1]) == "<")
+            if ((expr[expr.length - 1]) == "<")
               expr = expr.substring(0, expr.length - 2);
-            else expr = expr.substring(0, expr.length - 1);
+            else
+              expr = expr.substring(0, expr.length - 1);
           }
           break;
         case ">":
           {
-            if(expr.length - 1 == ">")
+            if (expr.length - 1 == ">")
               expr = expr.substring(0, expr.length - 2);
-            else expr = expr.substring(0, expr.length - 1);
-
+            else
+              expr = expr.substring(0, expr.length - 1);
           }
           break;
         case "!":
@@ -137,20 +136,17 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             switch (expr[expr.length - 1]) {
               case "&":
                 {
-                  expr = expr.substring(
-                      0, expr.length - 2);
+                  expr = expr.substring(0, expr.length - 2);
                 }
                 break;
               case "|":
                 {
-                  expr = expr.substring(
-                      0, expr.length - 2);
+                  expr = expr.substring(0, expr.length - 2);
                 }
                 break;
               case "^":
                 {
-                  expr = expr.substring(
-                      0, expr.length - 2);
+                  expr = expr.substring(0, expr.length - 2);
                 }
                 break;
             }
@@ -162,10 +158,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             check();
           }
       }
-    }else  expr = expr.substring(0, expr.length - 1);
+    } else
+      expr = expr.substring(0, expr.length - 1);
     userExpr = expr.replaceAll("&", " AND ").replaceAll("|", " OR ");
-    emit(CalculatorEprUpdate());
+    emit(CalculatorExprUpdate());
     check();
+    startPosition = endPosition = userExpr.length;
   }
 
   void changeNumberSystem(String system) {

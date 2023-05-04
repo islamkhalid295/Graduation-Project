@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/Cubits/simplification_cubit/simplification_cubit.dart';
@@ -44,7 +44,7 @@ class Simplification extends StatelessWidget {
                 EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
             child: Column(
               children: [
-                if (Platform.isWindows)
+                if (kIsWeb || Platform.isWindows)
                   SizedBox(
                     height: SizeConfig.heightBlock!,
                   ),
