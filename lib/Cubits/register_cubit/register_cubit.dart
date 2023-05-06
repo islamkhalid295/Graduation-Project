@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   final _auth = FirebaseAuth.instance;
+  final  userData = FirebaseFirestore.instance.collection('users');
 
   RegisterCubit() : super(RegisterInitial());
   bool isSecured = true;
@@ -42,13 +44,13 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegisterPass());
   }
 
-  void firebaseAuth(
-
-      String email, String pass, String confirmPass,BuildContext context) async {
+  void firebaseAuth(String email, String fName,String lName ,String pass, String confirmPass,BuildContext context) async {
     Map<String, String> errors = {
       'email': '',
       'pass': '',
       'confirm': '',
+      'fName':'',
+      'lName':'',
     };
     emit(RegisterLoading());
     bool flag = true;
@@ -62,6 +64,14 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
     if (pass.isEmpty) {
       errors['pass'] = 'Required Field';
+      flag = false;
+    }
+    if (fName.isEmpty) {
+      errors['fName'] = 'Required Field';
+      flag = false;
+    }
+    if (lName.isEmpty) {
+      errors['lName'] = 'Required Field';
       flag = false;
     }
     if (confirmPass.isEmpty) {
@@ -89,6 +99,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: pass);
         emit(RegisterSuccess());
+        addUserData(fName, lName, email);
         Navigator.of(context).pushReplacementNamed('/calculator');
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
@@ -113,9 +124,28 @@ class RegisterCubit extends Cubit<RegisterState> {
     } else {
       emit(RegisterFailure(errors: errors));
     }
+
   }
   void changeConfirmPassVisibility() {
     isSecuredConfirm = !isSecuredConfirm;
     emit(RegisterConfirmPass());
+  }
+  Future<void> addUserData(String fName,String lName,String email) {
+    return userData
+        .add({
+      'lName':lName,
+      'fName':fName,
+      'user': email,
+    })
+        .then((value) => print("User data Added"))
+        .catchError((error) => print("Failed to add user Data: $error"));
+  }
+  void getuserData()async{
+    var userData=  FirebaseFirestore.instance.collection('users');
+    await userData.where("user",isEqualTo:_auth.currentUser?.email ).get().then((value) {
+      value.docs.forEach((element) {
+        print(element.data());
+      });
+    });
   }
 }

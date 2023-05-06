@@ -54,7 +54,6 @@ class Digeator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _auth=FirebaseAuth.instance;
-
     return BlocConsumer<ThemeCubit, ThemeState>(
       listener: (context, state) {
         if (state is ThemeStateLight)

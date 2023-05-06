@@ -1,14 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
-
+import 'package:path/path.dart';
+import 'dart:async';
 part 'calculator_state.dart';
+
 
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial());
-
+  //  late Database database;
   String expr = '';
   String userExpr = '';
   String pattern = '';
@@ -26,6 +31,41 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   int endPosition = 0;
 
   int tmp = 0;
+  final _auth=FirebaseAuth.instance;
+  late User signInUser; //this get current user
+  final  _history = FirebaseFirestore.instance.collection('history');
+  @override
+
+  /*void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+   */
+  Future<void> addUserHistory(xtext) {
+        return _history
+            .add({
+          'operation': xtext, // add history
+          'user': _auth.currentUser?.email //currentuser
+          , 'type': curentNumerSystem
+        })
+            .then((value) => print("User History Added"))
+            .catchError((error) => print("Failed to add user History: $error"));
+      }
+  void getHistoryData()async{
+    CollectionReference HistroyData=  FirebaseFirestore.instance.collection('history');
+   await HistroyData.where("user",isEqualTo:_auth.currentUser?.email ).get().then((value) {
+     value.docs.forEach((element) {
+       print(element.data());
+     });
+   });
+  }
 
   void check() {
     try {
@@ -99,11 +139,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
+      addUserHistory(expr);
     } else
       result = "Math Error";
 
     isResultExist = true;
     emit(CalculatorResult());
+
+   // createData();
+   // insertToDatabase();
   }
 
   void clearAll() {
@@ -113,6 +157,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     userExpr = '';
     startPosition = endPosition = userExpr.length;
     emit(CalculatorExprUpdate());
+
+
   }
 
   void del() {
@@ -218,4 +264,42 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     startPosition = start;
     endPosition = end;
   }
+
+  /*void createData()async {
+
+     database = await openDatabase(
+      join(await getDatabasesPath(), 'history.db'),
+      version: 1,
+      onCreate: (db, version) {
+        db.execute(
+            'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,user TEXT,type TEXT)')
+            .then((value) {
+          print('table created');
+        }).catchError((Error) {
+          print(Error.toString);
+        });
+      },
+      onOpen: (db) {
+        print('table open');
+      },
+    );
+
+  }
+  void insertToDatabase(){
+     database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print("$value insert succssefly");
+      }).catchError((error){
+        print("error when insert $error");
+      });
+
+    });
+  }
+
+   */
 }
+
+
+
+
+
