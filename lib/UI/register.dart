@@ -8,6 +8,8 @@ import 'package:graduation_project/Models/app_config.dart';
 class Register extends StatelessWidget {
   TextEditingController passwordcontroller = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
+  TextEditingController fNamecontroller = TextEditingController();
+  TextEditingController lNamecontroller = TextEditingController();
   TextEditingController confirmPasswoerdcontroller = TextEditingController();
 
   Register({super.key});
@@ -103,6 +105,13 @@ class Register extends StatelessWidget {
                                     floatingLabelStyle: const TextStyle(
                                       fontStyle: FontStyle.normal,
                                     ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: const BorderSide(
+                                        width: 2,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(4),
                                       borderSide: BorderSide(
@@ -121,7 +130,22 @@ class Register extends StatelessWidget {
                                               : ThemeColors.darkForegroundTeal,
                                           style: BorderStyle.solid),
                                     ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: const BorderSide(
+                                        width: 2,
+                                        color: ThemeColors.redColor,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    errorText: (state is RegisterFailure &&
+                                        state.errors['fName']!.isNotEmpty)
+                                        ? state.errors['fName']
+                                        : null,
+                                    errorStyle:
+                                    const TextStyle(color: ThemeColors.redColor),
                                   ),
+                                  controller: fNamecontroller,
                                 ),
                               ),
                               SizedBox(
@@ -149,6 +173,13 @@ class Register extends StatelessWidget {
                                     floatingLabelStyle: const TextStyle(
                                       fontStyle: FontStyle.normal,
                                     ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: const BorderSide(
+                                        width: 2,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(4),
                                       borderSide: BorderSide(
@@ -167,7 +198,22 @@ class Register extends StatelessWidget {
                                               : ThemeColors.darkForegroundTeal,
                                           style: BorderStyle.solid),
                                     ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: const BorderSide(
+                                        width: 2,
+                                        color: ThemeColors.redColor,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    errorText: (state is RegisterFailure &&
+                                        state.errors['lName']!.isNotEmpty)
+                                        ? state.errors['lName']
+                                        : null,
+                                    errorStyle:
+                                    const TextStyle(color: ThemeColors.redColor),
                                   ),
+                                  controller: lNamecontroller,
                                 ),
                               ),
                             ],
@@ -405,6 +451,8 @@ class Register extends StatelessWidget {
                               BlocProvider.of<RegisterCubit>(context)
                                   .firebaseAuth(
                                       emailcontroller.text,
+                                      fNamecontroller.text,
+                                      lNamecontroller.text,
                                       passwordcontroller.text,
                                       confirmPasswoerdcontroller.text,
                                       context);

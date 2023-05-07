@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,5 +65,9 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       emit(LoginFailure(errors: errors));
     }
+  }
+  void logout(BuildContext context){
+    _auth.signOut();
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 }
