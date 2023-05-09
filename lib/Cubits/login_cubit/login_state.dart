@@ -9,9 +9,11 @@ class LoginSuccess extends LoginState {}
 
 class LoginFailure extends LoginState {
   Map<String, String> errors;
-  LoginFailure({required this.errors}):super();
+  LoginFailure({required this.errors}) : super();
 }
 
 class LoginLoading extends LoginState {}
 
 class LoginPass extends LoginState {}
+
+class Logout extends LoginState {}

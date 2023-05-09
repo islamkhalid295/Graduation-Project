@@ -22,8 +22,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
 
+  await UserConfig().init();
 
   runApp(MultiBlocProvider(
     providers: [
@@ -53,7 +53,7 @@ class Digeator extends StatelessWidget {
   String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
-    final _auth=FirebaseAuth.instance;
+    final _auth = FirebaseAuth.instance;
 
     return BlocConsumer<ThemeCubit, ThemeState>(
       listener: (context, state) {
@@ -88,7 +88,7 @@ class Digeator extends StatelessWidget {
           '/calculator': (ctx) => Calculator(),
           '/simplification': (ctx) => Simplification(),
         },
-        initialRoute:_auth.currentUser!=null?'/calculator':'/login',
+        initialRoute: _auth.currentUser != null ? '/calculator' : '/login',
       ),
     );
   }

@@ -175,6 +175,8 @@ class KeyboardOptions extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   )),
+              onPressed:
+                  BlocProvider.of<SimplificationCubit>(context).getResult,
               child: FittedBox(
                 child: Text(
                   'Simplify',
@@ -185,7 +187,6 @@ class KeyboardOptions extends StatelessWidget {
                   ),
                 ),
               ),
-              onPressed: () {},
             ),
           ),
         ],

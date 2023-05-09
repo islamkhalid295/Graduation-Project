@@ -12,12 +12,13 @@ part 'keyboard_options.dart';
 part 'keyboard_keys.dart';
 
 class Simplification extends StatelessWidget {
-  bool showCursor = true;
   Simplification({super.key});
   String? theme;
   @override
   Widget build(BuildContext context) {
-    // SizeConfig().init(context);
+    if (SizeConfig.width == null) {
+      SizeConfig().init(context);
+    }
     theme =
         checkTheme(BlocProvider.of<ThemeCubit>(context).currentTheme, context);
     return BlocConsumer<ThemeCubit, ThemeState>(
@@ -39,121 +40,131 @@ class Simplification extends StatelessWidget {
             ? ThemeColors.lightCanvas
             : ThemeColors.darkCanvas,
         body: SafeArea(
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
-            child: Column(
-              children: [
-                if (kIsWeb || Platform.isWindows)
+          child: GestureDetector(
+            onTap: BlocProvider.of<SimplificationCubit>(context)
+                .focusNode
+                .requestFocus,
+            child: Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock! * 5),
+              child: Column(
+                children: [
+                  if (kIsWeb || Platform.isWindows)
+                    SizedBox(
+                      height: SizeConfig.heightBlock!,
+                    ),
                   SizedBox(
-                    height: SizeConfig.heightBlock!,
-                  ),
-                SizedBox(
-                  height: SizeConfig.heightBlock! * 5,
-                  child: AppBar(
-                    title: const Text(
-                      'Simplification',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    centerTitle: true,
-                    leading: FittedBox(
-                      child: Builder(
-                        builder: (context) => IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      FittedBox(
-                        child: IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.history)),
-                      )
-                    ],
-                    backgroundColor: (theme == 'light')
-                        ? ThemeColors.lightElemBG
-                        : ThemeColors.darkElemBG,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    foregroundColor: (theme == 'light')
-                        ? ThemeColors.lightForegroundTeal
-                        : ThemeColors.darkForegroundTeal,
-                    elevation: 0,
-                  ),
-                ),
-                SizedBox(
-                  height: SizeConfig.heightBlock! * 2,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child:
-                        BlocBuilder<SimplificationCubit, SimplificationState>(
-                      buildWhen: (previous, current) =>
-                          current is SimplificationEprUpdate,
-                      builder: (context, state) => SelectableText(
-                        BlocProvider.of<SimplificationCubit>(context).userExpr,
+                    height: SizeConfig.heightBlock! * 5,
+                    child: AppBar(
+                      title: const Text(
+                        'Simplification',
                         style: TextStyle(
-                          color: (theme == 'light')
-                              ? ThemeColors.lightBlackText
-                              : ThemeColors.darkWhiteText,
-                          fontSize: SizeConfig.heightBlock! * 3,
                           fontWeight: FontWeight.bold,
                         ),
-                        showCursor: true,
-                        onSelectionChanged: (selection, cause) {
-                          BlocProvider.of<SimplificationCubit>(context)
-                              .changePosition(selection.start, selection.end);
+                      ),
+                      centerTitle: true,
+                      leading: FittedBox(
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        FittedBox(
+                          child: IconButton(
+                              onPressed: () =>
+                                  BlocProvider.of<SimplificationCubit>(context)
+                                      .showHistory(context, theme!),
+                              icon: const Icon(Icons.history)),
+                        )
+                      ],
+                      backgroundColor: (theme == 'light')
+                          ? ThemeColors.lightElemBG
+                          : ThemeColors.darkElemBG,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      foregroundColor: (theme == 'light')
+                          ? ThemeColors.lightForegroundTeal
+                          : ThemeColors.darkForegroundTeal,
+                      elevation: 0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.heightBlock! * 2,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextField(
+                      style: TextStyle(
+                        color: (theme == 'light')
+                            ? ThemeColors.lightBlackText
+                            : ThemeColors.darkWhiteText,
+                        fontSize: SizeConfig.heightBlock! * 3,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      focusNode: BlocProvider.of<SimplificationCubit>(context)
+                          .focusNode,
+                      maxLines: 1,
+                      autofocus: true,
+                      controller: BlocProvider.of<SimplificationCubit>(context)
+                          .controller,
+                      keyboardType: TextInputType.none,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.zero,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.heightBlock! * 2,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child:
+                          BlocBuilder<SimplificationCubit, SimplificationState>(
+                        buildWhen: (previous, current) =>
+                            current is SimplificationResult,
+                        builder: (context, state) {
+                          return SelectableText(
+                            BlocProvider.of<SimplificationCubit>(context)
+                                .result,
+                            style: TextStyle(
+                              color: (theme == 'light')
+                                  ? (BlocProvider.of<SimplificationCubit>(
+                                              context)
+                                          .isResultExist)
+                                      ? ThemeColors.lightBlackText
+                                      : ThemeColors.lightBlackText
+                                          .withOpacity(0.5)
+                                  : (BlocProvider.of<SimplificationCubit>(
+                                              context)
+                                          .isResultExist)
+                                      ? ThemeColors.darkWhiteText
+                                      : ThemeColors.darkWhiteText
+                                          .withOpacity(0.5),
+                              fontSize: SizeConfig.heightBlock! * 3,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
+                            showCursor: true,
+                          );
                         },
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: SizeConfig.heightBlock! * 2,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child:
-                        BlocBuilder<SimplificationCubit, SimplificationState>(
-                      buildWhen: (previous, current) =>
-                          current is SimplificationResult,
-                      builder: (context, state) {
-                        return SelectableText(
-                          BlocProvider.of<SimplificationCubit>(context).result,
-                          style: TextStyle(
-                            color: (theme == 'light')
-                                ? (BlocProvider.of<SimplificationCubit>(context)
-                                        .isResultExist)
-                                    ? ThemeColors.lightBlackText
-                                    : ThemeColors.lightBlackText
-                                        .withOpacity(0.5)
-                                : (BlocProvider.of<SimplificationCubit>(context)
-                                        .isResultExist)
-                                    ? ThemeColors.darkWhiteText
-                                    : ThemeColors.darkWhiteText
-                                        .withOpacity(0.5),
-                            fontSize: SizeConfig.heightBlock! * 3,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.start,
-                          showCursor: true,
-                        );
-                      },
-                    ),
+                  SizedBox(
+                    height: SizeConfig.heightBlock! * 2,
                   ),
-                ),
-                SizedBox(
-                  height: SizeConfig.heightBlock! * 2,
-                ),
-                Keyboard(),
-              ],
+                  Keyboard(),
+                ],
+              ),
             ),
           ),
         ),

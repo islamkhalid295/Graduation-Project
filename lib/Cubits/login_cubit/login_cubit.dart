@@ -65,4 +65,8 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginFailure(errors: errors));
     }
   }
+
+  bool isLogedIn() {
+    return true;
+  }
 }

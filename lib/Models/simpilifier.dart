@@ -1,16 +1,18 @@
 import 'dart:math';
 
+import 'package:flutter/widgets.dart';
+
 import 'digital_parser.dart';
 
 class Simplifier {
   late List<Map<String, dynamic>> _soms;
   late List<String> _vars;
-  late int _noOfVars;
+  //late int _noOfVars;
   List<String> dontCareComditions = [];
 
   Simplifier({required String expr}) {
     this._vars = getExprVariables(expr);
-    this._noOfVars = _vars.length;
+    //this._noOfVars = _vars.length;
     this._soms = getSumOfMinterms(expr, _vars)
         .map((v) => {
               'soms': {int.parse(v, radix: 2)},
@@ -26,7 +28,7 @@ class Simplifier {
       required List<String> variables,
       this.dontCareComditions = const []}) {
     this._vars = variables;
-    this._noOfVars = _vars.length;
+    //this._noOfVars = _vars.length;
     this._soms = somOfMinterms
         .map((v) => {
               'soms': {int.parse(v, radix: 2)},
@@ -38,39 +40,37 @@ class Simplifier {
   }
   bool isalpha(String ch) {
     return ((ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
-        ch.codeUnitAt(0) <= 'f'.codeUnitAt(0)) ||
+            ch.codeUnitAt(0) <= 'f'.codeUnitAt(0)) ||
         (ch.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
             ch.codeUnitAt(0) <= 'F'.codeUnitAt(0)));
-
   }
 
   List<String> getExprVariables(String expr) {
-    Set<String> variables={};
-    for (int i = 0; i <expr.length; i++) {
-      if(isalpha(expr[i]))
-        variables.add(expr[i]);
+    Set<String> variables = {};
+    for (int i = 0; i < expr.length; i++) {
+      if (isalpha(expr[i])) variables.add(expr[i]);
     }
+    print(variables.toList());
+
     return variables.toList();
   }
 
   List<String> getSumOfMinterms(String expr, List<String> variables) {
     List<String> soms = List.empty(growable: true);
     String binResult;
-    int len=variables.length;
-    for (int a= 0; a < pow(2, len); a++) {
+    int len = variables.length;
+    String newExpr = expr;
+    for (int a = 0; a < pow(2, len); a++) {
       binResult = a.toRadixString(2).toString();
-      binResult=binResult.padLeft(len,'0');
-      for (int i = 0; i <variables.length; i++) {
-        for (int j = 0; j < expr.length; j++) {
-          if (variables.elementAt(i) == expr[j]) {
-            expr = expr.replaceAll(expr[j], binResult[i]);
-          }
-        }
+      binResult = binResult.padLeft(len, '0');
+      newExpr = expr;
+      for (int i = 0; i < variables.length; i++) {
+        newExpr = newExpr.replaceAll(variables[i], binResult[i]);
       }
-      //print(expr);
-      Parser p = Parser(expr, "bin");
-      if(p.sampleParser()==1) {
+      Parser p = Parser(newExpr, "bin");
+      if (p.sampleParser() == 1) {
         soms.add(binResult);
+        print('Soms = $soms');
       }
     }
     return soms;
@@ -106,7 +106,7 @@ class Simplifier {
       temp['soms'] = a['soms'].union(b['soms']);
       a['click'] = true;
       b['click'] = true;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < _vars.length; i++) {
         if (a['som'][i] != b['som'][i])
           temp['som'] = a['som'].toString().replaceRange(i, i + 1, '-');
       }
@@ -146,6 +146,7 @@ class Simplifier {
     });
     newSoms.sort(sortComaparable);
     newSoms.add({'isCompared': flag});
+
     return newSoms;
   }
 
@@ -187,18 +188,18 @@ class Simplifier {
     String str = 'f(${_vars.join(', ')}) = ';
     soms.forEach((element) {
       String som = element['som'];
-      str += '(';
-      for (int i = 0; i < _noOfVars; i++) {
+      str += '( ';
+      for (int i = 0; i < _vars.length; i++) {
         if (som[i] == '-')
           continue;
         else if (som[i] == '1')
-          str += '${_vars[i]} & ';
-        else if (som[i] == '0') str += '~${_vars[i]} & ';
+          str += '${_vars[i]} AND ';
+        else if (som[i] == '0') str += 'NOT${_vars[i]} AND ';
       }
-      str = str.substring(0, str.length - 3);
-      str += ') | ';
+      str = str.substring(0, str.length - 5);
+      str += ' ) OR ';
     });
-    str = str.substring(0, str.length - 3);
+    str = str.substring(0, str.length - 4);
     return str;
   }
 }

@@ -33,6 +33,121 @@ class MyDrawer extends StatelessWidget {
             vertical: SizeConfig.heightBlock!,
           ),
           child: Column(children: [
+            SizedBox(
+              height: SizeConfig.heightBlock! * 5,
+            ),
+            (false)
+                ? Container(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Admin',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: (theme == 'light')
+                                ? ThemeColors.lightForegroundTeal
+                                : ThemeColors.darkForegroundTeal,
+                            fontSize: SizeConfig.heightBlock! * 2,
+                            fontFamily: SizeConfig.fontName,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text('admin@gmail.com'),
+                        SizedBox(
+                          height: SizeConfig.heightBlock! * 2,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.only(
+                              left: 0,
+                            ),
+                            foregroundColor: (theme == 'light')
+                                ? ThemeColors.lightForegroundTeal
+                                : ThemeColors.darkForegroundTeal,
+                            textStyle: TextStyle(
+                              fontSize: SizeConfig.heightBlock! * 2,
+                              fontFamily: SizeConfig.fontName,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Logout\t'),
+                              Icon(
+                                Icons.logout,
+                                size: SizeConfig.heightBlock! * 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.heightBlock! * 2,
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context)
+                                    .pushReplacementNamed('/login'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: (theme == 'light')
+                                      ? ThemeColors.lightForegroundTeal
+                                      : ThemeColors.darkForegroundTeal,
+                                  textStyle: TextStyle(
+                                    fontSize: SizeConfig.heightBlock! * 3,
+                                    fontFamily: SizeConfig.fontName,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                child: const Text('Login'),
+                              ),
+                            ),
+                            SizedBox(
+                              width: SizeConfig.widthBlock!,
+                            ),
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context)
+                                    .pushReplacementNamed('/register'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: (theme == 'light')
+                                      ? ThemeColors.lightForegroundTeal
+                                      : ThemeColors.darkForegroundTeal,
+                                  textStyle: TextStyle(
+                                    fontSize: SizeConfig.heightBlock! * 3,
+                                    fontFamily: SizeConfig.fontName,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                child: const Text('Register'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: SizeConfig.heightBlock! * 5,
+                        ),
+                      ],
+                    ),
+                  ),
+            Divider(
+              height: 5,
+              thickness: 2,
+              color: (theme == 'light')
+                  ? ThemeColors.lightBlackText.withOpacity(0.25)
+                  : ThemeColors.darkWhiteText.withOpacity(0.25),
+            ),
             buildListTile(context, 'Calculator'),
             buildListTile(context, 'Simplification'),
             Padding(
