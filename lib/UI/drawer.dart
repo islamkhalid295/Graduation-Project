@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/Cubits/login_cubit/login_cubit.dart';
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/app_config.dart';
 
@@ -60,7 +61,8 @@ class MyDrawer extends StatelessWidget {
                           height: SizeConfig.heightBlock! * 2,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () => BlocProvider.of<LoginCubit>(context)
+                              .logout(context),
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.only(
                               left: 0,

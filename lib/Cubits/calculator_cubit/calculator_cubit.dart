@@ -6,7 +6,6 @@ import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/app_config.dart';
 import 'package:meta/meta.dart';
 import 'package:sqflite/sqflite.dart';
-
 import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
 import 'package:path/path.dart';
@@ -155,10 +154,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           decResult = tmp.toString();
           hexResult = tmp.toRadixString(16).toString();
           octResult = tmp.toRadixString(8).toString();
-          // print(binResult);
-          // print(decResult);
-          // print(hexResult);
-          // print(octResult);
         } else {
           binResult = BigInt.from(tmp).toUnsigned(32).toRadixString(2);
           decResult = tmp.toString();
@@ -185,25 +180,21 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   //   emit(CalculatorExprUpdate());
   // }
 
-  void updateExpr(String str, String userStr) {
+  void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
     if (isResultExist) clearAll();
-    //print('user Str: $userStr');
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    // print('( ${controller.selection.start}, ${controller.selection.end})');
     String temp = controller.text.substring(endPosition);
-    //print('temp: ${temp}, ($startPosition, $endPosition)');
     controller.text = controller.text.substring(0, startPosition) + userStr;
     print('text+str: ${controller.text}, ($startPosition, $endPosition)');
     startPosition = endPosition = controller.text.length;
     controller.text += temp;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    // print('msg: ${controller.text}, ($startPosition, $endPosition)');
     userExpr = controller.text;
     expr += str;
     this.pattern += pattern;
@@ -276,8 +267,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
               start--;
               if (start == 0) break;
             }
-            userExpr = userExpr.substring(0, start - 1) +
-                userExpr.substring(end + 2, userExpr.length);
+            controller.text = controller.text.substring(0, start - 1) +
+                controller.text.substring(end + 2, controller.text.length);
             pattern = pattern.substring(0, start - 1) +
                 pattern.substring(end + 2, pattern.length);
           }
@@ -286,8 +277,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           {
             if (pattern[startPosition - 1] == " ") startPosition--;
 
-            userExpr = userExpr.substring(0, startPosition - 1) +
-                userExpr.substring(startPosition, userExpr.length);
+            controller.text = controller.text.substring(0, startPosition - 1) +
+                controller.text
+                    .substring(startPosition, controller.text.length);
             pattern = pattern.substring(0, startPosition - 1) +
                 pattern.substring(startPosition, pattern.length);
           }
@@ -325,15 +317,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       if (pattern[endPosition - 1] == 'n') {
         end = endPosition - 2;
       }
-      userExpr = userExpr.substring(0, start) +
-          userExpr.substring(end + 2, userExpr.length);
+      controller.text = controller.text.substring(0, start) +
+          controller.text.substring(end + 2, controller.text.length);
       pattern = pattern.substring(0, start) +
           pattern.substring(end + 2, pattern.length);
     }
 
     emit(CalculatorExprUpdate());
     check();
-    startPosition = endPosition = userExpr.length;
+    startPosition = endPosition = controller.text.length;
   }
 
   void changeNumberSystem(String system) {

@@ -188,18 +188,19 @@ class Simplifier {
     String str = 'f(${_vars.join(', ')}) = ';
     soms.forEach((element) {
       String som = element['som'];
-      str += '( ';
+      // str += '( ';
       for (int i = 0; i < _vars.length; i++) {
         if (som[i] == '-')
           continue;
         else if (som[i] == '1')
-          str += '${_vars[i]} AND ';
-        else if (som[i] == '0') str += 'NOT${_vars[i]} AND ';
+          str += '${_vars[i]}.';
+        else if (som[i] == '0') str += '${_vars[i]}\'.';
       }
-      str = str.substring(0, str.length - 5);
-      str += ' ) OR ';
+      str = str.substring(0, str.length - 1);
+      // str += ' )+';
+      str += ' + ';
     });
-    str = str.substring(0, str.length - 4);
+    str = str.substring(0, str.length - 3);
     return str;
   }
 }
