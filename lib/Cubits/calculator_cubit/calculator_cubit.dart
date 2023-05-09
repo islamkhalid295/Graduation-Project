@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/app_config.dart';
 import 'package:meta/meta.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
-
+import 'package:path/path.dart';
+import 'dart:async';
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -17,6 +21,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   String expr = '';
   late String userExpr;
+  String pattern = '';
   String result = '0';
   String binResult = '0';
   String octResult = '0';
@@ -93,6 +98,47 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     },
   ];
   int tmp = 0;
+  final _auth = FirebaseAuth.instance;
+  late User signInUser; //this get current user
+  final _history = FirebaseFirestore.instance.collection('history');
+  @override
+
+  /*void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+   */
+  Future<void> addUserHistory(xtext) {
+    return _history
+        .add({
+          'operation': xtext, // add history
+          'user': _auth.currentUser?.email //currentuser
+          ,
+          'type': curentNumerSystem
+        })
+        .then((value) => print("User History Added"))
+        .catchError((error) => print("Failed to add user History: $error"));
+  }
+
+  void getHistoryData() async {
+    CollectionReference HistroyData =
+        FirebaseFirestore.instance.collection('history');
+    await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        print(element.data());
+      });
+    });
+  }
+
   void check() {
     try {
       // print(expr);
@@ -160,6 +206,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     // print('msg: ${controller.text}, ($startPosition, $endPosition)');
     userExpr = controller.text;
     expr += str;
+    this.pattern += pattern;
     check();
     emit(CalculatorExprUpdate());
   }
@@ -190,11 +237,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
+      addUserHistory(expr);
     } else
       result = "Math Error";
 
     isResultExist = true;
     emit(CalculatorResult());
+
+    // createData();
+    // insertToDatabase();
   }
 
   void clearAll() {
@@ -202,6 +253,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = false;
     controller.text = '';
     expr = '';
+    pattern = '';
     userExpr = '';
     startPosition = endPosition = userExpr.length;
     emit(CalculatorExprUpdate());
@@ -209,43 +261,35 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void del() {
     focusNode.requestFocus();
-    if (expr.length >= 2) {
-      switch (expr[expr.length - 2]) {
-        case "<":
+    if (startPosition == endPosition) {
+      if (pattern[startPosition - 1] == " ") startPosition--;
+      switch (pattern[startPosition - 1]) {
+        case "o":
           {
-            if ((expr[expr.length - 1]) == "<")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case ">":
-          {
-            if (expr.length - 1 == ">")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case "!":
-          {
-            switch (expr[expr.length - 1]) {
-              case "&":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "|":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "^":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
+            int end = startPosition - 1;
+            int start = startPosition - 1;
+            while (pattern[end + 1] == 'o') {
+              end++;
+              if (end + 1 >= pattern.length - 1) break;
             }
+            while (pattern[start - 1] == 'o') {
+              start--;
+              if (start == 0) break;
+            }
+            userExpr = userExpr.substring(0, start - 1) +
+                userExpr.substring(end + 2, userExpr.length);
+            pattern = pattern.substring(0, start - 1) +
+                pattern.substring(end + 2, pattern.length);
+          }
+          break;
+        case "n":
+          {
+            if (pattern[startPosition - 1] == " ") startPosition--;
+
+            userExpr = userExpr.substring(0, startPosition - 1) +
+                userExpr.substring(startPosition, userExpr.length);
+            pattern = pattern.substring(0, startPosition - 1) +
+                pattern.substring(startPosition, pattern.length);
           }
           break;
         default:
@@ -254,9 +298,39 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             check();
           }
       }
-    } else
-      expr = expr.substring(0, expr.length - 1);
-    userExpr = expr.replaceAll("&", " AND ").replaceAll("|", " OR ");
+    } else {
+      if (pattern[startPosition] == " ") startPosition++;
+      if (pattern[endPosition - 1] == " ") endPosition--;
+
+      int end = endPosition - 1;
+      int start = startPosition;
+      if (pattern[endPosition - 1] == 'o') {
+        if (end < pattern.length - 1) {
+          while (pattern[end + 1] == 'o') {
+            end++;
+            if (end + 1 >= pattern.length - 1) break;
+          }
+        }
+      }
+      if (pattern[startPosition] == 'o') {
+        while (pattern[start - 1] == 'o') {
+          start--;
+          if (start == 0) break;
+        }
+      }
+
+      if (pattern[startPosition] == 'n') {
+        start = startPosition;
+      }
+      if (pattern[endPosition - 1] == 'n') {
+        end = endPosition - 2;
+      }
+      userExpr = userExpr.substring(0, start) +
+          userExpr.substring(end + 2, userExpr.length);
+      pattern = pattern.substring(0, start) +
+          pattern.substring(end + 2, pattern.length);
+    }
+
     emit(CalculatorExprUpdate());
     check();
     startPosition = endPosition = userExpr.length;
@@ -393,4 +467,37 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   //   startPosition = start;
   //   endPosition = end;
   // }
+
+  /*void createData()async {
+
+     database = await openDatabase(
+      join(await getDatabasesPath(), 'history.db'),
+      version: 1,
+      onCreate: (db, version) {
+        db.execute(
+            'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,user TEXT,type TEXT)')
+            .then((value) {
+          print('table created');
+        }).catchError((Error) {
+          print(Error.toString);
+        });
+      },
+      onOpen: (db) {
+        print('table open');
+      },
+    );
+
+  }
+  void insertToDatabase(){
+     database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print("$value insert succssefly");
+      }).catchError((error){
+        print("error when insert $error");
+      });
+
+    });
+  }
+
+   */
 }
