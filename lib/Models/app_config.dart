@@ -79,4 +79,26 @@ class UserConfig {
 }
 
 //static test data
-List<Map<String, String>> testHistory = [];
+
+List<String> testSimplificationHistory = [
+  'A AND B OR C XOR D',
+  'A AND B ( OR C XOR D )',
+  'A OR B OR C XOR D',
+  'A AND B AND ( C XOR D )',
+  'A AND B OR C XOR D',
+  'A AND B OR C XOR D',
+  'A AND B ( OR C XOR D )',
+  'A OR B OR C XOR D',
+  'A AND B AND ( C XOR D )',
+  'A AND B OR C XOR D',
+  'A AND B OR C XOR D',
+  'A AND B ( OR C XOR D )',
+  'A OR B OR C XOR D',
+  'A AND B AND ( C XOR D )',
+  'A AND B OR C XOR D',
+  'A AND B OR C XOR D',
+  'A AND B ( OR C XOR D )',
+  'A OR B OR C XOR D',
+  'A AND B AND ( C XOR D )',
+  'A AND B OR C XOR D',
+];

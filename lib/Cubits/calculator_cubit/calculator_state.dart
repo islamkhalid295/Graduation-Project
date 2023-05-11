@@ -12,3 +12,5 @@ class CalculatorResult extends CalculatorState {}
 class CalculatorNumberSystemChange extends CalculatorState {}
 
 class CalculatorIsSignedChange extends CalculatorState {}
+
+class CalculatorHistoryUpdate extends CalculatorState {}

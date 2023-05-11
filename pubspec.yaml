@@ -42,6 +42,7 @@ dependencies:
   flutterfire_cli: ^0.2.7
   firebase_core_desktop: ^1.0.2
   sqflite: ^2.2.8+1
+  modal_progress_hud_nsn: ^0.4.0
 
 
 
