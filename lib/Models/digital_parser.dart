@@ -60,6 +60,7 @@ class explanationStep {
   String toString() {
     return 'explanationStep{expr: $expr, updatedPart: $updatedPart, result: $result, exprAfter: $exprAfter, start: $start, end: $end}';
   }
+
 }
 class Parser {
   //data members
