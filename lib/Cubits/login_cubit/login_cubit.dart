@@ -65,4 +65,13 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginFailure(errors: errors));
     }
   }
+
+  void logout(BuildContext context) {
+    _auth.signOut();
+    Navigator.of(context).pushReplacementNamed('/login');
+  }
+
+  bool isLogedIn() {
+    return true;
+  }
 }

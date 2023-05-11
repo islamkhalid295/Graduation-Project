@@ -5,8 +5,10 @@ abstract class SimplificationState {}
 
 class SimplificationInitial extends SimplificationState {}
 
-class SimplificationEprUpdate extends SimplificationState {}
+class SimplificationExprUpdate extends SimplificationState {}
 
 class SimplificationResult extends SimplificationState {}
 
 class SimplificationIsNormalChange extends SimplificationState {}
+
+class SimplificationHistoryUpdate extends SimplificationState {}

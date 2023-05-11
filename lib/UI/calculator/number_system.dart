@@ -91,7 +91,6 @@ class ConvertSystem extends StatelessWidget {
               str = BlocProvider.of<CalculatorCubit>(context).hexResult;
               break;
           }
-          print("System : ${system} is rebuilded");
           return Material(
             borderRadius: borderRadius,
             color:
