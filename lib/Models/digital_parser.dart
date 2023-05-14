@@ -405,18 +405,19 @@ void main() {
   // | ^ & << >> ~ ( )
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
-  try {
-    Parser p = Parser("(4|2)&5!^2^1&3", "dec");
-    //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
-    //   //                 101!&110|~11&1001!|-14
-    //   //                 101!&110|-4&1001!|-14
-    //   //                 -5|-5!|-14
-    //   //                 -5!|-14
-    //   //                 4
-    print(p.sampleParser());
-  } catch (e) {
-    print("Result not defined");
-  }
+  // try {
+  //   Parser p = Parser("(4|2)&5!^2^1&3", "dec");
+  //   //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
+  //   //   //                 101!&110|~11&1001!|-14
+  //   //   //                 101!&110|-4&1001!|-14
+  //   //   //                 -5|-5!|-14
+  //   //   //                 -5!|-14
+  //   //   //                 4
+  //   print(p.sampleParser());
+  // } catch (e) {
+  //   print("Result not defined");
+  // }
+  //print(p.expGenerator("45 AND 74 NAND 7 XOR (NOT 88 OR 65)"));
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
   //print(5 ^ 8);

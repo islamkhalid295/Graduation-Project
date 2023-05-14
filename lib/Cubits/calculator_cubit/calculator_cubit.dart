@@ -202,6 +202,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorExprUpdate());
   }
 
+  String expGenerator(String s){
+    s = s.replaceAll("NAND", "!&");
+    s = s.replaceAll("AND", "&");
+    s = s.replaceAll("XNOR", "!^");
+    s = s.replaceAll("NOR", "!|");
+    s = s.replaceAll("XOR", "^");
+    s = s.replaceAll("OR", "|");
+    s = s.replaceAll("NOT", "~");
+    s = s.replaceAll(" ", "");
+    return s;
+  }
+
   void getResult() {
     focusNode.requestFocus();
     Parser p = Parser(expr, curentNumerSystem);
