@@ -133,16 +133,8 @@ class Validator {
       s = ch;
       if (iter!.moveNext()) {
         ch = iter!.currentAsString;
-        while (isAlpha(ch)) {
-          if (iter!.rawIndex == input.length - 1) {
-            s += ch;
-            break;
-          } else {
-            s += ch;
-            iter!.moveNext();
-            ch = iter!.currentAsString;
-          }
-        }
+        if(isAlpha(ch))
+          return MyToken(Token.ERROR_SY);
         if (!isAlpha(ch)) iter!.movePrevious();
       }
       return MyToken(Token.NUMBER_SY);
@@ -282,7 +274,11 @@ class Validator {
   int t() {
     if (current_token?.name == Token.NOT_SY) {
       match(MyToken(Token.NOT_SY));
-      return ~e();
+      int tmp = e();
+      if (tmp == 1)
+        return 0;
+      else
+        return 1;
     } else
       return q();
   }
