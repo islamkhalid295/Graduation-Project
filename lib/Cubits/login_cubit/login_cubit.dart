@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
+  String name = '';
+  String email = '';
   final _auth = FirebaseAuth.instance;
   LoginCubit() : super(LoginInitial());
   bool isSecured = true;
@@ -40,6 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
 
         emit(LoginSuccess());
         if (userlogin != null) {
+          getuserData();
           Navigator.of(context).pushReplacementNamed('/calculator');
         }
       } on FirebaseAuthException catch (e) {
@@ -72,6 +76,19 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   bool isLogedIn() {
-    return true;
+    return (_auth.currentUser?.email != null);
+  }
+
+  void getuserData() async {
+    var userData = FirebaseFirestore.instance.collection('users');
+    await userData
+        .where("user", isEqualTo: _auth.currentUser?.email)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        name = '${element.get('fName')} ${element.get('lName')}';
+      });
+    });
+    email = _auth.currentUser!.email!;
   }
 }

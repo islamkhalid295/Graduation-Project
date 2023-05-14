@@ -16,6 +16,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
     userExpr = controller.text;
+    testCalculatorHistory = List.empty(growable: true);
   }
 
   String expr = '';
@@ -34,68 +35,69 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
-  List<Map<String, String>> testCalculatorHistory = [
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'oct',
-    },
-    {
-      'expr': '11 AND 10 OR 101',
-      'system': 'bin',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND F OR A1',
-      'system': 'hex',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'oct',
-    },
-    {
-      'expr': '11 AND 10 OR 101',
-      'system': 'bin',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND F OR A1',
-      'system': 'hex',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'oct',
-    },
-    {
-      'expr': '11 AND 10 OR 101',
-      'system': 'bin',
-    },
-    {
-      'expr': '1 AND 2 OR 3',
-      'system': 'dec',
-    },
-    {
-      'expr': '1 AND F OR A1',
-      'system': 'hex',
-    },
-  ];
+  late List<Map<String, String>> testCalculatorHistory;
+  // List<Map<String, String>> testCalculatorHistory = [
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'oct',
+  //   },
+  //   {
+  //     'expr': '11 AND 10 OR 101',
+  //     'system': 'bin',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND F OR A1',
+  //     'system': 'hex',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'oct',
+  //   },
+  //   {
+  //     'expr': '11 AND 10 OR 101',
+  //     'system': 'bin',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND F OR A1',
+  //     'system': 'hex',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'oct',
+  //   },
+  //   {
+  //     'expr': '11 AND 10 OR 101',
+  //     'system': 'bin',
+  //   },
+  //   {
+  //     'expr': '1 AND 2 OR 3',
+  //     'system': 'dec',
+  //   },
+  //   {
+  //     'expr': '1 AND F OR A1',
+  //     'system': 'hex',
+  //   },
+  // ];
   int tmp = 0;
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
@@ -126,16 +128,23 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         .catchError((error) => print("Failed to add user History: $error"));
   }
 
-  void getHistoryData() async {
+  Future<void> getHistoryData() async {
+    testCalculatorHistory.clear();
     CollectionReference HistroyData =
         FirebaseFirestore.instance.collection('history');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((value) {
       value.docs.forEach((element) {
-        print(element.data());
+        testCalculatorHistory.add(
+          {
+            'expr': element.get('operation'),
+            'system': element.get('type'),
+          },
+        );
       });
     });
+    emit(CalculatorExprUpdate());
   }
 
   void check() {
@@ -191,13 +200,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
     print('text+str: ${controller.text}, ($startPosition, $endPosition)');
-    startPosition = endPosition = controller.text.length;
     controller.text += temp;
-    controller.selection =
-        TextSelection.fromPosition(TextPosition(offset: endPosition));
+
     userExpr = controller.text;
     expr += str;
-    this.pattern += pattern;
+
+    this.pattern = this.pattern.substring(0, startPosition) +
+        pattern +
+        this.pattern.substring(endPosition);
+    startPosition = endPosition = controller.text.length;
+    controller.selection =
+        TextSelection.fromPosition(TextPosition(offset: endPosition));
+    print(this.pattern);
     check();
     emit(CalculatorExprUpdate());
   }
@@ -216,6 +230,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void getResult() {
     focusNode.requestFocus();
+    print(_auth.currentUser?.email);
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -240,7 +255,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
-      addUserHistory(expr);
+      addUserHistory(controller.text);
     } else
       result = "Math Error";
 
@@ -375,7 +390,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void showHistory(
     BuildContext context,
     String theme,
-  ) {
+  ) async {
+    await getHistoryData();
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(
