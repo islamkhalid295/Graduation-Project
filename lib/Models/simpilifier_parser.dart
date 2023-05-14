@@ -362,10 +362,14 @@ class Parser {
     if (current_token?.name == Token.NOT_SY) {
       match(MyToken(Token.NOT_SY));
       int tmp = e();
+
       String s = "~${tmp}";
       explanationStep step = new explanationStep(explan.last.exprAfter, s, ~tmp, explan.last.exprAfter.replaceFirst(s, (~tmp).toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
       explan.add(step);
-      return ~tmp;
+      if (tmp == 1)
+        return 0;
+      else
+        return 1;
     } else
       return q();
   }
@@ -388,36 +392,20 @@ class Parser {
 }
 
 void main() {
-
-
-
   //print(~5);
 
   //print((5).toRadixString(2));
   String input = "30";
   int tmp = 7;
-  //print(tmp.toRadixString(2).);
-
-  //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
-  //print((6).toRadixString(2));
-  //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
-  //print("999999999999999999".length); //18 int
   // | ^ & << >> ~ ( )
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
-  // try {
-  //   Parser p = Parser("(4|2)&5!^2^1&3", "dec");
-  //   //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
-  //   //   //                 101!&110|~11&1001!|-14
-  //   //   //                 101!&110|-4&1001!|-14
-  //   //   //                 -5|-5!|-14
-  //   //   //                 -5!|-14
-  //   //   //                 4
-  //   print(p.sampleParser());
-  // } catch (e) {
-  //   print("Result not defined");
-  // }
-  //print(p.expGenerator("45 AND 74 NAND 7 XOR (NOT 88 OR 65)"));
+  try {
+    Parser p = Parser("~0", "bin");
+    print(p.sampleParser());
+  } catch (e) {
+    print("Result not defined");
+  }
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
   //print(5 ^ 8);
