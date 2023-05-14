@@ -3,12 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:graduation_project/Cubits/login_cubit/login_cubit.dart';
 
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   final _auth = FirebaseAuth.instance;
-  final  userData = FirebaseFirestore.instance.collection('users');
+  final userData = FirebaseFirestore.instance.collection('users');
 
   RegisterCubit() : super(RegisterInitial());
   bool isSecured = true;
@@ -44,21 +45,23 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegisterPass());
   }
 
-  void firebaseAuth(String email, String fName,String lName ,String pass, String confirmPass,BuildContext context) async {
+  void firebaseAuth(String email, String fName, String lName, String pass,
+      String confirmPass, BuildContext context) async {
     Map<String, String> errors = {
       'email': '',
       'pass': '',
       'confirm': '',
-      'fName':'',
-      'lName':'',
+      'fName': '',
+      'lName': '',
     };
     emit(RegisterLoading());
     bool flag = true;
     if (email.isEmpty) {
       errors['email'] = 'Required Field';
       flag = false;
-    } else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[gmail]+\.[com]+")
-        .hasMatch(email)){
+    } else if (!RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[gmail]+\.[com]+")
+        .hasMatch(email)) {
       errors['email'] = 'Not valid email';
       flag = false;
     }
@@ -100,21 +103,22 @@ class RegisterCubit extends Cubit<RegisterState> {
             email: email, password: pass);
         emit(RegisterSuccess());
         addUserData(fName, lName, email);
-        Navigator.of(context).pushReplacementNamed('/calculator');
+        BlocProvider.of<LoginCubit>(context).logout(context);
+        Navigator.of(context).pushReplacementNamed('/login');
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           if (errors['pass']!.isEmpty) {
             errors['pass'] = 'The password provided is too weak.';
           } else {
             errors['pass'] =
-            '${errors['pass']!}\nThe password provided is too weak.';
+                '${errors['pass']!}\nThe password provided is too weak.';
           }
         } else if (e.code == 'email-already-in-use') {
           if (errors['pass']!.isEmpty) {
             errors['pass'] = 'The account already exists for that email.';
           } else {
             errors['pass'] =
-            '${errors['pass']!}\nThe account already exists for that email.';
+                '${errors['pass']!}\nThe account already exists for that email.';
           }
         }
         emit(RegisterFailure(errors: errors));
@@ -124,28 +128,21 @@ class RegisterCubit extends Cubit<RegisterState> {
     } else {
       emit(RegisterFailure(errors: errors));
     }
-
   }
+
   void changeConfirmPassVisibility() {
     isSecuredConfirm = !isSecuredConfirm;
     emit(RegisterConfirmPass());
   }
-  Future<void> addUserData(String fName,String lName,String email) {
+
+  Future<void> addUserData(String fName, String lName, String email) {
     return userData
         .add({
-      'lName':lName,
-      'fName':fName,
-      'user': email,
-    })
+          'lName': lName,
+          'fName': fName,
+          'user': email,
+        })
         .then((value) => print("User data Added"))
         .catchError((error) => print("Failed to add user Data: $error"));
-  }
-  void getuserData()async{
-    var userData=  FirebaseFirestore.instance.collection('users');
-    await userData.where("user",isEqualTo:_auth.currentUser?.email ).get().then((value) {
-      value.docs.forEach((element) {
-        print(element.data());
-      });
-    });
   }
 }

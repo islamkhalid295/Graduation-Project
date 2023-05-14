@@ -37,7 +37,7 @@ class MyDrawer extends StatelessWidget {
             SizedBox(
               height: SizeConfig.heightBlock! * 5,
             ),
-            (false)
+            (BlocProvider.of<LoginCubit>(context).isLogedIn())
                 ? Container(
                     alignment: AlignmentDirectional.centerStart,
                     child: Column(
@@ -45,7 +45,7 @@ class MyDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Admin',
+                          BlocProvider.of<LoginCubit>(context).name,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             color: (theme == 'light')
@@ -56,7 +56,9 @@ class MyDrawer extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text('admin@gmail.com'),
+                        Text(
+                          BlocProvider.of<LoginCubit>(context).email,
+                        ),
                         SizedBox(
                           height: SizeConfig.heightBlock! * 2,
                         ),
