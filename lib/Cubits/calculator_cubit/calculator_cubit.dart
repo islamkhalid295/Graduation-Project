@@ -22,7 +22,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String octResult = '0';
   String decResult = '0';
   String hexResult = '0';
-  String curentNumerSystem = 'bin';
+  // rmove bin
+  String curentNumerSystem = '';
 
   bool isResultExist = false;
   bool isSigned = true;
@@ -31,6 +32,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   int endPosition = 0;
 
   int tmp = 0;
+  SqlDb sqlDb=SqlDb();int id=1;
   final _auth=FirebaseAuth.instance;
   late User signInUser; //this get current user
   final  _history = FirebaseFirestore.instance.collection('history');
@@ -53,7 +55,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             .add({
           'operation': xtext, // add history
           'user': _auth.currentUser?.email //currentuser
-          , 'type': curentNumerSystem
+          , 'type': curentNumerSystem,
+          'id':id++
+
         })
             .then((value) => print("User History Added"))
             .catchError((error) => print("Failed to add user History: $error"));
@@ -114,7 +118,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorExprUpdate());
   }
 
-  void getResult() {
+  void getResult()async {
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -140,6 +144,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           }
       }
       addUserHistory(expr);
+     // sheckData();
     } else
       result = "Math Error";
 
@@ -265,7 +270,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     endPosition = end;
   }
 
-  /*void createData()async {
+  /* void createData()async {
 
      database = await openDatabase(
       join(await getDatabasesPath(), 'history.db'),
@@ -297,9 +302,88 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
    */
+
+  void sheckData()async{
+
+   // print(_auth.currentUser?.email);
+
+   // int response =await sqlDb.insertData(userExpr, curentNumerSystem);
+
+    int response =await sqlDb.deleteData(1);
+    List<Map>res=await sqlDb.readData();
+    print("response =$response" );
+    print("response =$res" );
+    print("=========================");
+  }
 }
 
+class SqlDb{
+  static Database? _db;
 
+  Future<Database?> get db async{
+    if(_db==null){
+      _db=await intialDb();
+      return _db;
+    }
+    else{
+      return _db;
+    }
+  }
+  intialDb()async{
+
+    String databasepath=await getDatabasesPath();
+    String path= join (databasepath, 'User.db');
+    Database database = await openDatabase(
+      path, version: 1,
+      onCreate: _onCreate
+      ,onOpen: (db) {
+      print('table opened');
+    },
+    );
+    return database;
+  }
+  _onCreate(Database db,int version) {
+
+    db.execute(
+        'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,type TEXT)')
+        .then((value) {
+      print('table created');
+    }).catchError((Error) {
+      print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
+      print(Error.toString);
+    });
+  }
+
+  readData()async{
+    Database?mydb=await db;
+    List<Map>response=await mydb!.rawQuery('SELECT * FROM "data"');
+    return response;
+  }
+  insertData(String userExpr,String curentNumerSystem)async{
+    Database?mydb=await db;
+    int response=await mydb!.rawInsert('INSERT INTO data( operation , type ) VALUES("$userExpr", "$curentNumerSystem" ) ');
+    return response;
+  }
+  deleteData(int Id)async{
+    Database?mydb=await db;
+    int response=await mydb!.rawDelete('DELETE  FROM "data" WHERE id=$Id');
+    return response;
+  }
+
+/* void insertToDatabase(){
+    database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print("$value insert succssefly");
+      }).catchError((error){
+        print("error when insert $error");
+      });
+
+    });
+  }
+
+
+  */
+}
 
 
 
