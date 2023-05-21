@@ -301,7 +301,7 @@ void main() {
   //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
   //print("999999999999999999".length); //18 int
   // | ^ & << >> ~ ( )
-  Validator p = Validator("a&b|C&~(k!&c>>p!|m^o!^y)", "bin");
+  Validator p = Validator("A&b|C&~(k!&c>>p!|m^o!^y)", "bin");
   p.validat();
   print(p.error);
 }

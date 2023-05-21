@@ -197,21 +197,28 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
+    if(this.pattern.length>=2) {
+      if (this.pattern[startPosition - 1] == 'o' && this.pattern[startPosition] == 'o') {
+        del();
+      }
+    }
+
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
     print('text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
 
-    userExpr = controller.text;
-    expr += str;
 
+
+    userExpr = controller.text;
+    // 0110
     this.pattern = this.pattern.substring(0, startPosition) +
         pattern +
         this.pattern.substring(endPosition);
-    startPosition = endPosition = controller.text.length;
+    startPosition = endPosition = pattern.length + endPosition;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    print(this.pattern);
+    expr = expGenerator(userExpr);
     check();
     emit(CalculatorExprUpdate());
   }
@@ -274,11 +281,19 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     pattern = '';
     userExpr = '';
     startPosition = endPosition = userExpr.length;
+    controller.selection =
+        TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
   }
 
   void del() {
     focusNode.requestFocus();
+    int start_t= 0;
+    if (startPosition != controller.selection.start ||
+        endPosition != controller.selection.end) {
+      startPosition = controller.selection.start;
+      endPosition = controller.selection.end;
+    }
     if (startPosition == endPosition) {
       if (pattern[startPosition - 1] == " ") startPosition--;
       switch (pattern[startPosition - 1]) {
@@ -286,18 +301,17 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           {
             int end = startPosition - 1;
             int start = startPosition - 1;
-            while (pattern[end + 1] == 'o') {
+            while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
               end++;
               if (end + 1 >= pattern.length - 1) break;
             }
-            while (pattern[start - 1] == 'o') {
+            while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
               start--;
               if (start == 0) break;
             }
-            controller.text = controller.text.substring(0, start - 1) +
-                controller.text.substring(end + 2, controller.text.length);
-            pattern = pattern.substring(0, start - 1) +
-                pattern.substring(end + 2, pattern.length);
+            start_t=start;
+            controller.text = controller.text.substring(0, start ) + controller.text.substring(end+1, controller.text.length);
+            this.pattern = this.pattern.substring(0, start ) + this.pattern.substring(end+1, pattern.length);
           }
           break;
         case "n":
@@ -309,6 +323,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                     .substring(startPosition, controller.text.length);
             pattern = pattern.substring(0, startPosition - 1) +
                 pattern.substring(startPosition, pattern.length);
+            start_t = startPosition - 1;
           }
           break;
         default:
@@ -325,17 +340,19 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       int start = startPosition;
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
-          while (pattern[end + 1] == 'o') {
+          while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
             end++;
             if (end + 1 >= pattern.length - 1) break;
           }
         }
       }
+
       if (pattern[startPosition] == 'o') {
-        while (pattern[start - 1] == 'o') {
+        while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
           start--;
           if (start == 0) break;
         }
+        start_t=start;
       }
 
       if (pattern[startPosition] == 'n') {
@@ -345,14 +362,17 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         end = endPosition - 2;
       }
       controller.text = controller.text.substring(0, start) +
-          controller.text.substring(end + 2, controller.text.length);
+          controller.text.substring(end+1, controller.text.length);
       pattern = pattern.substring(0, start) +
-          pattern.substring(end + 2, pattern.length);
+          pattern.substring(end+1, pattern.length);
+      expr= expGenerator(controller.text);
     }
 
     emit(CalculatorExprUpdate());
     check();
-    startPosition = endPosition = controller.text.length;
+    startPosition = endPosition = start_t;
+    controller.selection =
+        TextSelection.fromPosition(TextPosition(offset: endPosition));
   }
 
   void changeNumberSystem(String system) {

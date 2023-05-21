@@ -401,7 +401,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   try {
-    Parser p = Parser("~0", "bin");
+    Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
     print(p.sampleParser());
   } catch (e) {
     print("Result not defined");
