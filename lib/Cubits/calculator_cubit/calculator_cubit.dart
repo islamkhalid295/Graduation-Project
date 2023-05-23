@@ -359,7 +359,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         start = startPosition;
       }
       if (pattern[endPosition - 1] == 'n') {
-        end = endPosition - 2;
+        end = endPosition - 1;
       }
       controller.text = controller.text.substring(0, start) +
           controller.text.substring(end+1, controller.text.length);
