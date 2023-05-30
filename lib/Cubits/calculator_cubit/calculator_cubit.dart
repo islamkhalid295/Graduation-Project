@@ -198,7 +198,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       endPosition = controller.selection.end;
     }
     if(this.pattern.length>=2) {
-      if (this.pattern[startPosition - 1] == 'o' && this.pattern[startPosition] == 'o') {
+      if ((this.pattern[startPosition - 1] == 'o' && this.pattern[startPosition] == 'o') || startPosition != endPosition) {
         del();
       }
     }
