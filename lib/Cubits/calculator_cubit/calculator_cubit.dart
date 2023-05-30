@@ -30,9 +30,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
-
+  SqlDb sqlDb=SqlDb();
   late int startPosition, endPosition;
-
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
   late List<Map<String, String>> testCalculatorHistory;
@@ -116,22 +115,64 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
    */
-  Future<void> addUserHistory(xtext) {
-    return _history
-        .add({
-          'operation': xtext, // add history
-          'user': _auth.currentUser?.email //currentuser
-          ,
-          'type': curentNumerSystem
-        })
-        .then((value) => print("User History Added"))
-        .catchError((error) => print("Failed to add user History: $error"));
+  void updatehistory()async{
+    int count=await sqlDb.getlenght();
+    List<Map>res=await sqlDb.readData();
+    if(count>0){
+      for(int i=0;i<count;i++){
+        addUserHistory(res[i]['operation'], res[i]['type']);
+        await sqlDb.deleteData(i+1);
+      }
+    }
+  }
+  void addHistoryLocal()async{
+    int response =await sqlDb.insertData(userExpr, curentNumerSystem);
   }
 
+  Future<void> addUserHistory(xtext,type) {
+    return _history
+        .add({
+      'operation': xtext, // add history
+      'user': _auth.currentUser?.email //currentuser
+      ,
+      'type': type
+    })
+        .then((value) => print("User History Added"))
+        .catchError((error) {
+      print("Failed to add user History: ");
+      addHistoryLocal();
+    }
+    );
+  }
+
+  Future<void> deleteHistoryData(String oper) async {
+    CollectionReference HistroyData =
+    FirebaseFirestore.instance.collection('history');
+    await HistroyData.where("user", isEqualTo:_auth.currentUser?.email).where("operation",isEqualTo: oper	)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((docId) {
+        HistroyData.doc(docId.id).delete().then((value) => print("operation Deleted"))
+            .catchError((error) => print("Failed to delete operation: $error"));
+      });
+    });
+  }
+  Future<void> cleareHistoryData() async {
+    CollectionReference HistroyData =
+    FirebaseFirestore.instance.collection('history');
+    await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((docId) {
+        HistroyData.doc(docId.id).delete().then((value) => print("operation Deleted"))
+            .catchError((error) => print("Failed to delete operation: $error"));
+      });
+    });
+  }
   Future<void> getHistoryData() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
-        FirebaseFirestore.instance.collection('history');
+    FirebaseFirestore.instance.collection('history');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((value) {
@@ -262,15 +303,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
-      addUserHistory(controller.text);
+      addUserHistory(controller.text,curentNumerSystem);
     } else
       result = "Math Error";
 
     isResultExist = true;
+
     emit(CalculatorResult());
 
-    // createData();
-    // insertToDatabase();
+
+    updatehistory();
+
+
   }
 
   void clearAll() {
@@ -408,9 +452,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
   void showHistory(
-    BuildContext context,
-    String theme,
-  ) async {
+      BuildContext context,
+      String theme,
+      ) async {
     await getHistoryData();
     showModalBottomSheet(
       context: context,
@@ -503,12 +547,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       ),
     );
   }
-  // void changePosition(int start, int end) {
-  //   startPosition = start;
-  //   endPosition = end;
-  // }
+// void changePosition(int start, int end) {
+//   startPosition = start;
+//   endPosition = end;
+// }
 
-  /*void createData()async {
+/*void createData()async {
 
      database = await openDatabase(
       join(await getDatabasesPath(), 'history.db'),
@@ -540,4 +584,78 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
    */
+}
+
+class SqlDb{
+  static Database? _db;
+
+  Future<Database?> get db async{
+    if(_db==null){
+      _db=await intialDb();
+      return _db;
+    }
+    else{
+      return _db;
+    }
+  }
+  intialDb()async{
+
+    String databasepath=await getDatabasesPath();
+    String path= join (databasepath, 'User.db');
+    Database database = await openDatabase(
+      path, version: 1,
+      onCreate: _onCreate
+      ,onOpen: (db) {
+      print('table opened');
+    },
+    );
+    return database;
+  }
+  _onCreate(Database db,int version) {
+
+    db.execute(
+        'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,type TEXT)')
+        .then((value) {
+      print('table created');
+    }).catchError((Error) {
+      print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
+      print(Error.toString);
+    });
+  }
+
+  readData()async{
+    Database?mydb=await db;
+    List<Map>response=await mydb!.rawQuery('SELECT * FROM "data"');
+    return response;
+  }
+  insertData(String userExpr,String curentNumerSystem)async{
+    Database?mydb=await db;
+    int response=await mydb!.rawInsert('INSERT INTO data( operation , type ) VALUES("$userExpr", "$curentNumerSystem" ) ');
+    return response;
+  }
+  deleteData(int Id)async{
+    Database?mydb=await db;
+    int response=await mydb!.rawDelete('DELETE  FROM "data" WHERE id=$Id');
+    return response;
+  }
+  getlenght()async{
+    Database?mydb=await db;
+    int? count = Sqflite
+        .firstIntValue(await mydb!.rawQuery('SELECT COUNT(*) FROM data'));
+    return count;
+  }
+
+/* void insertToDatabase(){
+    database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print("$value insert succssefly");
+      }).catchError((error){
+        print("error when insert $error");
+      });
+
+    });
+  }
+
+
+  */
 }
