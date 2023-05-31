@@ -10,8 +10,9 @@ import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
 import 'package:path/path.dart';
 import 'dart:async';
-part 'calculator_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+part 'calculator_state.dart';
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
@@ -115,6 +116,19 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
    */
+
+  Future<void> sendWhatsAppMessage(  String text) async {
+    final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+  Future<void> sendEmailMessage( String text ) async {
+    final Uri _url = Uri.parse('mailto:?subject=hellow&body=$text');
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
   void updatehistory()async{
     int count=await sqlDb.getlenght();
     List<Map>res=await sqlDb.readData();
@@ -328,6 +342,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
+
   }
 
   void del() {
