@@ -1,12 +1,13 @@
-class documentationElement {
+class DocumentationElement {
   String title;
   String description;
   List<Example> example;
-  documentationElement({
+    DocumentationElement({
     required this.title,
     required this.description,
     required this.example,
   });
+
 }
 
 class Example {

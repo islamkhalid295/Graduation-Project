@@ -117,6 +117,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
    */
 
+
   Future<void> sendWhatsAppMessage(  String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
     if (!await launchUrl(_url)) {
@@ -142,7 +143,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void addHistoryLocal()async{
     int response =await sqlDb.insertData(userExpr, curentNumerSystem);
   }
-
   Future<void> addUserHistory(xtext,type) {
     return _history
         .add({
@@ -158,7 +158,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     );
   }
-
   Future<void> deleteHistoryData(String oper) async {
     CollectionReference HistroyData =
     FirebaseFirestore.instance.collection('history');
