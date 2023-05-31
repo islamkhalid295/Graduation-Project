@@ -133,8 +133,7 @@ class Validator {
       s = ch;
       if (iter!.moveNext()) {
         ch = iter!.currentAsString;
-        if(isAlpha(ch))
-          return MyToken(Token.ERROR_SY);
+        if (isAlpha(ch)) return MyToken(Token.ERROR_SY);
         if (!isAlpha(ch)) iter!.movePrevious();
       }
       return MyToken(Token.NUMBER_SY);
@@ -297,11 +296,11 @@ class Validator {
   }
 }
 
-void main() {
-  //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
-  //print("999999999999999999".length); //18 int
-  // | ^ & << >> ~ ( )
-  Validator p = Validator("a&b|C&~(k!&c>>p!|m^o!^y)", "bin");
-  p.validat();
-  print(p.error);
-}
+// void main() {
+//   //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
+//   //print("999999999999999999".length); //18 int
+//   // | ^ & << >> ~ ( )
+//   Validator p = Validator("a&b|C&~(k!&c>>p!|m^o!^y)", "bin");
+//   p.validat();
+//   print(p.error);
+// }

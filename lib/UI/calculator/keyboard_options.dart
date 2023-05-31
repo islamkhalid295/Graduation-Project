@@ -97,68 +97,77 @@ class KeyboardOptions extends StatelessWidget {
           ),
           Expanded(
             flex: 4,
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.widthBlock!,
-                  vertical: 0,
-                ),
-                disabledBackgroundColor: (theme == 'light')
-                    ? ThemeColors.lightCanvas
-                    : ThemeColors.darkCanvas,
-                backgroundColor: (theme == 'light')
-                    ? ThemeColors.lightCanvas
-                    : ThemeColors.darkCanvas,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: BlocProvider.of<CalculatorCubit>(context).isResultExist
-                  ? () {}
-                  : null,
-              child: BlocBuilder<CalculatorCubit, CalculatorState>(
-                builder: (context, state) {
-                  return FittedBox(
-                    child: Row(
-                      children: [
-                        Text(
-                          'Explenation',
-                          style: TextStyle(
-                            color: (theme == 'light')
-                                ? (BlocProvider.of<CalculatorCubit>(context)
-                                        .isResultExist)
-                                    ? ThemeColors.lightBlackText
-                                    : ThemeColors.lightBlackText
-                                        .withOpacity(0.5)
-                                : (BlocProvider.of<CalculatorCubit>(context)
-                                        .isResultExist)
-                                    ? ThemeColors.darkWhiteText
-                                    : ThemeColors.darkWhiteText
-                                        .withOpacity(0.5),
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeConfig.heightBlock! * 2.5,
-                          ),
-                        ),
-                        SizedBox(
-                          width: SizeConfig.widthBlock! * 2,
-                        ),
-                        Icon(
-                          Icons.info_outline,
-                          color: (theme == 'light')
-                              ? (BlocProvider.of<CalculatorCubit>(context)
-                                      .isResultExist)
-                                  ? ThemeColors.lightForegroundTeal
-                                  : ThemeColors.lightBlackText.withOpacity(0.5)
-                              : (BlocProvider.of<CalculatorCubit>(context)
-                                      .isResultExist)
-                                  ? ThemeColors.darkForegroundTeal
-                                  : ThemeColors.darkWhiteText.withOpacity(0.5),
-                        )
-                      ],
+            child: BlocBuilder<CalculatorCubit, CalculatorState>(
+              buildWhen: (previous, current) => current is CalculatorResult,
+              builder: (context, state) {
+                return FilledButton(
+                  style: FilledButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SizeConfig.widthBlock!,
+                      vertical: 0,
                     ),
-                  );
-                },
-              ),
+                    disabledBackgroundColor: (theme == 'light')
+                        ? ThemeColors.lightCanvas
+                        : ThemeColors.darkCanvas,
+                    backgroundColor: (theme == 'light')
+                        ? ThemeColors.lightCanvas
+                        : ThemeColors.darkCanvas,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed:
+                      BlocProvider.of<CalculatorCubit>(context).isResultExist
+                          ? () => BlocProvider.of<CalculatorCubit>(context)
+                              .showExplenation(context, theme!)
+                          : null,
+                  child: BlocBuilder<CalculatorCubit, CalculatorState>(
+                    builder: (context, state) {
+                      return FittedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              'Explenation',
+                              style: TextStyle(
+                                color: (theme == 'light')
+                                    ? (BlocProvider.of<CalculatorCubit>(context)
+                                            .isResultExist)
+                                        ? ThemeColors.lightBlackText
+                                        : ThemeColors.lightBlackText
+                                            .withOpacity(0.5)
+                                    : (BlocProvider.of<CalculatorCubit>(context)
+                                            .isResultExist)
+                                        ? ThemeColors.darkWhiteText
+                                        : ThemeColors.darkWhiteText
+                                            .withOpacity(0.5),
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConfig.heightBlock! * 2.5,
+                              ),
+                            ),
+                            SizedBox(
+                              width: SizeConfig.widthBlock! * 2,
+                            ),
+                            Icon(
+                              Icons.info_outline,
+                              color: (theme == 'light')
+                                  ? (BlocProvider.of<CalculatorCubit>(context)
+                                          .isResultExist)
+                                      ? ThemeColors.lightForegroundTeal
+                                      : ThemeColors.lightBlackText
+                                          .withOpacity(0.5)
+                                  : (BlocProvider.of<CalculatorCubit>(context)
+                                          .isResultExist)
+                                      ? ThemeColors.darkForegroundTeal
+                                      : ThemeColors.darkWhiteText
+                                          .withOpacity(0.5),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
           SizedBox(

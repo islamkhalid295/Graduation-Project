@@ -9,7 +9,9 @@ import 'package:sqflite/sqflite.dart';
 import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
 import 'package:path/path.dart';
-import 'dart:async';
+import 'package:flutter/services.dart';
+
+// import 'dart:async';
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -17,8 +19,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     startPosition = endPosition = controller.text.length;
     userExpr = controller.text;
     testCalculatorHistory = List.empty(growable: true);
+    explenation = List.empty(growable: true);
   }
-
   String expr = '';
   late String userExpr;
   String pattern = '';
@@ -30,6 +32,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
+  late List<ExplanationStep> explenation;
 
   late int startPosition, endPosition;
 
@@ -216,7 +219,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorExprUpdate());
   }
 
-  String expGenerator(String s){
+  String expGenerator(String s) {
     s = s.replaceAll("NAND", "!&");
     s = s.replaceAll("AND", "&");
     s = s.replaceAll("XNOR", "!^");
@@ -260,6 +263,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       result = "Math Error";
 
     isResultExist = true;
+    explenation.clear();
+    explenation = p.explan;
+    explenation.removeAt(0);
+    //print(explenation.join('\n'));
     emit(CalculatorResult());
 
     // createData();
@@ -480,6 +487,176 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void showExplenation(BuildContext context, String theme) {
+    String exp = '';
+    print(explenation.join('\n'));
+    Color textColor = theme == 'light'
+        ? ThemeColors.lightBlackText
+        : ThemeColors.darkWhiteText;
+    Color focusedTextColor = ThemeColors.blueColor;
+    Color resultFocusedTextColor = ThemeColors.redColor;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor:
+            theme == 'light' ? ThemeColors.lightCanvas : ThemeColors.darkCanvas,
+        title: const Text(
+          'Explenation',
+          textAlign: TextAlign.center,
+        ),
+        titleTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: textColor,
+        ),
+        content: SizedBox(
+          height: SizeConfig.heightBlock! * 50,
+          width: SizeConfig.widthBlock! * 75,
+          child: ListView.builder(
+            itemCount: explenation.length,
+            itemBuilder: (context, index) {
+              String spaces = '           ';
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: 'Step ${index + 1}: ',
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: explenation[index]
+                              .expr
+                              .substring(0, explenation[index].start),
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: explenation[index].expr.substring(
+                              explenation[index].start, explenation[index].end),
+                          style: TextStyle(
+                            color: focusedTextColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: explenation[index]
+                              .expr
+                              .substring(explenation[index].end),
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: spaces,
+                      children: [
+                        TextSpan(
+                          text: explenation[index].updatedPart,
+                        ),
+                        TextSpan(
+                          text: ' = ',
+                        ),
+                        TextSpan(
+                          text: explenation[index].result.toString(),
+                          style: TextStyle(
+                            color: resultFocusedTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: '$spaces = ',
+                      children: [
+                        TextSpan(
+                            text: explenation[index]
+                                .expr
+                                .substring(0, explenation[index].start)),
+                        TextSpan(
+                          text: explenation[index].result.toString(),
+                          style: TextStyle(
+                            color: resultFocusedTextColor,
+                          ),
+                        ),
+                        TextSpan(
+                            text: explenation[index]
+                                .expr
+                                .substring(explenation[index].end)),
+                      ],
+                    ),
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.heightBlock! * 2,
+                  )
+                ],
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              for (int i = 0; i < explenation.length; i++) {
+                exp += 'Step ${i + 1} : ';
+                exp += explenation[i].expr.substring(0, explenation[i].start) +
+                    ' [ ' +
+                    explenation[i]
+                        .expr
+                        .substring(explenation[i].start, explenation[i].end) +
+                    ' ] ' +
+                    explenation[i].expr.substring(explenation[i].end) +
+                    '\n';
+
+                exp += '==> ' +
+                    explenation[i].updatedPart +
+                    ' = ' +
+                    explenation[i].result.toString() +
+                    '\n';
+
+                exp += '\t' +
+                    explenation[i].expr +
+                    ' ==> ' +
+                    explenation[i].expr.substring(0, explenation[i].start) +
+                    ' [ ' +
+                    explenation[i].result.toString() +
+                    ' ] ' +
+                    explenation[i].expr.substring(explenation[i].end) +
+                    '\n';
+                exp += '\n';
+              }
+              await Clipboard.setData(ClipboardData(text: exp));
+              print(exp);
+            },
+            child: const Text('Copy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
       ),
     );
   }
