@@ -9,9 +9,9 @@ import 'package:sqflite/sqflite.dart';
 import '../../Models/digital_parser.dart';
 import '../../Models/functions.dart';
 import 'package:path/path.dart';
+import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
-
-// import 'dart:async';
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -33,7 +33,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   bool isResultExist = false;
   bool isSigned = true;
   SqlDb sqlDb = SqlDb();
-  late List<ExplanationStep> explenation;
+  late List explenation;
 
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
@@ -58,6 +58,21 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
    */
+
+  Future<void> sendWhatsAppMessage(String text) async {
+    final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
+  Future<void> sendEmailMessage(String text) async {
+    final Uri _url = Uri.parse('mailto:?subject=hellow&body=$text');
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
   void updatehistory() async {
     int count = await sqlDb.getlenght();
     List<Map> res = await sqlDb.readData();
@@ -747,7 +762,7 @@ class SqlDb {
       version: 1,
       onCreate: _onCreate,
       onOpen: (db) {
-        print('table opened');
+        //print('table opened');
       },
     );
     return database;
@@ -758,9 +773,9 @@ class SqlDb {
         .execute(
             'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,type TEXT)')
         .then((value) {
-      print('table created');
+      //print('table created');
     }).catchError((Error) {
-      print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
+      // print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
       print(Error.toString);
     });
   }
