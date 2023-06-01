@@ -87,10 +87,9 @@ class Parser {
     '!^'
   ];
   RuneIterator? iter;
-  ExplanationStep init =
-      new ExplanationStep("expr", "updatedPart", 0, "", 0, 0);
-  List<ExplanationStep> explan = [];
-  int myRadix = 0;
+  ExplanationStep init = new ExplanationStep("expr", "updatedPart", "0", "", 0, 0);
+  List<ExplanationStep>explan = [];
+  int myRadix=0;
 
   //Constructor
   Parser(this.input, this.currentNumberSystem) {
@@ -488,15 +487,25 @@ class Parser {
 }
 
 // void main() {
+//   // int.parse('ff'.toRadixString(myRadix));
 
-//   //print(~5);
+// //   //print(~5);
 
-//print((5).toRadixString(10));
-String input = "30";
-int s = 5;
-// int.parse("7", radix: 2);
-//print(int.parse(s.toRadixString(2)));
-//print(tmp.toRadixString(2).);
+// //print((5).toRadixString(10));
+//   String input = "30";
+//   int s = 5;
+// // int.parse("7", radix: 2);
+// //print(int.parse(s.toRadixString(2)));
+// //print(tmp.toRadixString(2).);
+
+  //print(~5);
+
+  //print((5).toRadixString(10));
+  String input = "30";
+  int s = 5;
+ // int.parse("7", radix: 2);
+  //print(int.parse(s.toRadixString(2)));
+  //print(tmp.toRadixString(2).);
 
 //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
 //print((6).toRadixString(2));
@@ -522,4 +531,4 @@ Parser p = Parser("F!&36|E8", "hex");
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
   //print(5 ^ 8);
-// }
+}
