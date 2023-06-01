@@ -689,7 +689,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             child: const Text('Copy'),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () async => await sendEmailMessage(getExplinationStr()),
             icon: Icon(
               Icons.mail_outlined,
               color: theme == 'light'
@@ -698,7 +698,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () async =>
+                await sendWhatsAppMessage(getExplinationStr()),
             child: const Text('WhatsApp'),
           ),
           TextButton(
