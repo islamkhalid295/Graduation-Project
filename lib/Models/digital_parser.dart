@@ -19,6 +19,8 @@ Precedence	Operator	Associativity
 <digit> = 1 ~ 9 , a ~ f
 */
 
+import 'functions.dart';
+
 enum Token {
   PLUS_SY,
   minus_SY,
@@ -74,6 +76,7 @@ class Parser {
   RuneIterator? iter;
   explanationStep init = new explanationStep("expr", "updatedPart", 0, "", 0, 0);
   List<explanationStep>explan = [];
+  int myRadix=0;
 
 
   //Constructor
@@ -82,6 +85,27 @@ class Parser {
     userExp= expGenerator(input);
     init = new explanationStep("", "", 0, userExp, 0, 0);
     explan.add(init);
+    switch (this.currentNumberSystem) {
+      case "bin":
+        {
+          myRadix=2;
+        }
+        break;
+      case "hex":
+        {
+          myRadix = 16;
+        }
+        break;
+      case "oct":
+        {
+          myRadix = 8;
+        }
+        break;
+      default:
+        {
+          myRadix = 10;
+        }
+    }
 
   }
 
@@ -184,24 +208,7 @@ class Parser {
         }
         if (!isDigit(ch)) iter!.movePrevious();
       }
-      switch (currentNumberSystem) {
-        case "bin":
-          {
-            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 2));
-          }
-        case "hex":
-          {
-            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 16));
-          }
-        case "oct":
-          {
-            return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: 8));
-          }
-        default:
-          {
-            return MyToken(Token.NUMBER_SY, value: int.parse(s));
-          }
-      }
+      return MyToken(Token.NUMBER_SY, value: int.parse(s, radix: myRadix));
     } else {
       return MyToken(Token.ERROR_SY);
     }
@@ -282,17 +289,17 @@ class Parser {
       if(current_token?.name == Token.OR_SY) {
         match(MyToken(Token.OR_SY));
         int tmp2 = o();
-        String s="${tmp} OR ${tmp2}";
+        String s="${tmp.toRadixString(myRadix)} OR ${tmp2.toRadixString(myRadix)}";
         tmp = tmp | tmp2;
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
 
       }else if(current_token?.name == Token.NOR_SY){
         match(MyToken(Token.NOR_SY));
         int tmp2 = o();
-        String s = "${tmp} NOR ${tmp2}";
+        String s = "${tmp.toRadixString(myRadix)} NOR ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp | tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }
     }
@@ -306,16 +313,16 @@ class Parser {
       if(current_token?.name == Token.XOR_SY) {
         match(MyToken(Token.XOR_SY));
         tmp2 = s();
-        String ss = "${tmp} XOR ${tmp2}";
+        String ss = "${tmp.toRadixString(myRadix)} XOR ${tmp2.toRadixString(myRadix)}";
         tmp = tmp ^ tmp2;
-        explanationStep step = new explanationStep(explan.last.exprAfter, ss, tmp, explan.last.exprAfter.replaceFirst(ss, tmp.toString()),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
+        explanationStep step = new explanationStep(explan.last.exprAfter, ss, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
         explan.add(step);
       }else if(current_token?.name == Token.XNOR_SY){
         match(MyToken(Token.XNOR_SY));
         tmp2 = s();
-        String ss = "${tmp} XNOR ${tmp2}";
+        String ss = "${tmp.toRadixString(myRadix)} XNOR ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp ^ tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, ss, tmp, explan.last.exprAfter.replaceFirst(ss, tmp.toString()),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
+        explanationStep step = new explanationStep(explan.last.exprAfter, ss, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
         explan.add(step);
       }
     }
@@ -328,16 +335,16 @@ class Parser {
       if(current_token?.name == Token.AND_SY) {
         match(MyToken(Token.AND_SY));
         int tmp2 = e();
-        String s ="${tmp} AND ${tmp2}";
+        String s ="${tmp.toRadixString(myRadix)} AND ${tmp2.toRadixString(myRadix)}";
         tmp = tmp & tmp2 ;
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }else if (current_token?.name == Token.NAND_SY){
         match(MyToken(Token.NAND_SY));
         int tmp2 = e();
-        String s = "${tmp} NAND ${tmp2}";
+        String s = "${tmp.toRadixString(myRadix)} NAND ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp & tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
 
       }
@@ -354,15 +361,15 @@ class Parser {
         current_token?.name == Token.SR_SY) {
       if (current_token?.name == Token.SL_SY) {
         match(MyToken(Token.SL_SY));
-        String s = "${tmp} << ${t()}";
+        String s = "${tmp.toRadixString(myRadix)} << ${t().toRadixString(myRadix)}";
         tmp = tmp << t();
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       } else {
         match(MyToken(Token.SR_SY));
-        String s = "${tmp} >> ${t()}";
+        String s = "${tmp.toRadixString(myRadix)} >> ${t().toRadixString(myRadix)}";
         tmp = tmp >> t();
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }
     }
@@ -374,8 +381,8 @@ class Parser {
     if (current_token?.name == Token.NOT_SY) {
       match(MyToken(Token.NOT_SY));
       int tmp = e();
-      String s = "NOT ${tmp}";
-      explanationStep step = new explanationStep(explan.last.exprAfter, s, ~tmp, explan.last.exprAfter.replaceFirst(s, (~tmp).toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+      String s = "NOT ${tmp.toRadixString(myRadix)}";
+      explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse((~tmp).toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, (~tmp).toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
       explan.add(step);
       return ~tmp;
     } else
@@ -387,8 +394,8 @@ class Parser {
     if (current_token?.name == Token.LB_SY) {
       match(MyToken(Token.LB_SY));
       int tmp = z();
-      String s = "(${tmp})";
-      explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp, explan.last.exprAfter.replaceFirst(s, tmp.toString()),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+      String s = "(${tmp.toRadixString(myRadix)})";
+      explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
       explan.add(step);
       match(MyToken(Token.RB_SY));
       return tmp;
@@ -405,9 +412,11 @@ void main() {
 
   //print(~5);
 
-  //print((5).toRadixString(2));
+  //print((5).toRadixString(10));
   String input = "30";
-  int tmp = 7;
+  int s = 5;
+ // int.parse("7", radix: 2);
+  //print(int.parse(s.toRadixString(2)));
   //print(tmp.toRadixString(2).);
 
   //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
@@ -418,14 +427,14 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-    Parser p = Parser("4&6!&8!^3&~4!|2", "dec");
-  //   //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
+   Parser p = Parser("4&6!&8!^3&~4!|2", "dec");
+   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
   //   //   //                 101!&110|-4&1001!|-14
   //   //   //                 -5|-5!|-14
   //   //   //                 -5!|-14
   //   //   //                 4
-    print(p.sampleParser());
+  print(p.sampleParser());
   // } catch (e) {
   //   print("Result not defined");
   // }
