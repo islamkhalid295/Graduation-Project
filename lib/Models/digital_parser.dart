@@ -501,12 +501,13 @@ int s = 5;
 //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
 //print((6).toRadixString(2));
 //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
-//print(()=>"999999999999999999".length); //18 int
+//print("999999999999999999".length); //18 int
 // | ^ & << >> ~ ( )
 //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
 //Parser p = Parser("9<<~8","dec");
 // try {
-Parser p = Parser("4&6!&8!^3&~4!|2", "dec");
+Parser p = Parser("F!&36|E8", "hex");
+   //Parser p = Parser("7!&2|5", "oct");
    //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
   //   //   //                 101!&110|-4&1001!|-14
