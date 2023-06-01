@@ -51,7 +51,7 @@ class MyToken {
 class explanationStep {
   String expr = "";
   String updatedPart = "";
-  int result = 0;
+  String result = "0";
   String exprAfter = "";
   int start = 0;
   int end = 0;
@@ -74,7 +74,7 @@ class Parser {
   bool error = false;
   List<String> operator = ['&', '|', '~', '(', ')', '<<', '>>','!|','!&','!^'];
   RuneIterator? iter;
-  explanationStep init = new explanationStep("expr", "updatedPart", 0, "", 0, 0);
+  explanationStep init = new explanationStep("expr", "updatedPart", "0", "", 0, 0);
   List<explanationStep>explan = [];
   int myRadix=0;
 
@@ -83,7 +83,7 @@ class Parser {
   Parser(this.input, this.currentNumberSystem) {
     iter = input.runes.iterator;
     userExp= expGenerator(input.toLowerCase());
-    init = new explanationStep("", "", 0, userExp, 0, 0);
+    init = new explanationStep("", "", "0", userExp, 0, 0);
     explan.add(init);
     switch (this.currentNumberSystem) {
       case "bin":
@@ -291,7 +291,7 @@ class Parser {
         int tmp2 = o();
         String s="${tmp.toRadixString(myRadix)} OR ${tmp2.toRadixString(myRadix)}";
         tmp = tmp | tmp2;
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
 
       }else if(current_token?.name == Token.NOR_SY){
@@ -299,7 +299,7 @@ class Parser {
         int tmp2 = o();
         String s = "${tmp.toRadixString(myRadix)} NOR ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp | tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }
     }
@@ -315,14 +315,14 @@ class Parser {
         tmp2 = s();
         String ss = "${tmp.toRadixString(myRadix)} XOR ${tmp2.toRadixString(myRadix)}";
         tmp = tmp ^ tmp2;
-        explanationStep step = new explanationStep(explan.last.exprAfter, ss, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
+        explanationStep step = new explanationStep(explan.last.exprAfter, ss, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
         explan.add(step);
       }else if(current_token?.name == Token.XNOR_SY){
         match(MyToken(Token.XNOR_SY));
         tmp2 = s();
         String ss = "${tmp.toRadixString(myRadix)} XNOR ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp ^ tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, ss, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
+        explanationStep step = new explanationStep(explan.last.exprAfter, ss, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(ss, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(ss), ss.length + explan.last.exprAfter.indexOf(ss));
         explan.add(step);
       }
     }
@@ -337,14 +337,14 @@ class Parser {
         int tmp2 = e();
         String s ="${tmp.toRadixString(myRadix)} AND ${tmp2.toRadixString(myRadix)}";
         tmp = tmp & tmp2 ;
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }else if (current_token?.name == Token.NAND_SY){
         match(MyToken(Token.NAND_SY));
         int tmp2 = e();
         String s = "${tmp.toRadixString(myRadix)} NAND ${tmp2.toRadixString(myRadix)}";
         tmp = ~(tmp & tmp2);
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
 
       }
@@ -363,13 +363,13 @@ class Parser {
         match(MyToken(Token.SL_SY));
         String s = "${tmp.toRadixString(myRadix)} << ${t().toRadixString(myRadix)}";
         tmp = tmp << t();
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       } else {
         match(MyToken(Token.SR_SY));
         String s = "${tmp.toRadixString(myRadix)} >> ${t().toRadixString(myRadix)}";
         tmp = tmp >> t();
-        explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+        explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
         explan.add(step);
       }
     }
@@ -382,7 +382,7 @@ class Parser {
       match(MyToken(Token.NOT_SY));
       int tmp = e();
       String s = "NOT ${tmp.toRadixString(myRadix)}";
-      explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse((~tmp).toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, (~tmp).toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+      explanationStep step = new explanationStep(explan.last.exprAfter, s, (~tmp).toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, (~tmp).toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
       explan.add(step);
       return ~tmp;
     } else
@@ -395,7 +395,7 @@ class Parser {
       match(MyToken(Token.LB_SY));
       int tmp = z();
       String s = "(${tmp.toRadixString(myRadix)})";
-      explanationStep step = new explanationStep(explan.last.exprAfter, s, int.parse(tmp.toRadixString(myRadix)), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
+      explanationStep step = new explanationStep(explan.last.exprAfter, s, tmp.toRadixString(myRadix), explan.last.exprAfter.replaceFirst(s, tmp.toRadixString(myRadix)),explan.last.exprAfter.indexOf(s), s.length + explan.last.exprAfter.indexOf(s));
       explan.add(step);
       match(MyToken(Token.RB_SY));
       return tmp;
@@ -427,7 +427,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-   Parser p = Parser("F!&36|E8", "hex");
+   Parser p = Parser("233|EF!^119", "hex");
    //Parser p = Parser("7!&2|5", "oct");
    //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
