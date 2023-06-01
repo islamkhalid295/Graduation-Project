@@ -82,7 +82,7 @@ class Parser {
   //Constructor
   Parser(this.input, this.currentNumberSystem) {
     iter = input.runes.iterator;
-    userExp= expGenerator(input);
+    userExp= expGenerator(input.toLowerCase());
     init = new explanationStep("", "", 0, userExp, 0, 0);
     explan.add(init);
     switch (this.currentNumberSystem) {
@@ -427,7 +427,8 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-   Parser p = Parser("4&6!&8!^3&~4!|2", "dec");
+   Parser p = Parser("F!&36|E8", "hex");
+   //Parser p = Parser("7!&2|5", "oct");
    //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
   //   //   //                 101!&110|-4&1001!|-14
