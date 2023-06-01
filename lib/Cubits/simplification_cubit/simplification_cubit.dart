@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Models/app_config.dart';
+import '../../Models/exp_validation.dart';
 import '../../Models/simpilifier.dart';
 import 'package:meta/meta.dart';
 
@@ -10,7 +11,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   SimplificationCubit() : super(SimplificationInitial()) {
     startPosition = endPosition = controller.text.length;
   }
-
+  String pattern = '';
   String expr = '';
   String userExpr = '';
   String result = 'No Result';
@@ -58,29 +59,44 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   //   emit(SimplificationEprUpdate());
   //   //print('$startPosition, $endPosition');
   // }
-  void updateExpr(String str, String userStr) {
+  void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
     if (isResultExist) clearAll();
-    // print('user Str: $userStr');
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    // print('( ${controller.selection.start}, ${controller.selection.end})');
+    if(this.pattern.length>=2) {
+      if ((this.pattern[startPosition - 1] == 'o' && this.pattern[startPosition] == 'o') || startPosition != endPosition) {
+        del();
+      }
+    }
     String temp = controller.text.substring(endPosition);
-    // print('temp: ${temp}, ($startPosition, $endPosition)');
     controller.text = controller.text.substring(0, startPosition) + userStr;
-    // print('text+str: ${controller.text}, ($startPosition, $endPosition)');
-    startPosition = endPosition = controller.text.length;
+    print('text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
+    userExpr = controller.text;
+    // 0110
+    this.pattern = this.pattern.substring(0, startPosition) +
+        pattern +
+        this.pattern.substring(endPosition);
+    startPosition = endPosition = pattern.length + endPosition;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    // print('msg: ${controller.text}, ($startPosition, $endPosition)');
-    userExpr = controller.text;
-    expr += str;
-    isResultExist = false;
+    expr = expGenerator(userExpr);
     emit(SimplificationExprUpdate());
+  }
+  String expGenerator(String s){
+    s = s.replaceAll("NAND", "!&");
+    s = s.replaceAll("AND", "&");
+    s = s.replaceAll("XNOR", "!^");
+    s = s.replaceAll("NOR", "!|");
+    s = s.replaceAll("XOR", "^");
+    s = s.replaceAll("OR", "|");
+    s = s.replaceAll("NOT", "~");
+    s = s.replaceAll(" ", "");
+    return s;
   }
 
   void getResult() {
@@ -88,7 +104,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     //code
     // Simplifier simplifier = Simplifier(expr: expr);
     Simplifier simplifier = Simplifier(expr: expr);
-    result = simplifier.simpilify();
+    Validator v = Validator(expr, "bin");
+    v.validat();
+    if(v.error == false) {
+      result = simplifier.simpilify();
+    }else
+      {
+        result = "invalid Expression";
+      }
     isResultExist = true;
     emit(SimplificationResult());
   }
@@ -98,51 +121,52 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     isResultExist = false;
     controller.text = '';
     expr = '';
-    result = 'No Result';
+    pattern = '';
+    userExpr = '';
     startPosition = endPosition = userExpr.length;
+    controller.selection =
+        TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(SimplificationExprUpdate());
-    emit(SimplificationResult());
   }
 
   void del() {
     focusNode.requestFocus();
-    if (expr.length >= 2) {
-      switch (expr[expr.length - 2]) {
-        case "<":
+    int start_t= 0;
+    if (startPosition != controller.selection.start ||
+        endPosition != controller.selection.end) {
+      startPosition = controller.selection.start;
+      endPosition = controller.selection.end;
+    }
+    if (startPosition == endPosition) {
+      if (pattern[startPosition - 1] == " ") startPosition--;
+      switch (pattern[startPosition - 1]) {
+        case "o":
           {
-            if ((expr[expr.length - 1]) == "<")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case ">":
-          {
-            if (expr.length - 1 == ">")
-              expr = expr.substring(0, expr.length - 2);
-            else
-              expr = expr.substring(0, expr.length - 1);
-          }
-          break;
-        case "!":
-          {
-            switch (expr[expr.length - 1]) {
-              case "&":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "|":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
-              case "^":
-                {
-                  expr = expr.substring(0, expr.length - 2);
-                }
-                break;
+            int end = startPosition - 1;
+            int start = startPosition - 1;
+            while (pattern[end + 1] == 'o' || pattern[end] == 'o') {
+              end++;
+              if (end + 1 >= pattern.length - 1) break;
             }
+            while (pattern[start - 1] == 'o' || pattern[start ] == 'o') {
+              start--;
+              if (start == 0) break;
+            }
+            start_t=start;
+            controller.text = controller.text.substring(0, start ) + controller.text.substring(end+1, controller.text.length);
+            this.pattern = this.pattern.substring(0, start ) + this.pattern.substring(end+1, pattern.length);
+          }
+          break;
+        case "n":
+          {
+            if (pattern[startPosition - 1] == " ") startPosition--;
+
+            controller.text = controller.text.substring(0, startPosition - 1) +
+                controller.text
+                    .substring(startPosition, controller.text.length);
+            pattern = pattern.substring(0, startPosition - 1) +
+                pattern.substring(startPosition, pattern.length);
+            start_t = startPosition - 1;
           }
           break;
         default:
@@ -150,9 +174,52 @@ class SimplificationCubit extends Cubit<SimplificationState> {
             expr = expr.substring(0, expr.length - 1);
           }
       }
-    } else
-      expr = expr.substring(0, expr.length - 1);
+    } else {
+      if (pattern[startPosition] == " ") startPosition++;
+      if (pattern[endPosition - 1] == " ") endPosition--;
+
+      int end = endPosition - 1;
+      int start = startPosition;
+      if (pattern[endPosition - 1] == 'o') {
+        if (end < pattern.length - 1) {
+          while (pattern[end + 1] == 'o') {
+            end++;
+            if (end + 1 >= pattern.length - 1) break;
+          }
+          end++;
+        }
+      }
+
+      if (pattern[startPosition] == 'o') {
+        while (pattern[start - 1] == 'o' ) {
+          start--;
+          if (start == 0) break;
+        }
+        start--;
+        start_t=start;
+      }
+
+      if (pattern[startPosition] == 'n') {
+        start = startPosition;
+        start_t=start;
+      }
+      if (pattern[endPosition - 1] == 'n') {
+        end = endPosition - 1;
+        start_t=start;
+      }
+      controller.text = controller.text.substring(0, start) +
+          controller.text.substring(end+1, controller.text.length);
+      pattern = pattern.substring(0, start) +
+          pattern.substring(end+1, pattern.length);
+      expr= expGenerator(controller.text);
+    }
+
+    emit(SimplificationExprUpdate());
+    startPosition = endPosition = start_t;
+    controller.selection =
+        TextSelection.fromPosition(TextPosition(offset: endPosition));
   }
+
 
   void isNormalChanger() {
     focusNode.requestFocus();

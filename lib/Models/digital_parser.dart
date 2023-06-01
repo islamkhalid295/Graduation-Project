@@ -67,6 +67,7 @@ class ExplanationStep {
 class Parser {
   //data members
   String input = "";
+  String userExp = "";
   String currentNumberSystem = "";
   MyToken? current_token;
   MyToken? previous_token;
@@ -91,7 +92,8 @@ class Parser {
   //Constructor
   Parser(this.input, this.currentNumberSystem) {
     iter = input.runes.iterator;
-    init = new ExplanationStep("", "", 0, input, 0, 0);
+    userExp = expGenerator(input);
+    init = new ExplanationStep("", "", 0, userExp, 0, 0);
     explan.add(init);
   }
 
@@ -99,6 +101,17 @@ class Parser {
   // bool isOperator(String s) {
   //   return operator.contains(s);
   // }
+  String expGenerator(String s) {
+    s = s.replaceAll("!&", " NAND ");
+    s = s.replaceAll("&", " AND ");
+    s = s.replaceAll("!^", " XNOR ");
+    s = s.replaceAll("!|", " NOR ");
+    s = s.replaceAll("^", " XOR ");
+    s = s.replaceAll("|", " OR ");
+    s = s.replaceAll("~", "NOT ");
+    //s = s.replaceAll(" ", "");
+    return s;
+  }
 
   bool isDigit(String ch) {
     bool isAlpha(String ch) {
@@ -244,14 +257,14 @@ class Parser {
   }
 
   void syntax_error(MyToken t) {
-    print("${name(t)} is not expected\n");
+    print(() => "${name(t)} is not expected\n");
   }
 
   void match(MyToken t) {
     if (t.name == current_token?.name && !(t.name == Token.NUMBER_SY)) {
-      //print("${name(t)}  is matched\n");
+      //print(()=>"${name(t)}  is matched\n");
     } else if (t.name == current_token?.name && (t.name == Token.NUMBER_SY)) {
-      //print("${name(t)}  is matched with value ${current_token?.value}\n");
+      //print(()=>"${name(t)}  is matched with value ${current_token?.value}\n");
     } else {
       syntax_error(current_token!);
       error = true;
@@ -265,7 +278,7 @@ class Parser {
     int tmp = z();
     match(MyToken(Token.END_SOURCE_SY));
     for (int i = 0; i < explan.length; i++) {
-      print("${i} : ${explan[i].toString()}");
+      print(() => "${i} : ${explan[i].toString()}");
     }
     //print(explan);
     return tmp;
@@ -282,7 +295,7 @@ class Parser {
       if (current_token?.name == Token.OR_SY) {
         match(MyToken(Token.OR_SY));
         int tmp2 = o();
-        String s = "${tmp}|${tmp2}";
+        String s = "${tmp} OR ${tmp2}";
         tmp = tmp | tmp2;
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -295,7 +308,7 @@ class Parser {
       } else if (current_token?.name == Token.NOR_SY) {
         match(MyToken(Token.NOR_SY));
         int tmp2 = o();
-        String s = "${tmp}!|${tmp2}";
+        String s = "${tmp} NOR ${tmp2}";
         tmp = ~(tmp | tmp2);
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -318,7 +331,7 @@ class Parser {
       if (current_token?.name == Token.XOR_SY) {
         match(MyToken(Token.XOR_SY));
         tmp2 = s();
-        String ss = "${tmp}^${tmp2}";
+        String ss = "${tmp} XOR ${tmp2}";
         tmp = tmp ^ tmp2;
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -331,7 +344,7 @@ class Parser {
       } else if (current_token?.name == Token.XNOR_SY) {
         match(MyToken(Token.XNOR_SY));
         tmp2 = s();
-        String ss = "${tmp}!^${tmp2}";
+        String ss = "${tmp} XNOR ${tmp2}";
         tmp = ~(tmp ^ tmp2);
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -353,7 +366,7 @@ class Parser {
       if (current_token?.name == Token.AND_SY) {
         match(MyToken(Token.AND_SY));
         int tmp2 = e();
-        String s = "${tmp}&${tmp2}";
+        String s = "${tmp} AND ${tmp2}";
         tmp = tmp & tmp2;
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -366,7 +379,7 @@ class Parser {
       } else if (current_token?.name == Token.NAND_SY) {
         match(MyToken(Token.NAND_SY));
         int tmp2 = e();
-        String s = "${tmp}!&${tmp2}";
+        String s = "${tmp} NAND ${tmp2}";
         tmp = ~(tmp & tmp2);
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -390,7 +403,7 @@ class Parser {
         current_token?.name == Token.SR_SY) {
       if (current_token?.name == Token.SL_SY) {
         match(MyToken(Token.SL_SY));
-        String s = "${tmp}<<${t()}";
+        String s = "${tmp} << ${t()}";
         tmp = tmp << t();
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -402,7 +415,7 @@ class Parser {
         explan.add(step);
       } else {
         match(MyToken(Token.SR_SY));
-        String s = "${tmp}>>${t()}";
+        String s = "${tmp} >> ${t()}";
         tmp = tmp >> t();
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
@@ -422,7 +435,7 @@ class Parser {
     if (current_token?.name == Token.NOT_SY) {
       match(MyToken(Token.NOT_SY));
       int tmp = e();
-      String s = "~${tmp}";
+      String s = "NOT ${tmp}";
       ExplanationStep step = new ExplanationStep(
           explan.last.exprAfter,
           s,
@@ -470,27 +483,27 @@ class Parser {
 //   int tmp = 7;
 //   //print(tmp.toRadixString(2).);
 
-//   //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
-//   //print((6).toRadixString(2));
-//   //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
-//   //print("999999999999999999".length); //18 int
-//   // | ^ & << >> ~ ( )
-//   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
-//   //Parser p = Parser("9<<~8","dec");
-//   // try {
-//   //   Parser p = Parser("(4|2)&5!^2^1&3", "dec");
-//   //   //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
-//   //   //   //                 101!&110|~11&1001!|-14
-//   //   //   //                 101!&110|-4&1001!|-14
-//   //   //   //                 -5|-5!|-14
-//   //   //   //                 -5!|-14
-//   //   //   //                 4
-//   //   print(p.sampleParser());
-//   // } catch (e) {
-//   //   print("Result not defined");
-//   // }
-//   //print(p.expGenerator("45 AND 74 NAND 7 XOR (NOT 88 OR 65)"));
-//   //Result not defined
-//   //Parser p = Parser("1001|0110&101<<10","bin");
-//   //print(5 ^ 8);
+  //print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
+  //print((6).toRadixString(2));
+  //print((BigInt.from(-5).toUnsigned(64).decToBinary()));
+  //print(()=>"999999999999999999".length); //18 int
+  // | ^ & << >> ~ ( )
+  //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
+  //Parser p = Parser("9<<~8","dec");
+  // try {
+    // Parser p = Parser("4&6!&8!^3&~4!|2", "dec");
+  //   //   Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
+  //   //   //                 101!&110|~11&1001!|-14
+  //   //   //                 101!&110|-4&1001!|-14
+  //   //   //                 -5|-5!|-14
+  //   //   //                 -5!|-14
+  //   //   //                 4
+    // print(p.sampleParser());
+  // } catch (e) {
+  //   print(()=>"Result not defined");
+  // }
+  //print(p.expGenerator("45 AND 74 NAND 7 XOR (NOT 88 OR 65)"));
+  //Result not defined
+  //Parser p = Parser("1001|0110&101<<10","bin");
+  //print(5 ^ 8);
 // }

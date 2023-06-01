@@ -78,8 +78,6 @@ class UserConfig {
   }
 }
 
-//static test data
-
 List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
   'A AND B ( OR C XOR D )',
