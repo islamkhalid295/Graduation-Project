@@ -11,15 +11,16 @@ import '../../Models/functions.dart';
 import 'package:path/path.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:flutter/services.dart';
 part 'calculator_state.dart';
+
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
     userExpr = controller.text;
     testCalculatorHistory = List.empty(growable: true);
+    explenation = List.empty(growable: true);
   }
-
   String expr = '';
   late String userExpr;
   String pattern = '';
@@ -31,73 +32,14 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
-  SqlDb sqlDb=SqlDb();
+  SqlDb sqlDb = SqlDb();
+  late List explenation;
+
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
   late List<Map<String, String>> testCalculatorHistory;
-  // List<Map<String, String>> testCalculatorHistory = [
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'oct',
-  //   },
-  //   {
-  //     'expr': '11 AND 10 OR 101',
-  //     'system': 'bin',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND F OR A1',
-  //     'system': 'hex',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'oct',
-  //   },
-  //   {
-  //     'expr': '11 AND 10 OR 101',
-  //     'system': 'bin',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND F OR A1',
-  //     'system': 'hex',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'oct',
-  //   },
-  //   {
-  //     'expr': '11 AND 10 OR 101',
-  //     'system': 'bin',
-  //   },
-  //   {
-  //     'expr': '1 AND 2 OR 3',
-  //     'system': 'dec',
-  //   },
-  //   {
-  //     'expr': '1 AND F OR A1',
-  //     'system': 'hex',
-  //   },
-  // ];
+
   int tmp = 0;
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
@@ -117,75 +59,87 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
    */
 
-
-  Future<void> sendWhatsAppMessage(  String text) async {
+  Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
     if (!await launchUrl(_url)) {
       throw Exception('Could not launch $_url');
     }
   }
-  Future<void> sendEmailMessage( String text ) async {
+
+  Future<void> sendEmailMessage(String text) async {
     final Uri _url = Uri.parse('mailto:?subject=hellow&body=$text');
     if (!await launchUrl(_url)) {
       throw Exception('Could not launch $_url');
     }
   }
-  void updatehistory()async{
-    int count=await sqlDb.getlenght();
-    List<Map>res=await sqlDb.readData();
-    if(count>0){
-      for(int i=0;i<count;i++){
+
+  void updatehistory() async {
+    int count = await sqlDb.getlenght();
+    List<Map> res = await sqlDb.readData();
+    if (count > 0) {
+      for (int i = 0; i < count; i++) {
         addUserHistory(res[i]['operation'], res[i]['type']);
-        await sqlDb.deleteData(i+1);
+        await sqlDb.deleteData(i + 1);
       }
     }
   }
-  void addHistoryLocal()async{
-    int response =await sqlDb.insertData(userExpr, curentNumerSystem);
+
+  void addHistoryLocal() async {
+    int response = await sqlDb.insertData(userExpr, curentNumerSystem);
   }
-  Future<void> addUserHistory(xtext,type) {
+
+  Future<void> addUserHistory(xtext, type) {
     return _history
         .add({
-      'operation': xtext, // add history
-      'user': _auth.currentUser?.email //currentuser
-      ,
-      'type': type
-    })
-        .then((value) => print("User History Added"))
+          'operation': xtext, // add history
+          'user': _auth.currentUser?.email //currentuser
+          ,
+          'type': type
+        })
+        .then((value) => print(() => "User History Added"))
         .catchError((error) {
-      print("Failed to add user History: ");
-      addHistoryLocal();
-    }
-    );
+          print(() => "Failed to add user History: ");
+          addHistoryLocal();
+        });
   }
+
   Future<void> deleteHistoryData(String oper) async {
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('history');
-    await HistroyData.where("user", isEqualTo:_auth.currentUser?.email).where("operation",isEqualTo: oper	)
+        FirebaseFirestore.instance.collection('history');
+    await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
+        .where("operation", isEqualTo: oper)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((docId) {
-        HistroyData.doc(docId.id).delete().then((value) => print("operation Deleted"))
-            .catchError((error) => print("Failed to delete operation: $error"));
+        HistroyData.doc(docId.id)
+            .delete()
+            .then((value) => print(() => "operation Deleted"))
+            .catchError(
+                (error) => print(() => "Failed to delete operation: $error"));
       });
     });
   }
+
   Future<void> cleareHistoryData() async {
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('history');
+        FirebaseFirestore.instance.collection('history');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((docId) {
-        HistroyData.doc(docId.id).delete().then((value) => print("operation Deleted"))
-            .catchError((error) => print("Failed to delete operation: $error"));
+        HistroyData.doc(docId.id)
+            .delete()
+            .then((value) => print(() => "operation Deleted"))
+            .catchError(
+                (error) => print(() => "Failed to delete operation: $error"));
       });
     });
   }
+
   Future<void> getHistoryData() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('history');
+        FirebaseFirestore.instance.collection('history');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((value) {
@@ -229,20 +183,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
-  // void updateExpr(String str, String userStr) {
-  //   String temp = userExpr.substring(endPosition);
-  //   isResultExist = false;
-  //   result = 'No Result';
-  //   //if (expr.isEmpty) userExpr = '';
-  //   expr += str;
-  //   userExpr = userExpr.substring(0, startPosition);
-  //   userExpr += userStr;
-  //   startPosition = endPosition = userExpr.length;
-  //   userExpr += temp;
-  //   check();
-  //   emit(CalculatorExprUpdate());
-  // }
-
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
     if (isResultExist) clearAll();
@@ -251,18 +191,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    if(this.pattern.length>=2) {
-      if ((this.pattern[startPosition - 1] == 'o' && this.pattern[startPosition] == 'o') || startPosition != endPosition) {
+    if (this.pattern.length >= 2) {
+      if ((this.pattern[startPosition - 1] == 'o' &&
+              this.pattern[startPosition] == 'o') ||
+          startPosition != endPosition) {
         del();
       }
     }
 
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
-    print('text+str: ${controller.text}, ($startPosition, $endPosition)');
+    print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
-
-
 
     userExpr = controller.text;
     // 0110
@@ -277,7 +217,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorExprUpdate());
   }
 
-  String expGenerator(String s){
+  String expGenerator(String s) {
     s = s.replaceAll("NAND", "!&");
     s = s.replaceAll("AND", "&");
     s = s.replaceAll("XNOR", "!^");
@@ -291,7 +231,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void getResult() {
     focusNode.requestFocus();
-    print(_auth.currentUser?.email);
+    print(() => _auth.currentUser?.email);
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -316,18 +256,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
-      addUserHistory(controller.text,curentNumerSystem);
+      addUserHistory(controller.text, curentNumerSystem);
     } else
       result = "Math Error";
 
     isResultExist = true;
-
+    explenation.clear();
+    explenation = p.explan;
+    explenation.removeAt(0);
+    //print(explenation.join('\n'));
     emit(CalculatorResult());
 
-
     updatehistory();
-
-
   }
 
   void clearAll() {
@@ -341,12 +281,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
-
   }
 
   void del() {
     focusNode.requestFocus();
-    int start_t= 0;
+    int start_t = 0;
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
@@ -367,9 +306,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
               start--;
               if (start == 0) break;
             }
-            start_t=start;
-            controller.text = controller.text.substring(0, start ) + controller.text.substring(end+1, controller.text.length);
-            this.pattern = this.pattern.substring(0, start ) + this.pattern.substring(end+1, pattern.length);
+            start_t = start;
+            controller.text = controller.text.substring(0, start) +
+                controller.text.substring(end + 1, controller.text.length);
+            this.pattern = this.pattern.substring(0, start) +
+                this.pattern.substring(end + 1, pattern.length);
           }
           break;
         case "n":
@@ -410,7 +351,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           start--;
           if (start == 0) break;
         }
-        start_t=start;
+        start_t = start;
       }
 
       if (pattern[startPosition] == 'n') {
@@ -420,10 +361,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         end = endPosition - 1;
       }
       controller.text = controller.text.substring(0, start) +
-          controller.text.substring(end+1, controller.text.length);
+          controller.text.substring(end + 1, controller.text.length);
       pattern = pattern.substring(0, start) +
-          pattern.substring(end+1, pattern.length);
-      expr= expGenerator(controller.text);
+          pattern.substring(end + 1, pattern.length);
+      expr = expGenerator(controller.text);
     }
 
     emit(CalculatorExprUpdate());
@@ -466,210 +407,415 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
   void showHistory(
-      BuildContext context,
-      String theme,
-      ) async {
+    BuildContext context,
+    String theme,
+  ) async {
     await getHistoryData();
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(
         buildWhen: (previous, current) => current is CalculatorHistoryUpdate,
-        builder: (context, state) => ListView.builder(
-          itemCount: testCalculatorHistory.length,
-          itemBuilder: (context, index) => Dismissible(
-            key: Key('cal$index'),
-            direction: DismissDirection.startToEnd,
-            onDismissed: (direction) => testCalculatorHistory.removeAt(index),
-            confirmDismiss: (direction) => showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                content: const Text('Are you sure ,you want to delete it?'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
+        builder: (context, state) => Container(
+          color: theme == 'light'
+              ? ThemeColors.lightCanvas
+              : ThemeColors.darkCanvas,
+          child: Column(children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: testCalculatorHistory.length,
+                itemBuilder: (context, index) => Dismissible(
+                  key: Key('cal$index'),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) =>
+                      testCalculatorHistory.removeAt(index),
+                  confirmDismiss: (direction) => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content:
+                          const Text('Are you sure ,you want to delete it?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme == 'light'
+                                ? ThemeColors.lightBlackText
+                                : ThemeColors.darkWhiteText,
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            testCalculatorHistory.removeAt(index);
+                            await deleteHistoryData(
+                                testCalculatorHistory[index]['expr']!);
+                            emit(CalculatorHistoryUpdate());
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: ThemeColors.redColor,
+                          ),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  background: Container(
+                    color: ThemeColors.redColor,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.widthBlock! * 2,
+                        ),
+                        const Icon(
+                          Icons.delete,
+                          color: ThemeColors.darkWhiteText,
+                        ),
+                      ],
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    color: ThemeColors.redColor,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.widthBlock! * 2,
+                        ),
+                        const Icon(
+                          Icons.delete,
+                          color: ThemeColors.darkWhiteText,
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      setExpr(testCalculatorHistory[index]['expr']!);
                       Navigator.of(context).pop();
                     },
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme == 'light'
-                          ? ThemeColors.lightBlackText
-                          : ThemeColors.darkWhiteText,
+                    title: Text(
+                      testCalculatorHistory[index]['expr']!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      softWrap: true,
                     ),
-                    child: const Text('Cancel'),
+                    textColor: (theme == 'light')
+                        ? ThemeColors.lightForegroundTeal
+                        : ThemeColors.darkForegroundTeal,
+                    tileColor: (theme == 'light')
+                        ? ThemeColors.lightCanvas
+                        : ThemeColors.darkCanvas,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      testCalculatorHistory.removeAt(index);
-                      emit(CalculatorHistoryUpdate());
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: ThemeColors.redColor,
-                    ),
-                    child: const Text('Delete'),
-                  ),
-                ],
+                ),
               ),
             ),
-            background: Container(
-              color: ThemeColors.redColor,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: SizeConfig.widthBlock! * 2,
+            TextButton(
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: Text('Are you sure ,you want to clear History?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme == 'light'
+                              ? ThemeColors.lightBlackText
+                              : ThemeColors.darkWhiteText,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          testCalculatorHistory.clear();
+                          await cleareHistoryData();
+                          emit(CalculatorHistoryUpdate());
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: ThemeColors.redColor,
+                        ),
+                        child: const Text('Clear'),
+                      ),
+                    ],
                   ),
-                  const Icon(
-                    Icons.delete,
-                    color: ThemeColors.darkWhiteText,
-                  ),
-                ],
-              ),
-            ),
-            secondaryBackground: Container(
-              color: ThemeColors.redColor,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: SizeConfig.widthBlock! * 2,
-                  ),
-                  const Icon(
-                    Icons.delete,
-                    color: ThemeColors.darkWhiteText,
-                  ),
-                ],
-              ),
-            ),
-            child: ListTile(
-              onTap: () {
-                setExpr(testCalculatorHistory[index]['expr']!);
-                Navigator.of(context).pop();
+                );
               },
-              title: Text(
-                testCalculatorHistory[index]['expr']!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                softWrap: true,
-              ),
-              textColor: (theme == 'light')
-                  ? ThemeColors.lightForegroundTeal
-                  : ThemeColors.darkForegroundTeal,
-              tileColor: (theme == 'light')
-                  ? ThemeColors.lightCanvas
-                  : ThemeColors.darkCanvas,
+              child: Text('Clear All'),
+              style: TextButton.styleFrom(
+                  foregroundColor: ThemeColors.redColor,
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
-          ),
+          ]),
         ),
       ),
     );
   }
-// void changePosition(int start, int end) {
-//   startPosition = start;
-//   endPosition = end;
-// }
 
-/*void createData()async {
-
-     database = await openDatabase(
-      join(await getDatabasesPath(), 'history.db'),
-      version: 1,
-      onCreate: (db, version) {
-        db.execute(
-            'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,user TEXT,type TEXT)')
-            .then((value) {
-          print('table created');
-        }).catchError((Error) {
-          print(Error.toString);
-        });
-      },
-      onOpen: (db) {
-        print('table open');
-      },
+  void showExplenation(BuildContext context, String theme) {
+    print(() => explenation.join('\n'));
+    Color textColor = theme == 'light'
+        ? ThemeColors.lightBlackText
+        : ThemeColors.darkWhiteText;
+    Color focusedTextColor = ThemeColors.blueColor;
+    Color resultFocusedTextColor = ThemeColors.redColor;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor:
+            theme == 'light' ? ThemeColors.lightCanvas : ThemeColors.darkCanvas,
+        title: const Text(
+          'Explenation',
+          textAlign: TextAlign.center,
+        ),
+        titleTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: textColor,
+        ),
+        content: SizedBox(
+          height: SizeConfig.heightBlock! * 50,
+          width: SizeConfig.widthBlock! * 75,
+          child: ListView.builder(
+            itemCount: explenation.length,
+            itemBuilder: (context, index) {
+              String spaces = '           ';
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: 'Step ${index + 1}: ',
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: explenation[index]
+                              .expr
+                              .substring(0, explenation[index].start),
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: explenation[index].expr.substring(
+                              explenation[index].start, explenation[index].end),
+                          style: TextStyle(
+                            color: focusedTextColor,
+                          ),
+                        ),
+                        TextSpan(
+                          text: explenation[index]
+                              .expr
+                              .substring(explenation[index].end),
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: spaces,
+                      children: [
+                        TextSpan(
+                          text: explenation[index].updatedPart,
+                        ),
+                        TextSpan(
+                          text: ' = ',
+                        ),
+                        TextSpan(
+                          text: explenation[index].result.toString(),
+                          style: TextStyle(
+                            color: resultFocusedTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: '$spaces ==> ',
+                      children: [
+                        TextSpan(
+                            text: explenation[index]
+                                .expr
+                                .substring(0, explenation[index].start)),
+                        TextSpan(
+                          text: explenation[index].result.toString(),
+                          style: TextStyle(
+                            color: resultFocusedTextColor,
+                          ),
+                        ),
+                        TextSpan(
+                            text: explenation[index]
+                                .expr
+                                .substring(explenation[index].end)),
+                      ],
+                    ),
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.heightBlock! * 2,
+                  )
+                ],
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: getExplinationStr()));
+            },
+            child: const Text('Copy'),
+          ),
+          IconButton(
+            onPressed: () async => await sendEmailMessage(getExplinationStr()),
+            icon: Icon(
+              Icons.mail_outlined,
+              color: theme == 'light'
+                  ? ThemeColors.lightForegroundTeal
+                  : ThemeColors.darkForegroundTeal,
+            ),
+          ),
+          TextButton(
+            onPressed: () async =>
+                await sendWhatsAppMessage(getExplinationStr()),
+            child: const Text('WhatsApp'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
+      ),
     );
-
-  }
-  void insertToDatabase(){
-     database.transaction((txn)async{
-      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
-        print("$value insert succssefly");
-      }).catchError((error){
-        print("error when insert $error");
-      });
-
-    });
   }
 
-   */
+  String getExplinationStr() {
+    String exp = '';
+    for (int i = 0; i < explenation.length; i++) {
+      exp += 'Step ${i + 1} : ';
+      exp += explenation[i].expr.substring(0, explenation[i].start) +
+          ' [ ' +
+          explenation[i]
+              .expr
+              .substring(explenation[i].start, explenation[i].end) +
+          ' ] ' +
+          explenation[i].expr.substring(explenation[i].end) +
+          '\n';
+
+      exp += '\t==> ' +
+          explenation[i].updatedPart +
+          ' = ' +
+          explenation[i].result.toString() +
+          '\n';
+
+      exp += '\t==> ' +
+          explenation[i].expr.substring(0, explenation[i].start) +
+          ' [ ' +
+          explenation[i].result.toString() +
+          ' ] ' +
+          explenation[i].expr.substring(explenation[i].end) +
+          '\n';
+      exp += '\n';
+    }
+    return exp;
+  }
 }
 
-class SqlDb{
+class SqlDb {
   static Database? _db;
 
-  Future<Database?> get db async{
-    if(_db==null){
-      _db=await intialDb();
+  Future<Database?> get db async {
+    if (_db == null) {
+      _db = await intialDb();
       return _db;
-    }
-    else{
+    } else {
       return _db;
     }
   }
-  intialDb()async{
 
-    String databasepath=await getDatabasesPath();
-    String path= join (databasepath, 'User.db');
+  intialDb() async {
+    String databasepath = await getDatabasesPath();
+    String path = join(databasepath, 'User.db');
     Database database = await openDatabase(
-      path, version: 1,
-      onCreate: _onCreate
-      ,onOpen: (db) {
-      print('table opened');
-    },
+      path,
+      version: 1,
+      onCreate: _onCreate,
+      onOpen: (db) {
+        //print('table opened');
+      },
     );
     return database;
   }
-  _onCreate(Database db,int version) {
 
-    db.execute(
-        'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,type TEXT)')
+  _onCreate(Database db, int version) {
+    db
+        .execute(
+            'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,type TEXT)')
         .then((value) {
-      print('table created');
+      //print('table created');
     }).catchError((Error) {
-      print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
+      // print('table eeeeeeeeeeeeeeeeeeeeeeeeeeee');
       print(Error.toString);
     });
   }
 
-  readData()async{
-    Database?mydb=await db;
-    List<Map>response=await mydb!.rawQuery('SELECT * FROM "data"');
+  readData() async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('SELECT * FROM "data"');
     return response;
   }
-  insertData(String userExpr,String curentNumerSystem)async{
-    Database?mydb=await db;
-    int response=await mydb!.rawInsert('INSERT INTO data( operation , type ) VALUES("$userExpr", "$curentNumerSystem" ) ');
+
+  insertData(String userExpr, String curentNumerSystem) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawInsert(
+        'INSERT INTO data( operation , type ) VALUES("$userExpr", "$curentNumerSystem" ) ');
     return response;
   }
-  deleteData(int Id)async{
-    Database?mydb=await db;
-    int response=await mydb!.rawDelete('DELETE  FROM "data" WHERE id=$Id');
+
+  deleteData(int Id) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('DELETE  FROM "data" WHERE id=$Id');
     return response;
   }
-  getlenght()async{
-    Database?mydb=await db;
-    int? count = Sqflite
-        .firstIntValue(await mydb!.rawQuery('SELECT COUNT(*) FROM data'));
+
+  getlenght() async {
+    Database? mydb = await db;
+    int? count = Sqflite.firstIntValue(
+        await mydb!.rawQuery('SELECT COUNT(*) FROM data'));
     return count;
   }
 
 /* void insertToDatabase(){
     database.transaction((txn)async{
       await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
-        print("$value insert succssefly");
+        print(()=>"$value insert succssefly");
       }).catchError((error){
-        print("error when insert $error");
+        print(()=>"error when insert $error");
       });
 
     });
   }
-
-
   */
 }
