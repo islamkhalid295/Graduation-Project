@@ -91,11 +91,17 @@ class Parser {
       new ExplanationStep("expr", "updatedPart", "0", "", 0, 0);
   List<ExplanationStep> explan = [];
   int myRadix = 0;
+  RegExp regex = RegExp(r'\b0+(\d+)\b'); // Regular expression to match numbers starting with zeroes
 
   //Constructor
   Parser(this.input, this.currentNumberSystem) {
     iter = input.runes.iterator;
     userExp = expGenerator(input.toLowerCase());
+    userExp = userExp.replaceAllMapped(regex, (match) {
+      // Remove zeroes from each matched number
+      String number = match.group(1)!; // Add '!' to assert that the captured group is not null
+      return number;
+    });
     init = new ExplanationStep("", "", "0", userExp, 0, 0);
     explan.add(init);
     switch (this.currentNumberSystem) {
@@ -505,7 +511,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-  Parser p = Parser("233|EF!^119", "hex");
+  Parser p = Parser("01&01!|01|001", "bin");
   //Parser p = Parser("7!&2|5", "oct");
   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
@@ -521,4 +527,5 @@ void main() {
   //Result not defined
   //Parser p = Parser("1001|0110&101<<10","bin");
   //print(5 ^ 8);
+
 }
