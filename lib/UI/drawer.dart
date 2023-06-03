@@ -154,6 +154,7 @@ class MyDrawer extends StatelessWidget {
             ),
             buildListTile(context, 'Calculator'),
             buildListTile(context, 'Simplification'),
+            buildListTile(context, 'Documentation'),
             Padding(
               padding: EdgeInsets.symmetric(vertical: SizeConfig.heightBlock!),
               child: ExpansionTile(
