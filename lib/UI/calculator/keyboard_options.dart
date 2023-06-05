@@ -230,31 +230,6 @@ class KeyboardOptions extends StatelessWidget {
                   .updateExpr(')', ' ) ', ' o '),
             ),
           ),
-          SizedBox(
-            width: SizeConfig.heightBlock!,
-          ),
-          Expanded(
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock!),
-                  backgroundColor: (theme == 'light')
-                      ? ThemeColors.lightCanvas
-                      : ThemeColors.darkCanvas,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  )),
-              child: FittedBox(
-                child: Icon(
-                  Icons.more_horiz,
-                  color: (theme == 'light')
-                      ? ThemeColors.lightForegroundTeal
-                      : ThemeColors.darkForegroundTeal,
-                ),
-              ),
-              onPressed: () {},
-            ),
-          ),
         ],
       ),
     );

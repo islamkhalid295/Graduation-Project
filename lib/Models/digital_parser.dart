@@ -517,7 +517,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-  Parser p = Parser("10101<<1", "bin");
+  Parser p = Parser("101!^1", "bin");
   //Parser p = Parser("7!&2|5", "oct");
   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
@@ -526,11 +526,7 @@ void main() {
   //   //   //                 -5!|-14
   //   //   //                 4
   print(p.sampleParser());
-  int t1,t2;
-  t1=10101;
-  t2=1;
-  t1=t1<<t2;
-  print(t1);
+  print(decToBinary(~5));
   // } catch (e) {
   //   // print("Result not defined");
   // }
