@@ -39,7 +39,7 @@ dependencies:
   firebase_core: ^2.9.0
   firebase_auth: ^4.4.2
   cloud_firestore: ^4.5.3
-  flutterfire_cli: ^0.2.7
+  #flutterfire_cli: ^0.2.7
   firebase_core_desktop: ^1.0.2
   sqflite: ^2.2.8+1
   modal_progress_hud_nsn: ^0.4.0
@@ -50,6 +50,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -97,3 +98,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "icons/binary-code.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "icons/binary-code.png"
+  windows:
+    generate: true
+    image_path: "icons/binary-code.png"
+    icon_size: 48 # min:48, max:256, default: 48
