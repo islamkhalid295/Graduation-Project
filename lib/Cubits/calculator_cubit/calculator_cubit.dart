@@ -32,6 +32,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   bool isResultExist = false;
   bool isSigned = true;
   SqlDb sqlDb=SqlDb();
+
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -140,9 +141,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
     }
   }
+
   void addHistoryLocal()async{
     int response =await sqlDb.insertData(userExpr, curentNumerSystem);
   }
+
   Future<void> addUserHistory(xtext,type) {
     return _history
         .add({
@@ -158,6 +161,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     );
   }
+
   Future<void> deleteHistoryData(String oper) async {
     CollectionReference HistroyData =
     FirebaseFirestore.instance.collection('history');
@@ -170,6 +174,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       });
     });
   }
+
   Future<void> cleareHistoryData() async {
     CollectionReference HistroyData =
     FirebaseFirestore.instance.collection('history');
@@ -182,6 +187,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       });
     });
   }
+
   Future<void> getHistoryData() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
@@ -200,6 +206,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     });
     emit(CalculatorExprUpdate());
   }
+
 
   void check() {
     try {
@@ -561,43 +568,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       ),
     );
   }
-// void changePosition(int start, int end) {
-//   startPosition = start;
-//   endPosition = end;
-// }
 
-/*void createData()async {
-
-     database = await openDatabase(
-      join(await getDatabasesPath(), 'history.db'),
-      version: 1,
-      onCreate: (db, version) {
-        db.execute(
-            'CREATE TABLE data(id INTEGER PRIMARY KEY ,operation TEXT,user TEXT,type TEXT)')
-            .then((value) {
-          print('table created');
-        }).catchError((Error) {
-          print(Error.toString);
-        });
-      },
-      onOpen: (db) {
-        print('table open');
-      },
-    );
-
-  }
-  void insertToDatabase(){
-     database.transaction((txn)async{
-      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
-        print("$value insert succssefly");
-      }).catchError((error){
-        print("error when insert $error");
-      });
-
-    });
-  }
-
-   */
 }
 
 class SqlDb{
