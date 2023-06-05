@@ -1,19 +1,16 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/widgets.dart';
-
-import 'digital_parser.dart';
+import 'simpilifier_parser.dart';
 
 class Simplifier {
   late List<Map<String, dynamic>> _soms;
-  late List<String> _vars;
-  //late int _noOfVars;
+  late List<String> vars;
   List<String> dontCareComditions = [];
-
+  List<List<Map<String, dynamic>>> comparisonSteps = List.empty(growable: true);
   Simplifier({required String expr}) {
-    this._vars = getExprVariables(expr);
-    //this._noOfVars = _vars.length;
-    this._soms = getSumOfMinterms(expr, _vars)
+    this.vars = getExprVariables(expr);
+    this._soms = getSumOfMinterms(expr, vars)
         .map((v) => {
               'soms': {int.parse(v, radix: 2)},
               'som': v,
@@ -27,8 +24,8 @@ class Simplifier {
       {required List<String> somOfMinterms,
       required List<String> variables,
       this.dontCareComditions = const []}) {
-    this._vars = variables;
-    //this._noOfVars = _vars.length;
+    this.vars = variables;
+    //this._noOfVars = vars.length;
     this._soms = somOfMinterms
         .map((v) => {
               'soms': {int.parse(v, radix: 2)},
@@ -50,7 +47,7 @@ class Simplifier {
     for (int i = 0; i < expr.length; i++) {
       if (isalpha(expr[i])) variables.add(expr[i]);
     }
-    print(variables.toList());
+    //print(variables.toList());
 
     return variables.toList();
   }
@@ -68,7 +65,9 @@ class Simplifier {
         newExpr = newExpr.replaceAll(variables[i], binResult[i]);
       }
       Parser p = Parser(newExpr, "bin");
-      if (p.sampleParser() == 1) {
+      var result = p.sampleParser();
+      print(result);
+      if (result == 1) {
         soms.add(binResult);
         print('Soms = $soms');
       }
@@ -106,7 +105,7 @@ class Simplifier {
       temp['soms'] = a['soms'].union(b['soms']);
       a['click'] = true;
       b['click'] = true;
-      for (int i = 0; i < _vars.length; i++) {
+      for (int i = 0; i < vars.length; i++) {
         if (a['som'][i] != b['som'][i])
           temp['som'] = a['som'].toString().replaceRange(i, i + 1, '-');
       }
@@ -126,6 +125,30 @@ class Simplifier {
     });
     return flag;
   }
+
+  // bool isStepsContains(
+  //     List<List<Map<String, dynamic>>> steps, List<Map<String, dynamic>> soms) {
+  //   bool flag = true;
+  //   // steps.forEach((step) {
+  //   //   if (!listEquals(step, soms)) {
+  //   //     flag = false;
+  //   //     return;
+  //   //   }
+  //   // });
+
+  //   steps.forEach((step) {
+  //     step.forEach((som) {
+  //       if (!isContains(soms, som)) {
+  //         flag = false;
+  //         return;
+  //       }
+  //     });
+  //     if (!flag) {
+  //       return;
+  //     }
+  //   });
+  //   return flag;
+  // }
 
   List<Map<String, dynamic>> compare(List<Map<String, dynamic>> soms) {
     List<Map<String, dynamic>> newSoms = List.empty(growable: true);
@@ -179,22 +202,52 @@ class Simplifier {
       temp = List.from(compare(temp));
       flag = temp[temp.length - 1]['isCompared'];
       temp = temp.sublist(0, temp.length - 1);
+      comparisonSteps.add(temp);
     }
+    comparisonSteps.removeLast();
     return getIndependentTerms(temp);
   }
 
+  Map<String, List<dynamic>> getTruthTableData(String expr) {
+    Map<String, List<dynamic>> truthTableData = {
+      'soms': List<int>.empty(growable: true),
+      'table': List<Map<String, dynamic>>.empty(growable: true),
+    };
+    String binResult;
+    int len = vars.length;
+    String newExpr = expr;
+    for (int a = 0; a < pow(2, len); a++) {
+      binResult = a.toRadixString(2).toString();
+      binResult = binResult.padLeft(len, '0');
+      newExpr = expr;
+      for (int i = 0; i < vars.length; i++) {
+        newExpr = newExpr.replaceAll(vars[i], binResult[i]);
+      }
+      Parser p = Parser(newExpr, "bin");
+      int result = p.sampleParser();
+      truthTableData['table']!
+          .add({'index': a, 'bin': binResult, 'functionResult': result});
+      if (result == 1) {
+        truthTableData['soms']!.add(a);
+      }
+    }
+    return truthTableData;
+  }
+
   String simpilify() {
+    comparisonSteps.add(_soms);
     List<Map<String, dynamic>> soms = simplifySumOfMinterms();
-    String str = 'f(${_vars.join(', ')}) = ';
+    comparisonSteps.add(soms);
+    String str = 'f(${vars.join(', ')}) = ';
     soms.forEach((element) {
       String som = element['som'];
       // str += '( ';
-      for (int i = 0; i < _vars.length; i++) {
+      for (int i = 0; i < vars.length; i++) {
         if (som[i] == '-')
           continue;
         else if (som[i] == '1')
-          str += '${_vars[i]}.';
-        else if (som[i] == '0') str += '${_vars[i]}\'.';
+          str += '${vars[i]}.';
+        else if (som[i] == '0') str += '${vars[i]}\'.';
       }
       str = str.substring(0, str.length - 1);
       // str += ' )+';

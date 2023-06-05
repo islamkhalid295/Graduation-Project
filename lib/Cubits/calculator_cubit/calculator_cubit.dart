@@ -231,7 +231,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void getResult() {
     focusNode.requestFocus();
-    print(() => _auth.currentUser?.email);
+    // print(() => _auth.currentUser?.email);
+    expGenerator(controller.text);
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -557,8 +558,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     );
   }
 
-  void showExplenation(BuildContext context, String theme) {
-    print(() => explenation.join('\n'));
+  void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
         ? ThemeColors.lightBlackText
         : ThemeColors.darkWhiteText;
@@ -569,9 +569,14 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       builder: (context) => AlertDialog(
         backgroundColor:
             theme == 'light' ? ThemeColors.lightCanvas : ThemeColors.darkCanvas,
-        title: const Text(
-          'Explenation',
+        title: Text(
+          'Explanation',
           textAlign: TextAlign.center,
+          style: TextStyle(
+            color: theme == 'light'
+                ? ThemeColors.lightForegroundTeal
+                : ThemeColors.darkForegroundTeal,
+          ),
         ),
         titleTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
