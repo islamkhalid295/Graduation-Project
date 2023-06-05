@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:graduation_project/Cubits/calculator_cubit/calculator_cubit.dart';
 import 'package:graduation_project/Cubits/register_cubit/register_cubit.dart';
 import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Cubits/simplification_cubit/simplification_cubit.dart';
 import 'package:graduation_project/UI/calculator/calculator.dart';
+import 'package:graduation_project/UI/documentation/documentation.dart';
 import 'package:graduation_project/UI/register.dart';
 import 'package:graduation_project/UI/simpllification/simplification.dart';
 import 'Models/app_config.dart';
@@ -19,6 +21,8 @@ import 'package:firebase_core_platform_interface/firebase_core_platform_interfac
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -87,6 +91,7 @@ class Digeator extends StatelessWidget {
           '/register': (ctx) => Register(),
           '/calculator': (ctx) => Calculator(),
           '/simplification': (ctx) => Simplification(),
+          '/documentation': (ctx) => Documentation(),
         },
         initialRoute: _auth.currentUser != null ? '/calculator' : '/login',
       ),

@@ -80,9 +80,7 @@ class UserConfig {
   }
 }
 
-//static test data
-
-List<String> testSimplificationHistory = [
+/*List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
   'A AND B ( OR C XOR D )',
   'A OR B OR C XOR D',
@@ -105,11 +103,13 @@ List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
 ];
 
+
+ */
 List<DocumentationElement> documentation = [
   DocumentationElement(
     title: "AND Operator",
     description:
-        " If both expressions evaluate to True, the AND operator returns True. If either or both expressions evaluate to False, the AND operator returns False",
+        "If both expressions evaluate to True, the AND operator returns True. If either or both expressions evaluate to False, the AND operator returns False",
     example: [
       Example(num1: "001", num2: "011", operation: "AND", result: "001")
     ],
@@ -179,21 +179,23 @@ List<DocumentationElement> documentation = [
       ]),
   DocumentationElement(
       title: "decimal System",
-      description:"The decimal system is a number system that uses ten digits: 0, 1, 2, 3, 4, 5, 6, 7, 8, and 9. It is also known as the base-10 numeral system. The decimal system is the most common number system in the world, and it is used in everyday life for counting, measuring, and calculating."
-      ,example: [
+      description:
+          "The decimal system is a number system that uses ten digits: 0, 1, 2, 3, 4, 5, 6, 7, 8, and 9. It is also known as the base-10 numeral system. The decimal system is the most common number system in the world, and it is used in everyday life for counting, measuring, and calculating.",
+      example: [
         Example(num1: "125", num2: "157", operation: "AND", result: "29")
       ]),
   DocumentationElement(
       title: "Hexadecimal System",
       description:
-"Hexadecimal (also base-16 or simply hex) is a positional numeral system that represents numbers using a radix (base) of sixteen. Unlike the decimal system representing numbers using ten symbols, hexadecimal uses sixteen distinct symbols, most often the symbols 0-9 to represent values 0 to 9, and 'A'-'F  to represent values from ten to fifteen. Software developers and system"      ,example: [
-    Example(num1: "125", num2: "157", operation: "AND", result: "1D")
-  ]),
+          "Hexadecimal (also base-16 or simply hex) is a positional numeral system that represents numbers using a radix (base) of sixteen. Unlike the decimal system representing numbers using ten symbols, hexadecimal uses sixteen distinct symbols, most often the symbols 0-9 to represent values 0 to 9, and 'A'-'F  to represent values from ten to fifteen. Software developers and system",
+      example: [
+        Example(num1: "125", num2: "157", operation: "AND", result: "1D")
+      ]),
   DocumentationElement(
-      title: "Hexadecimal System",
+      title: "Octal System",
       description:
-"The octal numeral system, or oct for short, is the base-8 number system, and uses the digits 0 to 7. This is to say that 10octal represents eight and 100octal represents sixty-four. However, English, like most languages, uses a base-10 number system, hence a true octal system might use different vocabulary. ... in decimal."
-      ,example: [
-    Example(num1: "125", num2: "157", operation: "AND", result: "35")
-  ]),
+          "The octal numeral system, or oct for short, is the base-8 number system, and uses the digits 0 to 7. This is to say that 10octal represents eight and 100octal represents sixty-four. However, English, like most languages, uses a base-10 number system, hence a true octal system might use different vocabulary. ... in decimal.",
+      example: [
+        Example(num1: "125", num2: "157", operation: "AND", result: "35")
+      ]),
 ];

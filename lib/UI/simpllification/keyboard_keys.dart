@@ -46,238 +46,238 @@ class KeyboardKeys extends StatelessWidget {
             createButton(
               child: const Text('('),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('(', ' ( '),
+                  .updateExpr('(', ' ( ', ' o '),
               type: 'opr',
             ),
             createButton(
               child: const Text(')'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr(')', ' ) '),
+                  .updateExpr(')', ' ) ', ' o '),
               type: 'opr',
             ),
             //========================= 2nd Row ================================//
             createButton(
               child: const Text('AND'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('&', ' AND '),
+                  .updateExpr('&', ' AND ', ' ooo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('NAND'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('!&', ' NAND '),
+                  .updateExpr('!&', ' NAND ', ' oooo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('OR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('|', ' OR '),
+                  .updateExpr('|', ' OR ', ' oo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('NOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('!|', ' NOR '),
+                  .updateExpr('!|', ' NOR ', ' ooo '),
               type: 'opr',
             ),
             //========================= 3rd Row ================================//
             createButton(
               child: const Text('XOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('^', ' XOR '),
+                  .updateExpr('^', ' XOR ', ' ooo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('XNOR'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('!^', ' XNOR '),
+                  .updateExpr('!^', ' XNOR ', ' oooo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('LSH'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('<<', ' << '),
+                  .updateExpr('<<', ' << ', ' oo '),
               type: 'opr',
             ),
             createButton(
               child: const Text('RSH'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('>>', ' >> '),
+                  .updateExpr('>>', ' >> ', ' oo '),
               type: 'opr',
             ),
             //========================= 4th Row ================================//
             createButton(
               child: const Text('A'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('A', 'A'),
+                  .updateExpr('A', 'A', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('B'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('B', 'B'),
+                  .updateExpr('B', 'B', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('C'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('C', 'C'),
+                  .updateExpr('C', 'C', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('NOT'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('~', ' NOT '),
+                  .updateExpr('~', ' NOT ', ' ooo '),
               type: 'opr',
             ),
             //========================= 5th Row ================================//
             createButton(
               child: const Text('D'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('D', 'D'),
+                  .updateExpr('D', 'D', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('E'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('E', 'E'),
+                  .updateExpr('E', 'E', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('F'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('F', 'F'),
+                  .updateExpr('F', 'F', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('G'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('G', 'G'),
+                  .updateExpr('G', 'G', 'n'),
               type: 'letter',
             ),
             //========================= 6th Row ================================//
             createButton(
               child: const Text('H'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('H', 'H'),
+                  .updateExpr('H', 'H', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('I'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('I', 'I'),
+                  .updateExpr('I', 'I', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('J'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('J', 'J'),
+                  .updateExpr('J', 'J', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('K'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('K', 'K'),
+                  .updateExpr('K', 'K', 'n'),
               type: 'letter',
             ),
             //========================= 7th Row ================================//
             createButton(
               child: const Text('L'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('L', 'L'),
+                  .updateExpr('L', 'L', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('M'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('M', 'M'),
+                  .updateExpr('M', 'M', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('N'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('N', 'N'),
+                  .updateExpr('N', 'N', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('O'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('O', 'O'),
+                  .updateExpr('O', 'O', 'n'),
               type: 'letter',
             ),
             //========================= 8th Row ================================//
             createButton(
               child: const Text('P'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('P', 'P'),
+                  .updateExpr('P', 'P', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('Q'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('Q', 'Q'),
+                  .updateExpr('Q', 'Q', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('R'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('R', 'R'),
+                  .updateExpr('R', 'R', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('S'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('S', 'S'),
+                  .updateExpr('S', 'S', 'n'),
               type: 'letter',
             ),
             //========================= 9th Row ================================//
             createButton(
               child: const Text('T'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('T', 'T'),
+                  .updateExpr('T', 'T', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('U'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('U', 'U'),
+                  .updateExpr('U', 'U', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('V'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('V', 'V'),
+                  .updateExpr('V', 'V', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('W'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('W', 'W'),
+                  .updateExpr('W', 'W', 'n'),
               type: 'letter',
             ),
             //========================= 10th Row ===============================//
             createButton(
               child: const Text('X'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('X', 'X'),
+                  .updateExpr('X', 'X', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('Y'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('Y', 'Y'),
+                  .updateExpr('Y', 'Y', 'n'),
               type: 'letter',
             ),
             createButton(
               child: const Text('Z'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('Z', 'Z'),
+                  .updateExpr('Z', 'Z', 'n'),
               type: 'letter',
             ),
             createButton(
-              child: const Text('='),
-              onPressed:
-                  BlocProvider.of<SimplificationCubit>(context).getResult,
+              child: const Icon(Icons.table_view_rounded),
+              onPressed: () => BlocProvider.of<SimplificationCubit>(context)
+                  .showTruthTable(context, theme!),
               type: '=',
             ),
           ],
