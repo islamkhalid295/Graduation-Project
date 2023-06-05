@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -222,10 +223,11 @@ class Login extends StatelessWidget {
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
-                                  onPressed: () =>
+                                  onPressed: () {
                                       BlocProvider.of<LoginCubit>(context)
                                           .firebaseAuth(emailController.text,
-                                              passwordController.text, context),
+                                              passwordController.text, context);
+                                      },
                                   style: OutlinedButton.styleFrom(
                                       padding: EdgeInsets.symmetric(
                                           vertical: (kIsWeb)
@@ -253,23 +255,8 @@ class Login extends StatelessWidget {
                                   child: const Text('Login'),
                                 ),
                               ),
-                              SizedBox(
-                                height: SizeConfig.heightBlock,
-                              ),
-                              InkWell(
-                                onTap: () {},
-                                child: Text(
-                                  'Forget your password?',
-                                  style: TextStyle(
-                                    fontSize: SizeConfig.heightBlock! * 2,
-                                    color: (theme == 'light')
-                                        ? ThemeColors.lightBlackText
-                                            .withOpacity(0.75)
-                                        : ThemeColors.darkWhiteText
-                                            .withOpacity(0.75),
-                                  ),
-                                ),
-                              ),
+
+
                               SizedBox(
                                 height: SizeConfig.heightBlock,
                               ),
@@ -324,6 +311,75 @@ class Login extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                          /*    SizedBox(
+                                height: SizeConfig.heightBlock,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 50,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        BlocProvider.of<LoginCubit>(context).googleSignIn(context);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: (kIsWeb)
+                                                  ? SizeConfig.heightBlock! * 2
+                                                  : SizeConfig.heightBlock!,
+                                              horizontal:
+                                              SizeConfig.widthBlock! * 2),
+
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          )),
+                                      child:  Image.asset("images/Google.png"),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        BlocProvider.of<LoginCubit>(context).googleSignIn(context);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: (kIsWeb)
+                                                  ? SizeConfig.heightBlock! * 2
+                                                  : SizeConfig.heightBlock!,
+                                              horizontal:
+                                              SizeConfig.widthBlock! * 2),
+
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          )),
+                                      child:  Image.asset("images/twitter.png"),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        BlocProvider.of<LoginCubit>(context).googleSignIn(context);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: (kIsWeb)
+                                                  ? SizeConfig.heightBlock! * 2
+                                                  : SizeConfig.heightBlock!,
+                                              horizontal:
+                                              SizeConfig.widthBlock! * 2),
+
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          )),
+                                      child:  Image.asset("images/facebook.png"),
+                                    ),
+                                  )
+                                ],
+                              )
+*/
                             ],
                           ),
                         ),

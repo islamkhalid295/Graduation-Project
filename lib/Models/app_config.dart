@@ -80,7 +80,7 @@ class UserConfig {
   }
 }
 
-List<String> testSimplificationHistory = [
+/*List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
   'A AND B ( OR C XOR D )',
   'A OR B OR C XOR D',
@@ -103,6 +103,8 @@ List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
 ];
 
+
+ */
 List<DocumentationElement> documentation = [
   DocumentationElement(
     title: "AND Operator",
