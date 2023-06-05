@@ -275,9 +275,9 @@ class KeyboardKeys extends StatelessWidget {
               type: 'letter',
             ),
             createButton(
-              child: const Text('='),
-              onPressed:
-                  BlocProvider.of<SimplificationCubit>(context).getResult,
+              child: const Icon(Icons.table_view_rounded),
+              onPressed: () => BlocProvider.of<SimplificationCubit>(context)
+                  .showTruthTable(context, theme!),
               type: '=',
             ),
           ],

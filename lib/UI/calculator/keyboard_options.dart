@@ -119,7 +119,7 @@ class KeyboardOptions extends StatelessWidget {
                   onPressed:
                       BlocProvider.of<CalculatorCubit>(context).isResultExist
                           ? () => BlocProvider.of<CalculatorCubit>(context)
-                              .showExplenation(context, theme!)
+                              .showExplanation(context, theme!)
                           : null,
                   child: BlocBuilder<CalculatorCubit, CalculatorState>(
                     builder: (context, state) {
