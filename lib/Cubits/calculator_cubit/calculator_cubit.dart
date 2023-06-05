@@ -166,10 +166,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       Parser p = Parser(expr, curentNumerSystem);
       tmp = p.sampleParser();
       if (p.error) {
-        binResult = "Math Error";
-        decResult = "Math Error";
-        hexResult = "Math Error";
-        octResult = "Math Error";
+        binResult = "";
+        decResult = "";
+        hexResult = "";
+        octResult = "";
       } else {
         if (isSigned) {
           binResult = tmp.toRadixString(2).toString();
@@ -263,8 +263,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           }
       }
       addUserHistory(controller.text, curentNumerSystem);
-    } else
+    } else {
       result = "Math Error";
+      binResult = "Math Error";
+      decResult = "Math Error";
+      hexResult = "Math Error";
+      octResult = "Math Error";
+    }
 
     isResultExist = true;
     explenation.clear();
