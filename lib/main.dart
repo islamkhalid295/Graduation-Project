@@ -17,7 +17,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
+//import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

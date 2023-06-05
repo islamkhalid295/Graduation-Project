@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/Cubits/login_cubit/login_cubit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Models/app_config.dart';
@@ -36,21 +37,6 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   SqlDbSimlification sqlDbSimlification = SqlDbSimlification();
 
   final _historySimp = FirebaseFirestore.instance.collection('simplification');
-
-  // void updateExpr(String str, String userStr) {
-  //   String temp = userExpr.substring(endPosition);
-  //   isResultExist = false;
-  //   result = 'No Result';
-  //   //if (expr.isEmpty) userExpr = '';
-  //   //expr += str;
-  //   userExpr = userExpr.substring(0, startPosition);
-  //   userExpr += userStr;
-  //   startPosition = endPosition = userExpr.length;
-  //   userExpr += temp;
-
-  //   emit(SimplificationEprUpdate());
-  //   //print('$startPosition, $endPosition');
-  // }
 
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
@@ -326,14 +312,18 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   }
 
   void showHistory(
-      BuildContext context,
-      String theme,
-      ) async {
-    await getHistoryDataSimlification();
+    BuildContext context,
+    String theme,
+  ) async {
+    if (BlocProvider.of<LoginCubit>(context).isLogedIn()) {
+      await getHistoryDataSimlification();
+    }
     showModalBottomSheet(
       context: context,
-      builder: (context) => BlocBuilder<SimplificationCubit, SimplificationState>(
-        buildWhen: (previous, current) => current is SimplificationHistoryUpdate,
+      builder: (context) =>
+          BlocBuilder<SimplificationCubit, SimplificationState>(
+        buildWhen: (previous, current) =>
+            current is SimplificationHistoryUpdate,
         builder: (context, state) => Container(
           color: theme == 'light'
               ? ThemeColors.lightCanvas
@@ -351,7 +341,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                     context: context,
                     builder: (context) => AlertDialog(
                       content:
-                      const Text('Are you sure ,you want to delete it?'),
+                          const Text('Are you sure ,you want to delete it?'),
                       actions: [
                         TextButton(
                           onPressed: () {
