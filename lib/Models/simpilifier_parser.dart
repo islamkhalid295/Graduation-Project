@@ -296,7 +296,11 @@ class Parser {
         match(MyToken(Token.NOR_SY));
         int tmp2 = o();
         String s = "${tmp}!|${tmp2}";
-        tmp = ~(tmp | tmp2);
+        tmp = (tmp | tmp2);
+        if (tmp == 0)
+          tmp = 1;
+        else
+          tmp = 0;
         explanationStep step = new explanationStep(
             explan.last.exprAfter,
             s,
@@ -332,7 +336,11 @@ class Parser {
         match(MyToken(Token.XNOR_SY));
         tmp2 = s();
         String ss = "${tmp}!^${tmp2}";
-        tmp = ~(tmp ^ tmp2);
+        tmp = (tmp ^ tmp2);
+        if (tmp == 0)
+          tmp = 1;
+        else
+          tmp = 0;
         explanationStep step = new explanationStep(
             explan.last.exprAfter,
             ss,
@@ -367,7 +375,11 @@ class Parser {
         match(MyToken(Token.NAND_SY));
         int tmp2 = e();
         String s = "${tmp}!&${tmp2}";
-        tmp = ~(tmp & tmp2);
+        tmp = (tmp & tmp2);
+        if (tmp == 0)
+          tmp = 1;
+        else
+          tmp = 0;
         explanationStep step = new explanationStep(
             explan.last.exprAfter,
             s,
