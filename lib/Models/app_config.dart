@@ -80,7 +80,7 @@ class UserConfig {
   }
 }
 
-List<String> testSimplificationHistory = [
+/*List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
   'A AND B ( OR C XOR D )',
   'A OR B OR C XOR D',
@@ -103,6 +103,8 @@ List<String> testSimplificationHistory = [
   'A AND B OR C XOR D',
 ];
 
+
+ */
 List<DocumentationElement> documentation = [
   DocumentationElement(
     title: "AND Operator",
@@ -157,9 +159,9 @@ List<DocumentationElement> documentation = [
   DocumentationElement(
       title: "LSH Operator",
       description:
-          "LSH stands for locality-sensitive hashing. It is a technique for finding similar items in a large dataset. LSH works by creating a hash function that maps items to a smaller space. The hash function is designed so that items that are similar in the original space are more likely to map to the same hash bucket in the smaller space.",
+      "The LSH operator is a bitwise operator that performs a left shift on a binary number. The LSH operator takes two operands: the number to be shifted and the number of bits to shift by. The LSH operator works by shifting the bits of the number to the left by the specified number of bits. The bits that are shifted off the end of the number are discarded. Shifting to the left makes the number larger, effectively multiplying the number by pow(2, shiftAmount). ",
       example: [
-        Example(num1: "1010", num2: "1", operation: "LSH", result: "010")
+        Example(num1: "1010", num2: "1", operation: "LSH", result: "10100")
       ]),
   DocumentationElement(
       title: "RSH Operator",

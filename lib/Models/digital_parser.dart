@@ -424,9 +424,11 @@ class Parser {
         current_token?.name == Token.SR_SY) {
       if (current_token?.name == Token.SL_SY) {
         match(MyToken(Token.SL_SY));
+        int tmp2 = t();
         String s =
-            "${tmp.toRadixString(myRadix)} << ${t().toRadixString(myRadix)}";
-        tmp = tmp << t();
+            "${tmp.toRadixString(myRadix)} << ${tmp2.toRadixString(myRadix)}";
+        tmp = (tmp << tmp2);
+        print(s);
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
             s,
@@ -437,9 +439,11 @@ class Parser {
         explan.add(step);
       } else {
         match(MyToken(Token.SR_SY));
+        int tmp2 = t();
+
         String s =
-            "${tmp.toRadixString(myRadix)} >> ${t().toRadixString(myRadix)}";
-        tmp = tmp >> t();
+            "${tmp.toRadixString(myRadix)} >> ${tmp2.toRadixString(myRadix)}";
+        tmp = tmp >> tmp2;
         ExplanationStep step = new ExplanationStep(
             explan.last.exprAfter,
             s,
@@ -513,7 +517,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-  Parser p = Parser("01&01!|01|001", "bin");
+  Parser p = Parser("10101<<1", "bin");
   //Parser p = Parser("7!&2|5", "oct");
   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
@@ -521,7 +525,12 @@ void main() {
   //   //   //                 -5|-5!|-14
   //   //   //                 -5!|-14
   //   //   //                 4
-  // print(p.sampleParser());
+  print(p.sampleParser());
+  int t1,t2;
+  t1=10101;
+  t2=1;
+  t1=t1<<t2;
+  print(t1);
   // } catch (e) {
   //   // print("Result not defined");
   // }

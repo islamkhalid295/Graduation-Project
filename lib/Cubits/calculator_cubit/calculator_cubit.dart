@@ -32,8 +32,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
+
   SqlDb sqlDb = SqlDb();
   late List explenation;
+
 
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
@@ -84,11 +86,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
+
   void addHistoryLocal() async {
     int response = await sqlDb.insertData(userExpr, curentNumerSystem);
   }
 
   Future<void> addUserHistory(xtext, type) {
+
     return _history
         .add({
           'operation': xtext, // add history
@@ -154,6 +158,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     });
     emit(CalculatorExprUpdate());
   }
+
 
   void check() {
     try {
@@ -558,6 +563,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     );
   }
 
+
   void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
         ? ThemeColors.lightBlackText
@@ -746,6 +752,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     return exp;
   }
+
 }
 
 class SqlDb {

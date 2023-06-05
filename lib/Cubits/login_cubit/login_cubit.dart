@@ -2,19 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   String name = '';
   String email = '';
   final _auth = FirebaseAuth.instance;
+  final _googleSignIn=GoogleSignIn();
   LoginCubit() : super(LoginInitial());
   bool isSecured = true;
   void changePassVisibility() {
     isSecured = !isSecured;
     emit(LoginPass());
   }
-
   void firebaseAuth(String email, String pass, BuildContext context) async {
     Map<String, String> errors = {
       'email': '',
@@ -90,5 +91,15 @@ class LoginCubit extends Cubit<LoginState> {
       });
     });
     email = _auth.currentUser!.email!;
+  }
+  void googleSignIn(BuildContext context)async{
+    try {
+      GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      Navigator.of(context).pushReplacementNamed('/calculator');
+    }
+    catch(error){
+      print(error);
+    }
+
   }
 }
