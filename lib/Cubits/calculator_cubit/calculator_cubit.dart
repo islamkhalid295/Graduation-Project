@@ -196,7 +196,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    if (this.pattern.length >= 2) {
+    if (this.pattern.length >= 2 && startPosition > 0) {
       if ((this.pattern[startPosition - 1] == 'o' &&
               this.pattern[startPosition] == 'o') ||
           startPosition != endPosition) {
@@ -233,12 +233,26 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(" ", "");
     return s;
   }
-
+  String patternGenerator(String s) {
+    s = s.replaceAll("NAND", "oooo");
+    s = s.replaceAll("AND", "ooo");
+    s = s.replaceAll("XNOR", "oooo");
+    s = s.replaceAll("NOR", "ooo");
+    s = s.replaceAll("XOR", "ooo");
+    s = s.replaceAll("OR", "oo");
+    s = s.replaceAll("NOT", "ooo");
+    return s;
+  }
+void updatePos (String s,int start,int end) async {
+    startPosition = endPosition = s.length;
+    ClipboardData? tmp = await  Clipboard.getData(Clipboard.kTextPlain);
+    String? t = tmp?.text;
+}
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    expGenerator(controller.text);
-    Parser p = Parser(expr, curentNumerSystem);
+    pattern = patternGenerator(expGenerator(controller.text));
+    Parser p = Parser(expGenerator(controller.text), curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
       switch (curentNumerSystem) {
@@ -310,10 +324,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             int end = startPosition - 1;
             int start = startPosition - 1;
             while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
+              if(pattern[end + 1] == ' ') {
+                end++;
+                break;
+              }
               end++;
               if (end + 1 >= pattern.length - 1) break;
             }
             while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
+              if(pattern[start - 1] == ' ') {
+                start--;
+                break;
+              }
               start--;
               if (start == 0) break;
             }
@@ -351,6 +373,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
           while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
+            if(pattern[end + 1] == ' ') {
+              end++;
+              break;
+            }
             end++;
             if (end + 1 >= pattern.length - 1) break;
           }
@@ -359,6 +385,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
       if (pattern[startPosition] == 'o') {
         while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
+          if(pattern[start - 1] == ' ') {
+            start--;
+            break;
+          }
           start--;
           if (start == 0) break;
         }
