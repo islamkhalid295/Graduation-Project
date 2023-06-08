@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -105,9 +108,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
+
   Future<void> addHistoryLocal() async {
 
-    int response = await sqlDb.insertData(userExpr, curentNumerSystem);
+    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
     print("sssssssssssssssssssss");
   }
 
@@ -122,7 +126,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     print("res= $res");
   }
 
- main
+
   Future<void> addUserHistory(xtext, type) {
     return _history
         .add({
@@ -220,7 +224,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    //0if (isResultExist) clearAll();
+    //if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
@@ -283,7 +287,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    pattern = patternGenerator(expGenerator(controller.text));
+    pattern = patternGenerator(controller.text);
     Parser p = Parser(expGenerator(controller.text), curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
