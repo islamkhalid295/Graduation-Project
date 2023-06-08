@@ -87,7 +87,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
-  void updatehistory() async {
+  Future<void> updatehistory() async {
     int count = await sqlDb.getlenght();
     List<Map> res = await sqlDb.readData();
     if (count > 0) {
@@ -135,12 +135,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     print("cccccccccccccccccccccccccccccccc");
     }
   }
-
-
-
-
-
-
 
   Future<void> addUserHistory(xtext, type) {
 
@@ -351,11 +345,6 @@ void updatePos (String s,int start,int end) async {
     explenation.removeAt(0);
     //print(explenation.join('\n'));
     emit(CalculatorResult());
-
-    if(_auth.currentUser?.email!=null) {
-      updatehistory();
-      print("updattttttttttttttttttttttttttttttttt");
-    }
     getHistoryLocal();
   }
 
@@ -517,11 +506,15 @@ void updatePos (String s,int start,int end) async {
     String theme,
   ) async {
     if(_auth.currentUser?.email!=null) {
+      await updatehistory();
+    }
+    if(_auth.currentUser?.email!=null) {
       await getHistoryData();
     }
     else{
      await getHistoryLocal();
     }
+
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(

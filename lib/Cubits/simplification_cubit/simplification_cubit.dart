@@ -232,11 +232,6 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     print('truth table: \n${simplifier.getTruthTableData(expr)}');
     print('Comparison Steps: \n${simplifier.comparisonSteps}');
     isResultExist = true;
-    if(_auth.currentUser?.email!=null) {
-      updatehistorySimplification();
-      print("updattttttttttttttttttttttttttttttttt");
-    }
-
     getHistoryLocal();
     emit(SimplificationResult());
   }
@@ -365,6 +360,9 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       BuildContext context,
       String theme,
       ) async {
+    if(_auth.currentUser?.email!=null) {
+      updatehistorySimplification();
+    }
     if(_auth.currentUser?.email!=null) {
       await getHistoryDataSimlification();
     }
