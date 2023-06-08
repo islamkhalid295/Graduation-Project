@@ -77,6 +77,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
     }
   }
+
   Future<void> deleteHistoryLocal(String expr)async{
     List<Map> res = await sqlDb.readData();
     int count = await sqlDb.getlenght();
@@ -97,6 +98,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
   Future<void> addHistoryLocal() async {
+
     int response = await sqlDb.insertData(userExpr, curentNumerSystem);
     print("sssssssssssssssssssss");
   }
@@ -209,7 +211,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    if (isResultExist) clearAll();
+    //0if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
@@ -327,6 +329,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = false;
     controller.text = '';
     expr = '';
+    binResult= '0';
+    octResult= '0';
+    hexResult= '0';
+    decResult= '0';
     pattern = '';
     userExpr = '';
     startPosition = endPosition = userExpr.length;
@@ -387,8 +393,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           break;
         default:
           {
-            expr = expr.substring(0, expr.length - 1);
-            check();
+            result = "delete error";
           }
       }
     } else {
@@ -432,11 +437,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           controller.text.substring(end + 1, controller.text.length);
       pattern = pattern.substring(0, start) +
           pattern.substring(end + 1, pattern.length);
-      expr = expGenerator(controller.text);
-    }
 
-    emit(CalculatorExprUpdate());
+    }
+    expr = expGenerator(controller.text);
     check();
+    emit(CalculatorExprUpdate());
     startPosition = endPosition = start_t;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
