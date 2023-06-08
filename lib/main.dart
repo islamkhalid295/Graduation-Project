@@ -11,13 +11,10 @@ import 'package:graduation_project/UI/simpllification/simplification.dart';
 import 'Models/app_config.dart';
 import 'Cubits/login_cubit/login_cubit.dart';
 import 'UI/login.dart';
-//import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
-//import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +23,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  ClipboardData? c = await Clipboard.getData(Clipboard.kTextPlain);
   await UserConfig().init();
 
   runApp(MultiBlocProvider(

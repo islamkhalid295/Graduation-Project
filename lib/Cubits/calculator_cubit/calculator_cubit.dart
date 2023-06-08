@@ -36,7 +36,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   SqlDb sqlDb = SqlDb();
   late List explenation;
 
-
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -86,13 +85,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
-
   void addHistoryLocal() async {
     int response = await sqlDb.insertData(userExpr, curentNumerSystem);
   }
 
   Future<void> addUserHistory(xtext, type) {
-
     return _history
         .add({
           'operation': xtext, // add history
@@ -158,7 +155,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     });
     emit(CalculatorExprUpdate());
   }
-
 
   void check() {
     try {
@@ -237,7 +233,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    expGenerator(controller.text);
+    expr = expGenerator(controller.text);
     Parser p = Parser(expr, curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -568,7 +564,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     );
   }
 
-
   void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
         ? ThemeColors.lightBlackText
@@ -646,7 +641,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                         TextSpan(
                           text: explenation[index].updatedPart,
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' = ',
                         ),
                         TextSpan(
@@ -757,7 +752,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     return exp;
   }
-
 }
 
 class SqlDb {

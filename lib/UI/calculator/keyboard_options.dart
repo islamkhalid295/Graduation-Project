@@ -230,6 +230,36 @@ class KeyboardOptions extends StatelessWidget {
                   .updateExpr(')', ' ) ', ' o '),
             ),
           ),
+          SizedBox(
+            width: SizeConfig.heightBlock! * 0.5,
+          ),
+          Expanded(
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: SizeConfig.widthBlock!),
+                  backgroundColor: (theme == 'light')
+                      ? ThemeColors.lightCanvas
+                      : ThemeColors.darkCanvas,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  )),
+              child: FittedBox(
+                child: Text(
+                  '+/-',
+                  style: TextStyle(
+                    color: (theme == 'light')
+                        ? ThemeColors.lightForegroundTeal
+                        : ThemeColors.darkForegroundTeal,
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConfig.heightBlock! * 2.5,
+                  ),
+                ),
+              ),
+              onPressed: () => BlocProvider.of<CalculatorCubit>(context)
+                  .updateExpr('-', ' - ', ' o '),
+            ),
+          ),
         ],
       ),
     );
