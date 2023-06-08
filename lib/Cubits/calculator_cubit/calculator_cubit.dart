@@ -1,5 +1,7 @@
+
 import 'dart:async';
 import 'dart:core';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,9 +17,6 @@ import 'package:path/path.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
-
-import '../login_cubit/login_cubit.dart';
-
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -26,7 +25,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
-
   String expr = '';
   String pattern = '';
   String result = '0';
@@ -50,6 +48,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   SqlDb sqlDb = SqlDb();
   late List explenation;
 
+
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -59,9 +58,20 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
   final _history = FirebaseFirestore.instance.collection('history');
-
   @override
 
+  /*void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+   */
 
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
@@ -86,6 +96,24 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         await sqlDb.deleteData(i + 1);
       }
     }
+
+
+  }
+
+  Future<void> getHistoryLocal() async {
+    testCalculatorHistory.clear();
+    List<Map> res = await sqlDb.readData();
+    for (int i = 0; i < res.length; i++) {
+      testCalculatorHistory.add({
+        'expr': res[i]['operation'],
+      });
+    }
+    print("res= $res");
+  }
+  void addHistoryLocal() async {
+    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
+    print("dddddddddddddddddddddddddddd");
+
   }
 
 
@@ -109,25 +137,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
 
-  Future<void> addHistoryLocal() async {
 
-    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
-    print("sssssssssssssssssssss");
-  }
 
-  Future<void> getHistoryLocal() async {
-    testCalculatorHistory.clear();
-    List<Map> res = await sqlDb.readData();
-    for (int i = 0; i < res.length; i++) {
-      testCalculatorHistory.add({
-        'expr': res[i]['operation'],
-      });
-    }
-    print("res= $res");
-  }
+
 
 
   Future<void> addUserHistory(xtext, type) {
+
     return _history
         .add({
           'operation': xtext, // add history
@@ -193,6 +209,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     });
     emit(CalculatorExprUpdate());
   }
+
 
   void check() {
     try {
@@ -266,7 +283,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(" ", "");
     return s;
   }
-
   String patternGenerator(String s) {
     s = s.replaceAll("NAND", "oooo");
     s = s.replaceAll("AND", "ooo");
@@ -281,13 +297,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
     return s;
   }
-
-  void updatePos(String s, int start, int end) async {
+void updatePos (String s,int start,int end) async {
     startPosition = endPosition = s.length;
-    ClipboardData? tmp = await Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? tmp = await  Clipboard.getData(Clipboard.kTextPlain);
     String? t = tmp?.text;
-  }
-
+}
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
@@ -318,7 +332,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
       if(_auth.currentUser?.email!=null) {
         addUserHistory(controller.text, curentNumerSystem);
-      }else{
+        print("ssssssssssssss");
+      }
+      else{
         addHistoryLocal();
       }
     } else {
@@ -336,7 +352,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     //print(explenation.join('\n'));
     emit(CalculatorResult());
 
-    updatehistory();
+    if(_auth.currentUser?.email!=null) {
+      updatehistory();
+      print("updattttttttttttttttttttttttttttttttt");
+    }
     getHistoryLocal();
   }
 
@@ -372,7 +391,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             int end = startPosition - 1;
             int start = startPosition - 1;
             while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-              if (pattern[end + 1] == ' ') {
+              if(pattern[end + 1] == ' ') {
                 end++;
                 break;
               }
@@ -380,7 +399,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
               if (end + 1 >= pattern.length - 1) break;
             }
             while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-              if (pattern[start - 1] == ' ') {
+              if(pattern[start - 1] == ' ') {
                 start--;
                 break;
               }
@@ -420,7 +439,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
           while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-            if (pattern[end + 1] == ' ') {
+            if(pattern[end + 1] == ' ') {
               end++;
               break;
             }
@@ -432,7 +451,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
       if (pattern[startPosition] == 'o') {
         while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-          if (pattern[start - 1] == ' ') {
+          if(pattern[start - 1] == ' ') {
             start--;
             break;
           }
@@ -497,10 +516,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     BuildContext context,
     String theme,
   ) async {
-    if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+    if(_auth.currentUser?.email!=null) {
       await getHistoryData();
-    }else{
-      await getHistoryLocal();
+    }
+    else{
+     await getHistoryLocal();
     }
     showModalBottomSheet(
       context: context,
@@ -538,16 +558,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                            if(_auth.currentUser?.email!=null) {
                               await deleteHistoryData(
                                   testCalculatorHistory[index]['expr']!);
-                            }else{
+                            }
+                            else{
                               await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
                             }
-
-                            // testCalculatorHistory.removeAt(index);
                             testCalculatorHistory.removeWhere((element) =>
-                                element["expr"] ==
+                            element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(CalculatorHistoryUpdate());
                             Navigator.of(context).pop();
@@ -630,12 +649,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                          if(_auth.currentUser?.email!=null) {
                             await cleareHistoryData();
-                          }else{
+                          }
+                          else{
                             await clearHistoryLocal();
                           }
-
+                          await cleareHistoryData();
                           emit(CalculatorHistoryUpdate());
                           Navigator.of(context).pop();
                         },
@@ -660,6 +680,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       ),
     );
   }
+
 
   void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
@@ -849,6 +870,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     return exp;
   }
+
 }
 
 class SqlDb {
@@ -915,5 +937,15 @@ class SqlDb {
     return count;
   }
 
+/* void insertToDatabase(){
+    database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print(()=>"$value insert succssefly");
+      }).catchError((error){
+        print(()=>"error when insert $error");
+      });
 
+    });
+  }
+  */
 }
