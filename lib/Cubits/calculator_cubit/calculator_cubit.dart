@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,11 +86,16 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         await sqlDb.deleteData(i + 1);
       }
     }
+
   }
 
-
+Future<void>  getHustoryLocal()async{
+   List<Map> res = await sqlDb.readData();
+   print("ress=$res");
+ }
   void addHistoryLocal() async {
     int response = await sqlDb.insertData(userExpr, curentNumerSystem);
+    print("dddddddddddddddddddddddddddd");
   }
 
   Future<void> addUserHistory(xtext, type) {
@@ -291,8 +298,9 @@ void updatePos (String s,int start,int end) async {
     explenation.removeAt(0);
     //print(explenation.join('\n'));
     emit(CalculatorResult());
-
-    updatehistory();
+    addHistoryLocal();
+   // updatehistory();
+    getHustoryLocal();
   }
 
   void clearAll() {
@@ -451,7 +459,12 @@ void updatePos (String s,int start,int end) async {
     BuildContext context,
     String theme,
   ) async {
-    await getHistoryData();
+    if(_auth.currentUser?.email!=null) {
+      await getHistoryData();
+    }
+    else{
+     await getHustoryLocal();
+    }
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(
@@ -488,8 +501,11 @@ void updatePos (String s,int start,int end) async {
                         ),
                         TextButton(
                           onPressed: () async {
-                            testCalculatorHistory.removeAt(index);
+
                             await deleteHistoryData(
+                                testCalculatorHistory[index]['expr']!);
+                            testCalculatorHistory.removeWhere((element) =>
+                            element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(CalculatorHistoryUpdate());
                             Navigator.of(context).pop();

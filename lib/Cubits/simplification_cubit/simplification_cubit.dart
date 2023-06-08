@@ -195,13 +195,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     v.validat();
     if (v.error == false) {
       result = simplifier.simpilify();
+      addUserHistorySimlification(controller.text);
     } else {
       result = "invalid Expression";
     }
     print('truth table: \n${simplifier.getTruthTableData(expr)}');
     print('Comparison Steps: \n${simplifier.comparisonSteps}');
     isResultExist = true;
-    addUserHistorySimlification(controller.text);
+
     updatehistorySimplification();
     emit(SimplificationResult());
   }
@@ -329,7 +330,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       BuildContext context,
       String theme,
       ) async {
-    await getHistoryDataSimlification();
+      await getHistoryDataSimlification();
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<SimplificationCubit, SimplificationState>(
@@ -366,8 +367,11 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            testCalculatorHistory.removeAt(index);
+
                             await deleteHistoryDataSimlification(
+                                testCalculatorHistory[index]['expr']!);
+                            testCalculatorHistory.removeWhere((element) =>
+                            element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(SimplificationHistoryUpdate());
                             Navigator.of(context).pop();
