@@ -12,9 +12,6 @@ import 'package:path/path.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
-
-import '../login_cubit/login_cubit.dart';
-
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -24,7 +21,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
-
   String expr = '';
   late String userExpr;
   String pattern = '';
@@ -40,6 +36,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   SqlDb sqlDb = SqlDb();
   late List explenation;
 
+
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -49,9 +46,20 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
   final _history = FirebaseFirestore.instance.collection('history');
-
   @override
 
+  /*void getCurrentUser(){
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        signInUser = user;
+        print(user.email);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+   */
 
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
@@ -77,42 +85,14 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
     }
   }
-  Future<void> deleteHistoryLocal(String expr)async{
-    List<Map> res = await sqlDb.readData();
-    int count = await sqlDb.getlenght();
-    for (int i = 0; i < count; i++) {
-    if(res[i]['operation']==expr){
-    await sqlDb.deleteData(res[i]['id']);
-    print("dddddddddddddddddddddddddddddddddddddddd");
-    }
-    }
-  }
-  Future<void> clearHistoryLocal()async{
-    List<Map> res = await sqlDb.readData();
-    int count = await sqlDb.getlenght();
-    for (int i = 0; i < count; i++) {
-    await sqlDb.deleteData(res[i]['id']);
-    print("cccccccccccccccccccccccccccccccc");
-    }
-  }
 
-  Future<void> addHistoryLocal() async {
+
+  void addHistoryLocal() async {
     int response = await sqlDb.insertData(userExpr, curentNumerSystem);
-    print("sssssssssssssssssssss");
-  }
-
-  Future<void> getHistoryLocal() async {
-    testCalculatorHistory.clear();
-    List<Map> res = await sqlDb.readData();
-    for (int i = 0; i < res.length; i++) {
-      testCalculatorHistory.add({
-        'expr': res[i]['operation'],
-      });
-    }
-    print("res= $res");
   }
 
   Future<void> addUserHistory(xtext, type) {
+
     return _history
         .add({
           'operation': xtext, // add history
@@ -178,6 +158,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     });
     emit(CalculatorExprUpdate());
   }
+
 
   void check() {
     try {
@@ -252,7 +233,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(" ", "");
     return s;
   }
-
   String patternGenerator(String s) {
     s = s.replaceAll("NAND", "oooo");
     s = s.replaceAll("AND", "ooo");
@@ -263,13 +243,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll("NOT", "ooo");
     return s;
   }
-
-  void updatePos(String s, int start, int end) async {
+void updatePos (String s,int start,int end) async {
     startPosition = endPosition = s.length;
-    ClipboardData? tmp = await Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? tmp = await  Clipboard.getData(Clipboard.kTextPlain);
     String? t = tmp?.text;
-  }
-
+}
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
@@ -298,11 +276,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
-      if(_auth.currentUser?.email!=null) {
-        addUserHistory(controller.text, curentNumerSystem);
-      }else{
-        addHistoryLocal();
-      }
+      addUserHistory(controller.text, curentNumerSystem);
     } else {
       result = "Math Error";
       binResult = "Math Error";
@@ -319,7 +293,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorResult());
 
     updatehistory();
-    getHistoryLocal();
   }
 
   void clearAll() {
@@ -351,7 +324,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             int end = startPosition - 1;
             int start = startPosition - 1;
             while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-              if (pattern[end + 1] == ' ') {
+              if(pattern[end + 1] == ' ') {
                 end++;
                 break;
               }
@@ -359,7 +332,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
               if (end + 1 >= pattern.length - 1) break;
             }
             while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-              if (pattern[start - 1] == ' ') {
+              if(pattern[start - 1] == ' ') {
                 start--;
                 break;
               }
@@ -400,7 +373,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
           while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-            if (pattern[end + 1] == ' ') {
+            if(pattern[end + 1] == ' ') {
               end++;
               break;
             }
@@ -412,7 +385,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
       if (pattern[startPosition] == 'o') {
         while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-          if (pattern[start - 1] == ' ') {
+          if(pattern[start - 1] == ' ') {
             start--;
             break;
           }
@@ -478,11 +451,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     BuildContext context,
     String theme,
   ) async {
-    if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
-      await getHistoryData();
-    }else{
-      await getHistoryLocal();
-    }
+    await getHistoryData();
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(
@@ -519,16 +488,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
-                              await deleteHistoryData(
-                                  testCalculatorHistory[index]['expr']!);
-                            }else{
-                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
-                            }
-
-                            // testCalculatorHistory.removeAt(index);
-                            testCalculatorHistory.removeWhere((element) =>
-                                element["expr"] ==
+                            testCalculatorHistory.removeAt(index);
+                            await deleteHistoryData(
                                 testCalculatorHistory[index]['expr']!);
                             emit(CalculatorHistoryUpdate());
                             Navigator.of(context).pop();
@@ -611,12 +572,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
-                            await cleareHistoryData();
-                          }else{
-                            await clearHistoryLocal();
-                          }
-
+                          await cleareHistoryData();
                           emit(CalculatorHistoryUpdate());
                           Navigator.of(context).pop();
                         },
@@ -641,6 +597,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       ),
     );
   }
+
 
   void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
@@ -830,6 +787,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     return exp;
   }
+
 }
 
 class SqlDb {
@@ -896,5 +854,15 @@ class SqlDb {
     return count;
   }
 
+/* void insertToDatabase(){
+    database.transaction((txn)async{
+      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
+        print(()=>"$value insert succssefly");
+      }).catchError((error){
+        print(()=>"error when insert $error");
+      });
 
+    });
+  }
+  */
 }
