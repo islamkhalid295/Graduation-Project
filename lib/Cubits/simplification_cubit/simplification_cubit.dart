@@ -1,8 +1,9 @@
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graduation_project/Cubits/login_cubit/login_cubit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Models/app_config.dart';
@@ -11,6 +12,8 @@ import '../../Models/simpilifier.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'dart:async';
+
+import '../login_cubit/login_cubit.dart';
 
 part 'simplification_state.dart';
 
@@ -72,17 +75,8 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     }
   }
 
-  Future<void> addHistoryLocalSimlification() async {
+  void addHistoryLocalSimlification() async {
     int response = await sqlDbSimlification.insertData(userExpr);
-  }
-  Future<void> getHistoryLocalSimlification()async{
-    List<Map> res = await sqlDbSimlification.readData();
-    for(int i=0;i<res.length;i++){
-      testCalculatorHistory.add(
-          {
-            'expr': res[i]['operation'],
-          });
-    }
   }
 
   Future<void> addUserHistorySimlification(xtext) {
@@ -91,16 +85,13 @@ class SimplificationCubit extends Cubit<SimplificationState> {
           'operation': xtext, // add history
           'user': _auth.currentUser?.email //currentuser
         })
-        .then((value) => print("User History Added"))
+        .then((value) => print("User History Added ${_auth.currentUser?.email}"))
         .catchError((error) {
           print("Failed to add user History: ");
           addHistoryLocalSimlification();
         });
   }
-  Future<void> addHistoryLocal() async {
-    int response = await sqlDbSimlification.insertData(userExpr);
-    print("sssssssssssssssssssss");
-  }
+
   Future<void> deleteHistoryDataSimlification(String oper) async {
     CollectionReference HistroyData =
         FirebaseFirestore.instance.collection('simplification');
@@ -229,8 +220,10 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       result = simplifier.simpilify();
       if(_auth.currentUser?.email!=null) {
         addUserHistorySimlification(controller.text);
-      }else{
-        addHistoryLocal();
+      print("ssssssssssssss");
+      }
+      else{
+        addHistoryLocalSimlification();
       }
 
     } else {
@@ -239,10 +232,12 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     print('truth table: \n${simplifier.getTruthTableData(expr)}');
     print('Comparison Steps: \n${simplifier.comparisonSteps}');
     isResultExist = true;
+    if(_auth.currentUser?.email!=null) {
+      updatehistorySimplification();
+      print("updattttttttttttttttttttttttttttttttt");
+    }
 
-    addHistoryLocal();
     getHistoryLocal();
-    updatehistorySimplification();
     emit(SimplificationResult());
   }
 
@@ -367,11 +362,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   void showHistory(
 
-    BuildContext context,
-    String theme,
-  ) async {
-    if (BlocProvider.of<LoginCubit>(context).isLogedIn()) {
+      BuildContext context,
+      String theme,
+      ) async {
+    if(_auth.currentUser?.email!=null) {
       await getHistoryDataSimlification();
+    }
+    else{
+      await getHistoryLocal();
     }
 
     showModalBottomSheet(
@@ -412,14 +410,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            await deleteHistoryDataSimlification(
-                                testCalculatorHistory[index]['expr']!);
-                            if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                            if(_auth.currentUser?.email!=null) {
                               await deleteHistoryDataSimlification(
                                   testCalculatorHistory[index]['expr']!);
-                            }else{
+                            }
+                            else{
                               await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
                             }
+
                             testCalculatorHistory.removeWhere((element) =>
                             element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
@@ -504,12 +502,13 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-
-                          if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                          if(_auth.currentUser?.email!=null) {
                             await cleareHistoryDataSimlification();
-                          }else{
+                          }
+                          else{
                             await clearHistoryLocal();
                           }
+
                           emit(SimplificationHistoryUpdate());
                           Navigator.of(context).pop();
                         },
