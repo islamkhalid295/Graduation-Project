@@ -65,8 +65,14 @@ String checkTheme(String theme, BuildContext context) {
 class UserConfig {
   static SharedPreferences? pref;
 
+  static late bool? calculatorG;
+  static late bool? simplificationG;
+  static late String? pageRoute;
   Future<void> init() async {
     pref = await SharedPreferences.getInstance();
+    // pageRoute = await getLastPage();
+    // calculatorG = await getCalculatorGuidance();
+    // simplificationG = await getSimplificationGuidance();
   }
 
   static void setTheme(String theme) {
@@ -75,6 +81,30 @@ class UserConfig {
 
   static String? getTheme() {
     return pref!.getString('theme');
+  }
+
+  static void setLastPage(String theme) {
+    pref!.setString('lastPage', theme);
+  }
+
+  static String? getLastPage() {
+    return pref!.getString('lastPage');
+  }
+
+  static void setCalculatorGuidance(bool val) {
+    pref!.setBool('calculatorG', val);
+  }
+
+  static void setSimplificationGuidance(bool val) {
+    pref!.setBool('simplificationG', val);
+  }
+
+  static bool? getCalculatorGuidance() {
+    return pref!.getBool('calculatorG');
+  }
+
+  static bool? getSimplificationGuidance() {
+    return pref!.getBool('simplificationG');
   }
 }
 

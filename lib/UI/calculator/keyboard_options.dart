@@ -38,55 +38,71 @@ class KeyboardOptions extends StatelessWidget {
                 buildWhen: (previous, current) =>
                     current is CalculatorIsSignedChange,
                 builder: (context, state) {
-                  return DropdownButton(
-                    isDense: true,
-                    isExpanded: true,
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: (theme == 'light')
-                          ? ThemeColors.lightForegroundTeal
-                          : ThemeColors.darkForegroundTeal,
+                  return Showcase(
+                    tooltipBackgroundColor: ThemeColors.lightCanvas,
+                    titleTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: ThemeColors.lightForegroundTeal,
+                        fontSize: 16),
+                    descTextStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: ThemeColors.lightBlackText,
+                      fontSize: 14,
                     ),
-                    dropdownColor: (theme == 'light')
-                        ? ThemeColors.lightCanvas
-                        : ThemeColors.darkCanvas,
-                    underline: const SizedBox(),
-                    value: BlocProvider.of<CalculatorCubit>(context).isSigned,
-                    items: [
-                      DropdownMenuItem(
-                        value: true,
-                        child: FittedBox(
-                          child: Text(
-                            'Signed',
-                            style: TextStyle(
-                              color: (theme == 'light')
-                                  ? ThemeColors.lightBlackText
-                                  : ThemeColors.darkWhiteText,
-                              fontWeight: FontWeight.bold,
-                              fontSize: SizeConfig.heightBlock! * 2.5,
+                    key: BlocProvider.of<CalculatorCubit>(context).signedKey,
+                    title: 'Signed',
+                    description:
+                        'To change the number system to signed or to unsigned number system.',
+                    child: DropdownButton(
+                      isDense: true,
+                      isExpanded: true,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: (theme == 'light')
+                            ? ThemeColors.lightForegroundTeal
+                            : ThemeColors.darkForegroundTeal,
+                      ),
+                      dropdownColor: (theme == 'light')
+                          ? ThemeColors.lightCanvas
+                          : ThemeColors.darkCanvas,
+                      underline: const SizedBox(),
+                      value: BlocProvider.of<CalculatorCubit>(context).isSigned,
+                      items: [
+                        DropdownMenuItem(
+                          value: true,
+                          child: FittedBox(
+                            child: Text(
+                              'Signed',
+                              style: TextStyle(
+                                color: (theme == 'light')
+                                    ? ThemeColors.lightBlackText
+                                    : ThemeColors.darkWhiteText,
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConfig.heightBlock! * 2.5,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      DropdownMenuItem(
-                        value: false,
-                        child: FittedBox(
-                          child: Text(
-                            'Unsigned',
-                            style: TextStyle(
-                              color: (theme == 'light')
-                                  ? ThemeColors.lightBlackText
-                                  : ThemeColors.darkWhiteText,
-                              fontWeight: FontWeight.bold,
-                              fontSize: SizeConfig.heightBlock! * 2.5,
+                        DropdownMenuItem(
+                          value: false,
+                          child: FittedBox(
+                            child: Text(
+                              'Unsigned',
+                              style: TextStyle(
+                                color: (theme == 'light')
+                                    ? ThemeColors.lightBlackText
+                                    : ThemeColors.darkWhiteText,
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConfig.heightBlock! * 2.5,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                    onChanged: (value) =>
-                        BlocProvider.of<CalculatorCubit>(context)
-                            .isSignedChanger(),
+                      ],
+                      onChanged: (value) =>
+                          BlocProvider.of<CalculatorCubit>(context)
+                              .isSignedChanger(),
+                    ),
                   );
                 },
               ),
@@ -97,77 +113,95 @@ class KeyboardOptions extends StatelessWidget {
           ),
           Expanded(
             flex: 4,
-            child: BlocBuilder<CalculatorCubit, CalculatorState>(
-              buildWhen: (previous, current) => current is CalculatorResult,
-              builder: (context, state) {
-                return FilledButton(
-                  style: FilledButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: SizeConfig.widthBlock!,
-                      vertical: 0,
+            child: Showcase(
+              tooltipBackgroundColor: ThemeColors.lightCanvas,
+              titleTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ThemeColors.lightForegroundTeal,
+                  fontSize: 16),
+              descTextStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: ThemeColors.lightBlackText,
+                fontSize: 14,
+              ),
+              key: BlocProvider.of<CalculatorCubit>(context).explanationKey,
+              title: 'Explanation Button',
+              description:
+                  'To change the number system to signed or to unsigned number system.',
+              child: BlocBuilder<CalculatorCubit, CalculatorState>(
+                buildWhen: (previous, current) => current is CalculatorResult,
+                builder: (context, state) {
+                  return FilledButton(
+                    style: FilledButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.widthBlock!,
+                        vertical: 0,
+                      ),
+                      disabledBackgroundColor: (theme == 'light')
+                          ? ThemeColors.lightCanvas
+                          : ThemeColors.darkCanvas,
+                      backgroundColor: (theme == 'light')
+                          ? ThemeColors.lightCanvas
+                          : ThemeColors.darkCanvas,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    disabledBackgroundColor: (theme == 'light')
-                        ? ThemeColors.lightCanvas
-                        : ThemeColors.darkCanvas,
-                    backgroundColor: (theme == 'light')
-                        ? ThemeColors.lightCanvas
-                        : ThemeColors.darkCanvas,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed:
-                      BlocProvider.of<CalculatorCubit>(context).isResultExist
-                          ? () => BlocProvider.of<CalculatorCubit>(context)
-                              .showExplanation(context, theme!)
-                          : null,
-                  child: BlocBuilder<CalculatorCubit, CalculatorState>(
-                    builder: (context, state) {
-                      return FittedBox(
-                        child: Row(
-                          children: [
-                            Text(
-                              'Explenation',
-                              style: TextStyle(
+                    onPressed:
+                        BlocProvider.of<CalculatorCubit>(context).isResultExist
+                            ? () => BlocProvider.of<CalculatorCubit>(context)
+                                .showExplanation(context, theme!)
+                            : null,
+                    child: BlocBuilder<CalculatorCubit, CalculatorState>(
+                      builder: (context, state) {
+                        return FittedBox(
+                          child: Row(
+                            children: [
+                              Text(
+                                'Explenation',
+                                style: TextStyle(
+                                  color: (theme == 'light')
+                                      ? (BlocProvider.of<CalculatorCubit>(
+                                                  context)
+                                              .isResultExist)
+                                          ? ThemeColors.lightBlackText
+                                          : ThemeColors.lightBlackText
+                                              .withOpacity(0.5)
+                                      : (BlocProvider.of<CalculatorCubit>(
+                                                  context)
+                                              .isResultExist)
+                                          ? ThemeColors.darkWhiteText
+                                          : ThemeColors.darkWhiteText
+                                              .withOpacity(0.5),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConfig.heightBlock! * 2.5,
+                                ),
+                              ),
+                              SizedBox(
+                                width: SizeConfig.widthBlock! * 2,
+                              ),
+                              Icon(
+                                Icons.info_outline,
                                 color: (theme == 'light')
                                     ? (BlocProvider.of<CalculatorCubit>(context)
                                             .isResultExist)
-                                        ? ThemeColors.lightBlackText
+                                        ? ThemeColors.lightForegroundTeal
                                         : ThemeColors.lightBlackText
                                             .withOpacity(0.5)
                                     : (BlocProvider.of<CalculatorCubit>(context)
                                             .isResultExist)
-                                        ? ThemeColors.darkWhiteText
+                                        ? ThemeColors.darkForegroundTeal
                                         : ThemeColors.darkWhiteText
                                             .withOpacity(0.5),
-                                fontWeight: FontWeight.bold,
-                                fontSize: SizeConfig.heightBlock! * 2.5,
-                              ),
-                            ),
-                            SizedBox(
-                              width: SizeConfig.widthBlock! * 2,
-                            ),
-                            Icon(
-                              Icons.info_outline,
-                              color: (theme == 'light')
-                                  ? (BlocProvider.of<CalculatorCubit>(context)
-                                          .isResultExist)
-                                      ? ThemeColors.lightForegroundTeal
-                                      : ThemeColors.lightBlackText
-                                          .withOpacity(0.5)
-                                  : (BlocProvider.of<CalculatorCubit>(context)
-                                          .isResultExist)
-                                      ? ThemeColors.darkForegroundTeal
-                                      : ThemeColors.darkWhiteText
-                                          .withOpacity(0.5),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           SizedBox(

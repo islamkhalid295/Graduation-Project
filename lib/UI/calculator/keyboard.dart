@@ -21,32 +21,48 @@ class Keyboard extends StatelessWidget {
         }
       },
       builder: (context, state) => Expanded(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: (theme == 'light')
-                ? ThemeColors.lightElemBG
-                : ThemeColors.darkElemBG,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+        child: Showcase(
+          tooltipBackgroundColor: ThemeColors.lightCanvas,
+          titleTextStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: ThemeColors.lightForegroundTeal,
+              fontSize: 16),
+          descTextStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: ThemeColors.lightBlackText,
+            fontSize: 14,
           ),
-          child: Column(
-            children: [
-              Expanded(child: KeyboardOptions()),
-              Divider(
-                height: 5,
-                thickness: 2,
-                indent: SizeConfig.widthBlock! * 2,
-                endIndent: SizeConfig.widthBlock! * 2,
-                color: (theme == 'light')
-                    ? ThemeColors.lightBlackText.withOpacity(0.25)
-                    : ThemeColors.darkWhiteText.withOpacity(0.25),
-              ),
-              Expanded(
-                flex: 9,
-                child: KeyboardKeys(),
-              ),
-            ],
+          key: BlocProvider.of<CalculatorCubit>(context).keyboardKey,
+          title: 'Keyboard Section',
+          description: 'You can write your expression via this section.',
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: (theme == 'light')
+                  ? ThemeColors.lightElemBG
+                  : ThemeColors.darkElemBG,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(8)),
+            ),
+            child: Column(
+              children: [
+                Expanded(child: KeyboardOptions()),
+                Divider(
+                  height: 5,
+                  thickness: 2,
+                  indent: SizeConfig.widthBlock! * 2,
+                  endIndent: SizeConfig.widthBlock! * 2,
+                  color: (theme == 'light')
+                      ? ThemeColors.lightBlackText.withOpacity(0.25)
+                      : ThemeColors.darkWhiteText.withOpacity(0.25),
+                ),
+                Expanded(
+                  flex: 9,
+                  child: KeyboardKeys(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

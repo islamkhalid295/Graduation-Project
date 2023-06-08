@@ -17,12 +17,10 @@ part 'calculator_state.dart';
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
-    userExpr = controller.text;
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
   String expr = '';
-  late String userExpr;
   String pattern = '';
   String result = '0';
   String binResult = '0';
@@ -32,6 +30,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
+
+  GlobalKey menuKey = GlobalKey();
+  GlobalKey pageKey = GlobalKey();
+  GlobalKey signedKey = GlobalKey();
+  GlobalKey keyboardKey = GlobalKey();
+  GlobalKey resultKey = GlobalKey();
+  GlobalKey explanationKey = GlobalKey();
+  GlobalKey historyKey = GlobalKey();
+  GlobalKey convertSysKey = GlobalKey();
 
   SqlDb sqlDb = SqlDb();
   late List explenation;
@@ -86,7 +93,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
 
   void addHistoryLocal() async {
-    int response = await sqlDb.insertData(userExpr, curentNumerSystem);
+    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
   }
 
   Future<void> addUserHistory(xtext, type) {
@@ -162,10 +169,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       Parser p = Parser(expr, curentNumerSystem);
       tmp = p.sampleParser();
       if (p.error) {
-        binResult = "";
-        decResult = "";
-        hexResult = "";
-        octResult = "";
+        binResult = "Math Error";
+        decResult = "Math Error";
+        hexResult = "Math Error";
+        octResult = "Math Error";
       } else {
         if (isSigned) {
           binResult = tmp.toRadixString(2).toString();
@@ -186,13 +193,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    if (isResultExist) clearAll();
+    //0if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    if (this.pattern.length >= 2) {
+    if (this.pattern.length >= 2 && startPosition > 0) {
       if ((this.pattern[startPosition - 1] == 'o' &&
               this.pattern[startPosition] == 'o') ||
           startPosition != endPosition) {
@@ -205,7 +212,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
 
-    userExpr = controller.text;
     // 0110
     this.pattern = this.pattern.substring(0, startPosition) +
         pattern +
@@ -213,7 +219,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     startPosition = endPosition = pattern.length + endPosition;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    expr = expGenerator(userExpr);
+    expr = expGenerator(controller.text);
     check();
     emit(CalculatorExprUpdate());
   }
@@ -230,11 +236,28 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     return s;
   }
 
+  String patternGenerator(String s) {
+    s = s.replaceAll("NAND", "oooo");
+    s = s.replaceAll("AND", "ooo");
+    s = s.replaceAll("XNOR", "oooo");
+    s = s.replaceAll("NOR", "ooo");
+    s = s.replaceAll("XOR", "ooo");
+    s = s.replaceAll("OR", "oo");
+    s = s.replaceAll("NOT", "ooo");
+    return s;
+  }
+
+  void updatePos(String s, int start, int end) async {
+    startPosition = endPosition = s.length;
+    ClipboardData? tmp = await Clipboard.getData(Clipboard.kTextPlain);
+    String? t = tmp?.text;
+  }
+
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    expr = expGenerator(controller.text);
-    Parser p = Parser(expr, curentNumerSystem);
+    pattern = patternGenerator(expGenerator(controller.text));
+    Parser p = Parser(expGenerator(controller.text), curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
       switch (curentNumerSystem) {
@@ -282,9 +305,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = false;
     controller.text = '';
     expr = '';
+    binResult = '0';
+    octResult = '0';
+    hexResult = '0';
+    decResult = '0';
     pattern = '';
-    userExpr = '';
-    startPosition = endPosition = userExpr.length;
+    startPosition = endPosition = controller.text.length;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
@@ -306,10 +332,18 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             int end = startPosition - 1;
             int start = startPosition - 1;
             while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
+              if (pattern[end + 1] == ' ') {
+                end++;
+                break;
+              }
               end++;
               if (end + 1 >= pattern.length - 1) break;
             }
             while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
+              if (pattern[start - 1] == ' ') {
+                start--;
+                break;
+              }
               start--;
               if (start == 0) break;
             }
@@ -334,8 +368,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           break;
         default:
           {
-            expr = expr.substring(0, expr.length - 1);
-            check();
+            result = "delete error";
           }
       }
     } else {
@@ -347,6 +380,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
           while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
+            if (pattern[end + 1] == ' ') {
+              end++;
+              break;
+            }
             end++;
             if (end + 1 >= pattern.length - 1) break;
           }
@@ -355,6 +392,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
       if (pattern[startPosition] == 'o') {
         while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
+          if (pattern[start - 1] == ' ') {
+            start--;
+            break;
+          }
           start--;
           if (start == 0) break;
         }
@@ -371,11 +412,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           controller.text.substring(end + 1, controller.text.length);
       pattern = pattern.substring(0, start) +
           pattern.substring(end + 1, pattern.length);
-      expr = expGenerator(controller.text);
     }
-
-    emit(CalculatorExprUpdate());
+    expr = expGenerator(controller.text);
     check();
+    emit(CalculatorExprUpdate());
     startPosition = endPosition = start_t;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));

@@ -74,7 +74,8 @@ class ConvertSystem extends StatelessWidget {
       child: BlocBuilder<CalculatorCubit, CalculatorState>(
         buildWhen: (previous, current) =>
             current is CalculatorExprUpdate ||
-            current is CalculatorNumberSystemChange,
+            current is CalculatorNumberSystemChange ||
+            current is CalculatorResult,
         builder: (context, state) {
           String str = '';
           switch (system) {
@@ -126,10 +127,10 @@ class ConvertSystem extends StatelessWidget {
                         str,
                         textAlign: TextAlign.start,
                         style: TextStyle(
-                          color: (theme == 'light')
-                              ? ThemeColors.lightBlackText
-                              : ThemeColors.darkWhiteText,
-                        ),
+                            color: (theme == 'light')
+                                ? ThemeColors.lightBlackText
+                                : ThemeColors.darkWhiteText,
+                            fontSize: 20),
                       ),
                     ),
                   ),

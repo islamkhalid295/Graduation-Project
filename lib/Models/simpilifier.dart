@@ -126,30 +126,6 @@ class Simplifier {
     return flag;
   }
 
-  // bool isStepsContains(
-  //     List<List<Map<String, dynamic>>> steps, List<Map<String, dynamic>> soms) {
-  //   bool flag = true;
-  //   // steps.forEach((step) {
-  //   //   if (!listEquals(step, soms)) {
-  //   //     flag = false;
-  //   //     return;
-  //   //   }
-  //   // });
-
-  //   steps.forEach((step) {
-  //     step.forEach((som) {
-  //       if (!isContains(soms, som)) {
-  //         flag = false;
-  //         return;
-  //       }
-  //     });
-  //     if (!flag) {
-  //       return;
-  //     }
-  //   });
-  //   return flag;
-  // }
-
   List<Map<String, dynamic>> compare(List<Map<String, dynamic>> soms) {
     List<Map<String, dynamic>> newSoms = List.empty(growable: true);
     bool flag = false;

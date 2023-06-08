@@ -23,7 +23,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  ClipboardData? c = await Clipboard.getData(Clipboard.kTextPlain);
   await UserConfig().init();
 
   runApp(MultiBlocProvider(
@@ -50,12 +49,13 @@ void main() async {
 
 // ignore: must_be_immutable
 class Digeator extends StatelessWidget {
+  late String? routeName;
   Digeator({super.key});
   String currentTheme = 'system';
   @override
   Widget build(BuildContext context) {
     final _auth = FirebaseAuth.instance;
-
+    routeName = UserConfig.getLastPage();
     return BlocConsumer<ThemeCubit, ThemeState>(
       listener: (context, state) {
         if (state is ThemeStateLight)
@@ -90,7 +90,8 @@ class Digeator extends StatelessWidget {
           '/simplification': (ctx) => Simplification(),
           '/documentation': (ctx) => Documentation(),
         },
-        initialRoute: _auth.currentUser != null ? '/calculator' : '/login',
+        initialRoute: routeName == null ? '/login' : routeName!,
+        // initialRoute: _auth.currentUser != null ? '/calculator' : '/login',
       ),
     );
   }
