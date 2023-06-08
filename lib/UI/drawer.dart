@@ -263,8 +263,10 @@ class MyDrawer extends StatelessWidget {
                 : ThemeColors.darkWhiteText,
           ),
         ),
-        onTap: () =>
-            Navigator.of(context).pushReplacementNamed('/${str.toLowerCase()}'),
+        onTap: () {
+          Navigator.of(context).pushReplacementNamed('/${str.toLowerCase()}');
+          UserConfig.setLastPage('/${str.toLowerCase()}');
+        },
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: SizeConfig.heightBlock! * 2,

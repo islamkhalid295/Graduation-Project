@@ -1,4 +1,7 @@
-import 'dart:developer';
+
+import 'dart:async';
+import 'dart:core';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,12 +22,10 @@ part 'calculator_state.dart';
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
-    userExpr = controller.text;
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
   String expr = '';
-  late String userExpr;
   String pattern = '';
   String result = '0';
   String binResult = '0';
@@ -34,6 +35,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
+
+  GlobalKey menuKey = GlobalKey();
+  GlobalKey pageKey = GlobalKey();
+  GlobalKey signedKey = GlobalKey();
+  GlobalKey keyboardKey = GlobalKey();
+  GlobalKey resultKey = GlobalKey();
+  GlobalKey explanationKey = GlobalKey();
+  GlobalKey historyKey = GlobalKey();
+  GlobalKey convertSysKey = GlobalKey();
 
   SqlDb sqlDb = SqlDb();
   late List explenation;
@@ -87,16 +97,50 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
     }
 
+
   }
 
-Future<void>  getHustoryLocal()async{
-   List<Map> res = await sqlDb.readData();
-   print("ress=$res");
- }
-  void addHistoryLocal() async {
-    int response = await sqlDb.insertData(userExpr, curentNumerSystem);
-    print("dddddddddddddddddddddddddddd");
+  Future<void> getHistoryLocal() async {
+    testCalculatorHistory.clear();
+    List<Map> res = await sqlDb.readData();
+    for (int i = 0; i < res.length; i++) {
+      testCalculatorHistory.add({
+        'expr': res[i]['operation'],
+      });
+    }
+    print("res= $res");
   }
+  void addHistoryLocal() async {
+    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
+    print("dddddddddddddddddddddddddddd");
+
+  }
+
+
+  Future<void> deleteHistoryLocal(String expr)async{
+    List<Map> res = await sqlDb.readData();
+    int count = await sqlDb.getlenght();
+    for (int i = 0; i < count; i++) {
+    if(res[i]['operation']==expr){
+    await sqlDb.deleteData(res[i]['id']);
+    print("dddddddddddddddddddddddddddddddddddddddd");
+    }
+    }
+  }
+  Future<void> clearHistoryLocal()async{
+    List<Map> res = await sqlDb.readData();
+    int count = await sqlDb.getlenght();
+    for (int i = 0; i < count; i++) {
+    await sqlDb.deleteData(res[i]['id']);
+    print("cccccccccccccccccccccccccccccccc");
+    }
+  }
+
+
+
+
+
+
 
   Future<void> addUserHistory(xtext, type) {
 
@@ -173,10 +217,10 @@ Future<void>  getHustoryLocal()async{
       Parser p = Parser(expr, curentNumerSystem);
       tmp = p.sampleParser();
       if (p.error) {
-        binResult = "";
-        decResult = "";
-        hexResult = "";
-        octResult = "";
+        binResult = "Math Error";
+        decResult = "Math Error";
+        hexResult = "Math Error";
+        octResult = "Math Error";
       } else {
         if (isSigned) {
           binResult = tmp.toRadixString(2).toString();
@@ -197,7 +241,7 @@ Future<void>  getHustoryLocal()async{
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    if (isResultExist) clearAll();
+    //if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
@@ -216,7 +260,6 @@ Future<void>  getHustoryLocal()async{
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
 
-    userExpr = controller.text;
     // 0110
     this.pattern = this.pattern.substring(0, startPosition) +
         pattern +
@@ -224,7 +267,7 @@ Future<void>  getHustoryLocal()async{
     startPosition = endPosition = pattern.length + endPosition;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    expr = expGenerator(userExpr);
+    expr = expGenerator(controller.text);
     check();
     emit(CalculatorExprUpdate());
   }
@@ -258,7 +301,7 @@ void updatePos (String s,int start,int end) async {
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    pattern = patternGenerator(expGenerator(controller.text));
+    pattern = patternGenerator(controller.text);
     Parser p = Parser(expGenerator(controller.text), curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -283,7 +326,13 @@ void updatePos (String s,int start,int end) async {
             result = tmp.toString();
           }
       }
-      addUserHistory(controller.text, curentNumerSystem);
+      if(_auth.currentUser?.email!=null) {
+        addUserHistory(controller.text, curentNumerSystem);
+        print("ssssssssssssss");
+      }
+      else{
+        addHistoryLocal();
+      }
     } else {
       result = "Math Error";
       binResult = "Math Error";
@@ -298,9 +347,12 @@ void updatePos (String s,int start,int end) async {
     explenation.removeAt(0);
     //print(explenation.join('\n'));
     emit(CalculatorResult());
-    addHistoryLocal();
-   // updatehistory();
-    getHustoryLocal();
+
+    if(_auth.currentUser?.email!=null) {
+      updatehistory();
+      print("updattttttttttttttttttttttttttttttttt");
+    }
+    getHistoryLocal();
   }
 
   void clearAll() {
@@ -308,9 +360,12 @@ void updatePos (String s,int start,int end) async {
     isResultExist = false;
     controller.text = '';
     expr = '';
+    binResult = '0';
+    octResult = '0';
+    hexResult = '0';
+    decResult = '0';
     pattern = '';
-    userExpr = '';
-    startPosition = endPosition = userExpr.length;
+    startPosition = endPosition = controller.text.length;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
@@ -368,8 +423,7 @@ void updatePos (String s,int start,int end) async {
           break;
         default:
           {
-            expr = expr.substring(0, expr.length - 1);
-            check();
+            result = "delete error";
           }
       }
     } else {
@@ -413,11 +467,10 @@ void updatePos (String s,int start,int end) async {
           controller.text.substring(end + 1, controller.text.length);
       pattern = pattern.substring(0, start) +
           pattern.substring(end + 1, pattern.length);
-      expr = expGenerator(controller.text);
     }
-
-    emit(CalculatorExprUpdate());
+    expr = expGenerator(controller.text);
     check();
+    emit(CalculatorExprUpdate());
     startPosition = endPosition = start_t;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
@@ -463,7 +516,7 @@ void updatePos (String s,int start,int end) async {
       await getHistoryData();
     }
     else{
-     await getHustoryLocal();
+     await getHistoryLocal();
     }
     showModalBottomSheet(
       context: context,
@@ -501,9 +554,13 @@ void updatePos (String s,int start,int end) async {
                         ),
                         TextButton(
                           onPressed: () async {
-
-                            await deleteHistoryData(
-                                testCalculatorHistory[index]['expr']!);
+                            if(_auth.currentUser?.email!=null) {
+                              await deleteHistoryData(
+                                  testCalculatorHistory[index]['expr']!);
+                            }
+                            else{
+                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
+                            }
                             testCalculatorHistory.removeWhere((element) =>
                             element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
@@ -588,6 +645,12 @@ void updatePos (String s,int start,int end) async {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
+                          if(_auth.currentUser?.email!=null) {
+                            await cleareHistoryData();
+                          }
+                          else{
+                            await clearHistoryLocal();
+                          }
                           await cleareHistoryData();
                           emit(CalculatorHistoryUpdate());
                           Navigator.of(context).pop();
@@ -692,7 +755,7 @@ void updatePos (String s,int start,int end) async {
                         TextSpan(
                           text: explenation[index].updatedPart,
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' = ',
                         ),
                         TextSpan(

@@ -24,6 +24,7 @@ import 'functions.dart';
 enum Token {
   PLUS_SY,
   minus_SY,
+  negation_SY,
   SL_SY,
   SR_SY,
   AND_SY,
@@ -83,6 +84,7 @@ class Parser {
     '<<',
     '>>',
     '!|',
+    '-',
     '!&',
     '!^'
   ];
@@ -140,6 +142,8 @@ class Parser {
     s = s.replaceAll("!|", " NOR ");
     s = s.replaceAll("^", " XOR ");
     s = s.replaceAll("|", " OR ");
+    s = s.replaceAll("<<", " << ");
+    s = s.replaceAll(">>", " >> ");
     s = s.replaceAll("~", "NOT ");
     //s = s.replaceAll(" ", "");
     return s;
@@ -177,6 +181,8 @@ class Parser {
       return MyToken(Token.OR_SY);
     } else if (ch == '~') {
       return MyToken(Token.NOT_SY);
+    } else if (ch == '-') {
+      return MyToken(Token.negation_SY);
     } else if (ch == '(') {
       return MyToken(Token.LB_SY);
     } else if (ch == ')') {
@@ -241,6 +247,8 @@ class Parser {
         return "&";
       case Token.NAND_SY:
         return "!&";
+      case Token.negation_SY:
+        return "-";
       case Token.OR_SY:
         return "|";
       case Token.NOR_SY:
@@ -272,14 +280,14 @@ class Parser {
   }
 
   void syntax_error(MyToken t) {
-    // print("${name(t)} is not expected\n");
+    print("${name(t)} is not expected\n");
   }
 
   void match(MyToken t) {
     if (t.name == current_token?.name && !(t.name == Token.NUMBER_SY)) {
-      //// print("${name(t)}  is matched\n");
+      print("${name(t)}  is matched\n");
     } else if (t.name == current_token?.name && (t.name == Token.NUMBER_SY)) {
-      //// print("${name(t)}  is matched with value ${current_token?.value}\n");
+      print("${name(t)}  is matched with value ${current_token?.value}\n");
     } else {
       syntax_error(current_token!);
       error = true;
@@ -475,9 +483,25 @@ class Parser {
     } else
       return q();
   }
-
-// <Q> -> (<S>) | <digit>
   int q() {
+    if (current_token?.name == Token.negation_SY) {
+      match(MyToken(Token.negation_SY));
+      int tmp = e();
+      String s = "-${tmp.toRadixString(myRadix)}";
+      ExplanationStep step = new ExplanationStep(
+          explan.last.exprAfter,
+          s,
+          (-1*tmp).toRadixString(myRadix),
+          explan.last.exprAfter.replaceFirst(s, (-1*tmp).toRadixString(myRadix)),
+          explan.last.exprAfter.indexOf(s),
+          s.length + explan.last.exprAfter.indexOf(s));
+      explan.add(step);
+      return -1*tmp;
+    } else
+      return qq();
+  }
+// <Q> -> (<S>) | <digit>
+  int qq() {
     if (current_token?.name == Token.LB_SY) {
       match(MyToken(Token.LB_SY));
       int tmp = z();
@@ -517,7 +541,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-  Parser p = Parser("101!^1", "bin");
+  Parser p = Parser("-1101", "bin");
   //Parser p = Parser("7!&2|5", "oct");
   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
