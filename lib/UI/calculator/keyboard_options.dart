@@ -291,7 +291,7 @@ class KeyboardOptions extends StatelessWidget {
                 ),
               ),
               onPressed: () => BlocProvider.of<CalculatorCubit>(context)
-                  .updateExpr('-', ' - ', ' o '),
+                  .updateExpr('-', ' -', ' o'),
             ),
           ),
         ],

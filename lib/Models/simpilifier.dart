@@ -37,9 +37,9 @@ class Simplifier {
   }
   bool isalpha(String ch) {
     return ((ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
-            ch.codeUnitAt(0) <= 'f'.codeUnitAt(0)) ||
+            ch.codeUnitAt(0) <= 'z'.codeUnitAt(0)) ||
         (ch.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
-            ch.codeUnitAt(0) <= 'F'.codeUnitAt(0)));
+            ch.codeUnitAt(0) <= 'Z'.codeUnitAt(0)));
   }
 
   List<String> getExprVariables(String expr) {

@@ -230,7 +230,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    if (this.pattern.length >= 2 && startPosition > 0) {
+    if (this.pattern.length >= 2 && startPosition > 0 && this.pattern.length > startPosition) {
       if ((this.pattern[startPosition - 1] == 'o' &&
               this.pattern[startPosition] == 'o') ||
           startPosition != endPosition) {
@@ -275,6 +275,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll("XOR", "ooo");
     s = s.replaceAll("OR", "oo");
     s = s.replaceAll("NOT", "ooo");
+    s = s.replaceAll(">>", "oo");
+    s = s.replaceAll("<<", "oo");
+    s = s.replaceAll("-", "o");
+    s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
     return s;
   }
 

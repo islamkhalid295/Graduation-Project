@@ -528,11 +528,12 @@ void main() {
 
   //// print((5).toRadixString(10));
   String input = "30";
-  int s = 5;
+  String s="155 ooo frd54 oo";
   // int.parse("7", radix: 2);
   //// print(int.parse(s.toRadixString(2)));
   //// print(tmp.toRadixString(2).);
-
+  s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
+  print(s);
   //// print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
   //// print((6).toRadixString(2));
   //// print((BigInt.from(-5).toUnsigned(64).decToBinary()));
@@ -541,7 +542,7 @@ void main() {
   //Parser p = Parser("51|(2&6>>(5|(6<<7)))");
   //Parser p = Parser("9<<~8","dec");
   // try {
-  Parser p = Parser("-1101", "bin");
+  // Parser p = Parser("-1101", "bin");
   //Parser p = Parser("7!&2|5", "oct");
   //Parser p = Parser("101!&110|~11&1001!|(111!^1010)", "bin");
   //   //   //                 101!&110|~11&1001!|-14
@@ -549,8 +550,8 @@ void main() {
   //   //   //                 -5|-5!|-14
   //   //   //                 -5!|-14
   //   //   //                 4
-  print(p.sampleParser());
-  print(decToBinary(~5));
+  // print(p.sampleParser());
+  // print(decToBinary(~5));
   // } catch (e) {
   //   // print("Result not defined");
   // }
