@@ -72,8 +72,17 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     }
   }
 
-  void addHistoryLocalSimlification() async {
+  Future<void> addHistoryLocalSimlification() async {
     int response = await sqlDbSimlification.insertData(userExpr);
+  }
+  Future<void> getHistoryLocalSimlification()async{
+    List<Map> res = await sqlDbSimlification.readData();
+    for(int i=0;i<res.length;i++){
+      testCalculatorHistory.add(
+          {
+            'expr': res[i]['operation'],
+          });
+    }
   }
 
   Future<void> addUserHistorySimlification(xtext) {
@@ -88,7 +97,10 @@ class SimplificationCubit extends Cubit<SimplificationState> {
           addHistoryLocalSimlification();
         });
   }
-
+  Future<void> addHistoryLocal() async {
+    int response = await sqlDbSimlification.insertData(userExpr);
+    print("sssssssssssssssssssss");
+  }
   Future<void> deleteHistoryDataSimlification(String oper) async {
     CollectionReference HistroyData =
         FirebaseFirestore.instance.collection('simplification');
@@ -104,7 +116,16 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       });
     });
   }
-
+  Future<void> deleteHistoryLocal(String expr)async{
+    List<Map> res = await sqlDbSimlification.readData();
+    int count = await sqlDbSimlification.getlenght();
+    for (int i = 0; i < count; i++) {
+      if(res[i]['operation']==expr){
+        await sqlDbSimlification.deleteData(res[i]['id']);
+        print("dddddddddddddddddddddddddddddddddddddddd");
+      }
+    }
+  }
   Future<void> cleareHistoryDataSimlification() async {
     CollectionReference HistroyData =
         FirebaseFirestore.instance.collection('simplification');
@@ -119,7 +140,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       });
     });
   }
-
+  Future<void> clearHistoryLocal()async{
+    List<Map> res = await sqlDbSimlification.readData();
+    int count = await sqlDbSimlification.getlenght();
+    for (int i = 0; i < count; i++) {
+      await sqlDbSimlification.deleteData(res[i]['id']);
+      print("cccccccccccccccccccccccccccccccc");
+    }
+  }
   Future<void> getHistoryDataSimlification() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
@@ -137,7 +165,16 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     });
     emit(SimplificationHistoryUpdate());
   }
-
+  Future<void> getHistoryLocal() async {
+    testCalculatorHistory.clear();
+    List<Map> res = await sqlDbSimlification.readData();
+    for (int i = 0; i < res.length; i++) {
+      testCalculatorHistory.add({
+        'expr': res[i]['operation'],
+      });
+    }
+    print("res= $res");
+  }
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
     if (isResultExist) clearAll();
@@ -190,13 +227,21 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     v.validat();
     if (v.error == false) {
       result = simplifier.simpilify();
+      if(_auth.currentUser?.email!=null) {
+        addUserHistorySimlification(controller.text);
+      }else{
+        addHistoryLocal();
+      }
+
     } else {
       result = "invalid Expression";
     }
     print('truth table: \n${simplifier.getTruthTableData(expr)}');
     print('Comparison Steps: \n${simplifier.comparisonSteps}');
     isResultExist = true;
-    addUserHistorySimlification(controller.text);
+
+    addHistoryLocal();
+    getHistoryLocal();
     updatehistorySimplification();
     emit(SimplificationResult());
   }
@@ -321,12 +366,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   }
 
   void showHistory(
+
     BuildContext context,
     String theme,
   ) async {
     if (BlocProvider.of<LoginCubit>(context).isLogedIn()) {
       await getHistoryDataSimlification();
     }
+
     showModalBottomSheet(
       context: context,
       builder: (context) =>
@@ -365,8 +412,16 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            testCalculatorHistory.removeAt(index);
                             await deleteHistoryDataSimlification(
+                                testCalculatorHistory[index]['expr']!);
+                            if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                              await deleteHistoryDataSimlification(
+                                  testCalculatorHistory[index]['expr']!);
+                            }else{
+                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
+                            }
+                            testCalculatorHistory.removeWhere((element) =>
+                            element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(SimplificationHistoryUpdate());
                             Navigator.of(context).pop();
@@ -449,7 +504,12 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          await cleareHistoryDataSimlification();
+
+                          if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                            await cleareHistoryDataSimlification();
+                          }else{
+                            await clearHistoryLocal();
+                          }
                           emit(SimplificationHistoryUpdate());
                           Navigator.of(context).pop();
                         },

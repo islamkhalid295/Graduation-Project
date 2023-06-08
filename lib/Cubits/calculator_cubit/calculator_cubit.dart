@@ -12,6 +12,9 @@ import 'package:path/path.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
+
+import '../login_cubit/login_cubit.dart';
+
 part 'calculator_state.dart';
 
 class CalculatorCubit extends Cubit<CalculatorState> {
@@ -20,6 +23,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
+
   String expr = '';
   String pattern = '';
   String result = '0';
@@ -52,20 +56,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
   final _history = FirebaseFirestore.instance.collection('history');
+
   @override
 
-  /*void getCurrentUser(){
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        signInUser = user;
-        print(user.email);
-      }
-    }catch(e){
-      print(e);
-    }
-  }
-   */
 
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
@@ -92,10 +85,44 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
-  void addHistoryLocal() async {
-    int response = await sqlDb.insertData(controller.text, curentNumerSystem);
+
+  Future<void> deleteHistoryLocal(String expr)async{
+    List<Map> res = await sqlDb.readData();
+    int count = await sqlDb.getlenght();
+    for (int i = 0; i < count; i++) {
+    if(res[i]['operation']==expr){
+    await sqlDb.deleteData(res[i]['id']);
+    print("dddddddddddddddddddddddddddddddddddddddd");
+    }
+    }
+  }
+  Future<void> clearHistoryLocal()async{
+    List<Map> res = await sqlDb.readData();
+    int count = await sqlDb.getlenght();
+    for (int i = 0; i < count; i++) {
+    await sqlDb.deleteData(res[i]['id']);
+    print("cccccccccccccccccccccccccccccccc");
+    }
   }
 
+  Future<void> addHistoryLocal() async {
+
+    int response = await sqlDb.insertData(userExpr, curentNumerSystem);
+    print("sssssssssssssssssssss");
+  }
+
+  Future<void> getHistoryLocal() async {
+    testCalculatorHistory.clear();
+    List<Map> res = await sqlDb.readData();
+    for (int i = 0; i < res.length; i++) {
+      testCalculatorHistory.add({
+        'expr': res[i]['operation'],
+      });
+    }
+    print("res= $res");
+  }
+
+ main
   Future<void> addUserHistory(xtext, type) {
     return _history
         .add({
@@ -281,7 +308,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             result = tmp.toString();
           }
       }
-      addUserHistory(controller.text, curentNumerSystem);
+      if(_auth.currentUser?.email!=null) {
+        addUserHistory(controller.text, curentNumerSystem);
+      }else{
+        addHistoryLocal();
+      }
     } else {
       result = "Math Error";
       binResult = "Math Error";
@@ -298,6 +329,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorResult());
 
     updatehistory();
+    getHistoryLocal();
   }
 
   void clearAll() {
@@ -457,7 +489,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     BuildContext context,
     String theme,
   ) async {
-    await getHistoryData();
+    if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+      await getHistoryData();
+    }else{
+      await getHistoryLocal();
+    }
     showModalBottomSheet(
       context: context,
       builder: (context) => BlocBuilder<CalculatorCubit, CalculatorState>(
@@ -494,8 +530,16 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            testCalculatorHistory.removeAt(index);
-                            await deleteHistoryData(
+                            if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                              await deleteHistoryData(
+                                  testCalculatorHistory[index]['expr']!);
+                            }else{
+                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
+                            }
+
+                            // testCalculatorHistory.removeAt(index);
+                            testCalculatorHistory.removeWhere((element) =>
+                                element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(CalculatorHistoryUpdate());
                             Navigator.of(context).pop();
@@ -578,7 +622,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          await cleareHistoryData();
+                          if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
+                            await cleareHistoryData();
+                          }else{
+                            await clearHistoryLocal();
+                          }
+
                           emit(CalculatorHistoryUpdate());
                           Navigator.of(context).pop();
                         },
@@ -858,15 +907,5 @@ class SqlDb {
     return count;
   }
 
-/* void insertToDatabase(){
-    database.transaction((txn)async{
-      await txn.rawInsert('INSERT INTO data( operation , user , type ) VALUES("1+2" , "eslam@gmail.com" , "dic" ) ').then((value){
-        print(()=>"$value insert succssefly");
-      }).catchError((error){
-        print(()=>"error when insert $error");
-      });
 
-    });
-  }
-  */
 }
