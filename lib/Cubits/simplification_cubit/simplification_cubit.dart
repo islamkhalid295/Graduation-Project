@@ -29,6 +29,15 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   bool isResultExist = false;
   bool isNormal = true;
 
+  GlobalKey pageKey = GlobalKey();
+  GlobalKey historyKey = GlobalKey();
+  GlobalKey resultKey = GlobalKey();
+  GlobalKey keyboardKey = GlobalKey();
+  GlobalKey explanationKey = GlobalKey();
+  GlobalKey simplifyKey = GlobalKey();
+  GlobalKey showTTKey = GlobalKey();
+  GlobalKey menuKey = GlobalKey();
+
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -37,21 +46,6 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   SqlDbSimlification sqlDbSimlification = SqlDbSimlification();
 
   final _historySimp = FirebaseFirestore.instance.collection('simplification');
-
-  // void updateExpr(String str, String userStr) {
-  //   String temp = userExpr.substring(endPosition);
-  //   isResultExist = false;
-  //   result = 'No Result';
-  //   //if (expr.isEmpty) userExpr = '';
-  //   //expr += str;
-  //   userExpr = userExpr.substring(0, startPosition);
-  //   userExpr += userStr;
-  //   startPosition = endPosition = userExpr.length;
-  //   userExpr += temp;
-
-  //   emit(SimplificationEprUpdate());
-  //   //print('$startPosition, $endPosition');
-  // }
 
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
@@ -372,20 +366,20 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   }
 
   void showHistory(
-      BuildContext context,
-      String theme,
-      ) async {
 
+    BuildContext context,
+    String theme,
+  ) async {
+    if (BlocProvider.of<LoginCubit>(context).isLogedIn()) {
+      await getHistoryDataSimlification();
+    }
 
-     if(BlocProvider.of<LoginCubit>(context).isLogedIn()){
-       await getHistoryDataSimlification();
-     }else{
-       await getHistoryLocalSimlification();
-     }
     showModalBottomSheet(
       context: context,
-      builder: (context) => BlocBuilder<SimplificationCubit, SimplificationState>(
-        buildWhen: (previous, current) => current is SimplificationHistoryUpdate,
+      builder: (context) =>
+          BlocBuilder<SimplificationCubit, SimplificationState>(
+        buildWhen: (previous, current) =>
+            current is SimplificationHistoryUpdate,
         builder: (context, state) => Container(
           color: theme == 'light'
               ? ThemeColors.lightCanvas
@@ -403,7 +397,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                     context: context,
                     builder: (context) => AlertDialog(
                       content:
-                      const Text('Are you sure ,you want to delete it?'),
+                          const Text('Are you sure ,you want to delete it?'),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -543,7 +537,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   void showTruthTable(BuildContext context, String theme) {
     expr = expGenerator(controller.text);
-    print(expr);
+    //print(expr);
     Validator v = Validator(expr, "bin");
     v.validat();
     if (v.error == false) {
@@ -553,10 +547,40 @@ class SimplificationCubit extends Cubit<SimplificationState> {
           builder: (context) {
             List<Map<String, dynamic>> table =
                 List.from(simplifier.getTruthTableData(expr)['table']!);
-            return createTT(
-              simplifier,
-              table,
-              theme,
+            return Container(
+              padding: const EdgeInsets.all(5),
+              child: Column(children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Text.rich(
+                  TextSpan(
+                      text: 'Expression:  ',
+                      children: [
+                        TextSpan(
+                            text: controller.text,
+                            style: const TextStyle(
+                              color: ThemeColors.redColor,
+                              fontWeight: FontWeight.bold,
+                            ))
+                      ],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: ThemeColors.blueColor,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: createTT(
+                    simplifier,
+                    table,
+                    theme,
+                  ),
+                ),
+              ]),
             );
           },
           backgroundColor: theme == 'light'
@@ -632,14 +656,17 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
+                    textAlign: TextAlign.start,
                   ),
                   SizedBox(
                     height: SizeConfig.heightBlock! * 2,
                   ),
-                  createTT(simplifier, table, theme),
+                  Center(
+                    child: createTT(simplifier, table, theme),
+                  ),
                   SizedBox(
                     height: SizeConfig.heightBlock! * 2,
                   ),
@@ -657,12 +684,18 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: textColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
+                  Divider(
+                    height: 40,
+                    thickness: 2,
+                    indent: 20,
+                    endIndent: 20,
+                    color: (theme == 'light')
+                        ? ThemeColors.lightBlackText.withOpacity(0.25)
+                        : ThemeColors.darkWhiteText.withOpacity(0.25),
                   ),
                   Text.rich(
                     TextSpan(
@@ -678,7 +711,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -686,10 +719,18 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                     height: SizeConfig.heightBlock! * 2,
                   ),
                   ...steps
-                      .map((step) => createQuineTable(step, theme)!)
+                      .map(
+                        (step) => Center(child: createQuineTable(step, theme)!),
+                      )
                       .toList(),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
+                  Divider(
+                    height: 40,
+                    thickness: 2,
+                    indent: 20,
+                    endIndent: 20,
+                    color: (theme == 'light')
+                        ? ThemeColors.lightBlackText.withOpacity(0.25)
+                        : ThemeColors.darkWhiteText.withOpacity(0.25),
                   ),
                   Text.rich(
                     TextSpan(
@@ -705,15 +746,17 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
                   SizedBox(
                     height: SizeConfig.heightBlock! * 2,
                   ),
-                  createDependancyTeble(
-                      simplifier.comparisonSteps.last, soms, theme),
+                  Center(
+                    child: createDependancyTeble(
+                        simplifier.comparisonSteps.last, soms, theme),
+                  ),
                   SizedBox(
                     height: SizeConfig.heightBlock! * 2,
                   ),
@@ -731,7 +774,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -743,7 +786,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       text: "We have The terms: ",
                       children: [
                         TextSpan(
-                          text: '{${finalTerms.join(' ,  ')}}',
+                          text: '{ ${finalTerms.join(' ,  ')} }',
                           style: TextStyle(
                             color: resultFocusedTextColor,
                           ),
@@ -752,12 +795,18 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
+                  Divider(
+                    height: 40,
+                    thickness: 2,
+                    indent: 20,
+                    endIndent: 20,
+                    color: (theme == 'light')
+                        ? ThemeColors.lightBlackText.withOpacity(0.25)
+                        : ThemeColors.darkWhiteText.withOpacity(0.25),
                   ),
                   Text.rich(
                     TextSpan(
@@ -774,19 +823,23 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       style: TextStyle(
                         color: focusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                     ),
                   ),
                   SizedBox(
                     height: SizeConfig.heightBlock! * 2,
                   ),
-                  Text(BlocProvider.of<SimplificationCubit>(context).result,
+                  Center(
+                    child: Text(
+                      BlocProvider.of<SimplificationCubit>(context).result,
                       style: TextStyle(
                         color: resultFocusedTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      )),
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -807,19 +860,19 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   Widget createTT(
       Simplifier simplifier, List<Map<String, dynamic>> table, String theme) {
     TextStyle style = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.5,
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: theme == 'light'
           ? ThemeColors.lightBlackText
           : ThemeColors.darkWhiteText,
     );
-    TextStyle somStyle = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.5,
+    TextStyle somStyle = const TextStyle(
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: ThemeColors.redColor,
     );
-    TextStyle headerStyle = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.75,
+    TextStyle headerStyle = const TextStyle(
+      fontSize: 18,
       fontWeight: FontWeight.bold,
       color: ThemeColors.blueColor,
     );
@@ -840,18 +893,21 @@ class SimplificationCubit extends Cubit<SimplificationState> {
               DataColumn(
                   label: Text(
                 'Index',
+                textAlign: TextAlign.center,
                 style: headerStyle,
               )),
               ...simplifier.vars
                   .map((e) => DataColumn(
                           label: Text(
                         e,
+                        textAlign: TextAlign.center,
                         style: headerStyle,
                       )))
                   .toList(),
               DataColumn(
                   label: Text(
-                'Fun Value',
+                'Result',
+                textAlign: TextAlign.center,
                 style: headerStyle,
               )),
             ],
@@ -859,20 +915,29 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                 .map(
                   (e) => DataRow(cells: [
                     DataCell(
-                      Text(
-                        e['index'].toString(),
-                        style: (e['functionResult'] != 1) ? style : somStyle,
+                      Center(
+                        child: Text(
+                          e['index'].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
                       ),
                     ),
                     for (int i = 0; i < simplifier.vars.length; i++)
-                      DataCell(Text(
-                        e['bin'][i].toString(),
-                        style: (e['functionResult'] != 1) ? style : somStyle,
+                      DataCell(Center(
+                        child: Text(
+                          e['bin'][i].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
                       )),
                     DataCell(
-                      Text(
-                        e['functionResult'].toString(),
-                        style: (e['functionResult'] != 1) ? style : somStyle,
+                      Center(
+                        child: Text(
+                          e['functionResult'].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
                       ),
                     ),
                   ]),
@@ -886,19 +951,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   Widget? createQuineTable(List<Map<String, dynamic>> step, String theme) {
     TextStyle style = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.5,
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: theme == 'light'
           ? ThemeColors.lightBlackText
           : ThemeColors.darkWhiteText,
     );
-    // TextStyle somStyle = TextStyle(
-    //   fontSize: SizeConfig.heightBlock! * 2.5,
-    //   fontWeight: FontWeight.bold,
-    //   color: ThemeColors.redColor,
-    // );
-    TextStyle headerStyle = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.75,
+    TextStyle headerStyle = const TextStyle(
+      fontSize: 18,
       fontWeight: FontWeight.bold,
       color: ThemeColors.blueColor,
     );
@@ -939,18 +999,24 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                 .map(
                   (e) => DataRow(
                     cells: [
-                      DataCell(Text(
-                        e['soms'].toString(),
-                        style: style,
+                      DataCell(Center(
+                        child: Text(
+                          e['soms'].toString(),
+                          style: style,
+                        ),
                       )),
-                      DataCell(Text(
-                        e['som'],
-                        style: style,
+                      DataCell(Center(
+                        child: Text(
+                          e['som'],
+                          style: style,
+                        ),
                       )),
                       DataCell(e['click']
-                          ? const Icon(
-                              Icons.check,
-                              color: ThemeColors.redColor,
+                          ? const Center(
+                              child: Icon(
+                                Icons.check,
+                                color: ThemeColors.redColor,
+                              ),
                             )
                           : const Text('')),
                     ],
@@ -966,19 +1032,15 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   Widget createDependancyTeble(
       List<Map<String, dynamic>> finalStep, List<int> soms, String theme) {
     TextStyle style = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.5,
+      fontSize: 16,
       fontWeight: FontWeight.bold,
       color: theme == 'light'
           ? ThemeColors.lightBlackText
           : ThemeColors.darkWhiteText,
     );
-    TextStyle somStyle = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.5,
-      fontWeight: FontWeight.bold,
-      color: ThemeColors.redColor,
-    );
-    TextStyle headerStyle = TextStyle(
-      fontSize: SizeConfig.heightBlock! * 2.75,
+
+    TextStyle headerStyle = const TextStyle(
+      fontSize: 18,
       fontWeight: FontWeight.bold,
       color: ThemeColors.blueColor,
     );
@@ -1021,7 +1083,10 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       )),
                       ...soms
                           .map((v) => DataCell((e['soms'] as Set).contains(v)
-                              ? const Icon(Icons.check)
+                              ? const Icon(
+                                  Icons.check,
+                                  color: ThemeColors.redColor,
+                                )
                               : const Text('')))
                           .toList()
                     ],

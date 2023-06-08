@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graduation_project/Cubits/theme_cubit/theme_cubit.dart';
 import 'package:graduation_project/Models/documentation_element_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,8 +65,14 @@ String checkTheme(String theme, BuildContext context) {
 class UserConfig {
   static SharedPreferences? pref;
 
+  static late bool? calculatorG;
+  static late bool? simplificationG;
+  static late String? pageRoute;
   Future<void> init() async {
     pref = await SharedPreferences.getInstance();
+    // pageRoute = await getLastPage();
+    // calculatorG = await getCalculatorGuidance();
+    // simplificationG = await getSimplificationGuidance();
   }
 
   static void setTheme(String theme) {
@@ -77,6 +81,30 @@ class UserConfig {
 
   static String? getTheme() {
     return pref!.getString('theme');
+  }
+
+  static void setLastPage(String theme) {
+    pref!.setString('lastPage', theme);
+  }
+
+  static String? getLastPage() {
+    return pref!.getString('lastPage');
+  }
+
+  static void setCalculatorGuidance(bool val) {
+    pref!.setBool('calculatorG', val);
+  }
+
+  static void setSimplificationGuidance(bool val) {
+    pref!.setBool('simplificationG', val);
+  }
+
+  static bool? getCalculatorGuidance() {
+    return pref!.getBool('calculatorG');
+  }
+
+  static bool? getSimplificationGuidance() {
+    return pref!.getBool('simplificationG');
   }
 }
 
@@ -159,7 +187,7 @@ List<DocumentationElement> documentation = [
   DocumentationElement(
       title: "LSH Operator",
       description:
-      "The LSH operator is a bitwise operator that performs a left shift on a binary number. The LSH operator takes two operands: the number to be shifted and the number of bits to shift by. The LSH operator works by shifting the bits of the number to the left by the specified number of bits. The bits that are shifted off the end of the number are discarded. Shifting to the left makes the number larger, effectively multiplying the number by pow(2, shiftAmount). ",
+          "The LSH operator is a bitwise operator that performs a left shift on a binary number. The LSH operator takes two operands: the number to be shifted and the number of bits to shift by. The LSH operator works by shifting the bits of the number to the left by the specified number of bits. The bits that are shifted off the end of the number are discarded. Shifting to the left makes the number larger, effectively multiplying the number by pow(2, shiftAmount). ",
       example: [
         Example(num1: "1010", num2: "1", operation: "LSH", result: "10100")
       ]),

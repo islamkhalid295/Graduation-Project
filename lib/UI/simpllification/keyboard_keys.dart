@@ -274,11 +274,26 @@ class KeyboardKeys extends StatelessWidget {
                   .updateExpr('Z', 'Z', 'n'),
               type: 'letter',
             ),
-            createButton(
-              child: const Icon(Icons.table_view_rounded),
-              onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .showTruthTable(context, theme!),
-              type: '=',
+            Showcase(
+              tooltipBackgroundColor: ThemeColors.lightCanvas,
+              titleTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: ThemeColors.lightForegroundTeal,
+                  fontSize: 16),
+              descTextStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: ThemeColors.lightBlackText,
+                fontSize: 14,
+              ),
+              key: BlocProvider.of<SimplificationCubit>(context).showTTKey,
+              title: 'Truth Table Button',
+              description: 'To show the truth table of the expression.',
+              child: createButton(
+                child: const Icon(Icons.table_view_rounded),
+                onPressed: () => BlocProvider.of<SimplificationCubit>(context)
+                    .showTruthTable(context, theme!),
+                type: '=',
+              ),
             ),
           ],
         ),

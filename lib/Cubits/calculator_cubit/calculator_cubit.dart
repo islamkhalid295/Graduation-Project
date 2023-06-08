@@ -20,13 +20,11 @@ part 'calculator_state.dart';
 class CalculatorCubit extends Cubit<CalculatorState> {
   CalculatorCubit() : super(CalculatorInitial()) {
     startPosition = endPosition = controller.text.length;
-    userExpr = controller.text;
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
 
   String expr = '';
-  late String userExpr;
   String pattern = '';
   String result = '0';
   String binResult = '0';
@@ -36,6 +34,15 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String curentNumerSystem = 'bin';
   bool isResultExist = false;
   bool isSigned = true;
+
+  GlobalKey menuKey = GlobalKey();
+  GlobalKey pageKey = GlobalKey();
+  GlobalKey signedKey = GlobalKey();
+  GlobalKey keyboardKey = GlobalKey();
+  GlobalKey resultKey = GlobalKey();
+  GlobalKey explanationKey = GlobalKey();
+  GlobalKey historyKey = GlobalKey();
+  GlobalKey convertSysKey = GlobalKey();
 
   SqlDb sqlDb = SqlDb();
   late List explenation;
@@ -78,6 +85,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
 
+
   Future<void> deleteHistoryLocal(String expr)async{
     List<Map> res = await sqlDb.readData();
     int count = await sqlDb.getlenght();
@@ -114,6 +122,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     print("res= $res");
   }
 
+ main
   Future<void> addUserHistory(xtext, type) {
     return _history
         .add({
@@ -187,10 +196,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       Parser p = Parser(expr, curentNumerSystem);
       tmp = p.sampleParser();
       if (p.error) {
-        binResult = "";
-        decResult = "";
-        hexResult = "";
-        octResult = "";
+        binResult = "Math Error";
+        decResult = "Math Error";
+        hexResult = "Math Error";
+        octResult = "Math Error";
       } else {
         if (isSigned) {
           binResult = tmp.toRadixString(2).toString();
@@ -230,7 +239,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
 
-    userExpr = controller.text;
     // 0110
     this.pattern = this.pattern.substring(0, startPosition) +
         pattern +
@@ -238,7 +246,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     startPosition = endPosition = pattern.length + endPosition;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
-    expr = expGenerator(userExpr);
+    expr = expGenerator(controller.text);
     check();
     emit(CalculatorExprUpdate());
   }
@@ -329,13 +337,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = false;
     controller.text = '';
     expr = '';
-    binResult= '0';
-    octResult= '0';
-    hexResult= '0';
-    decResult= '0';
+    binResult = '0';
+    octResult = '0';
+    hexResult = '0';
+    decResult = '0';
     pattern = '';
-    userExpr = '';
-    startPosition = endPosition = userExpr.length;
+    startPosition = endPosition = controller.text.length;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(CalculatorExprUpdate());
@@ -437,7 +444,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           controller.text.substring(end + 1, controller.text.length);
       pattern = pattern.substring(0, start) +
           pattern.substring(end + 1, pattern.length);
-
     }
     expr = expGenerator(controller.text);
     check();
@@ -724,7 +730,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
                         TextSpan(
                           text: explenation[index].updatedPart,
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' = ',
                         ),
                         TextSpan(
