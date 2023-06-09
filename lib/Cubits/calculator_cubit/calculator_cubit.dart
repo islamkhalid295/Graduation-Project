@@ -1,7 +1,5 @@
-
 import 'dart:async';
 import 'dart:core';
-
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,7 +46,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   SqlDb sqlDb = SqlDb();
   late List explenation;
 
-
   late int startPosition, endPosition;
   TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
@@ -72,7 +69,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
   }
    */
-
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
     if (!await launchUrl(_url)) {
@@ -96,8 +92,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
         await sqlDb.deleteData(i + 1);
       }
     }
-
-
   }
 
   Future<void> getHistoryLocal() async {
@@ -110,34 +104,30 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     }
     print("res= $res");
   }
+
   void addHistoryLocal() async {
     int response = await sqlDb.insertData(controller.text, curentNumerSystem);
-    print("dddddddddddddddddddddddddddd");
-
   }
 
-
-  Future<void> deleteHistoryLocal(String expr)async{
+  Future<void> deleteHistoryLocal(String expr) async {
     List<Map> res = await sqlDb.readData();
     int count = await sqlDb.getlenght();
     for (int i = 0; i < count; i++) {
-    if(res[i]['operation']==expr){
-    await sqlDb.deleteData(res[i]['id']);
-    print("dddddddddddddddddddddddddddddddddddddddd");
-    }
+      if (res[i]['operation'] == expr) {
+        await sqlDb.deleteData(res[i]['id']);
+      }
     }
   }
-  Future<void> clearHistoryLocal()async{
+
+  Future<void> clearHistoryLocal() async {
     List<Map> res = await sqlDb.readData();
     int count = await sqlDb.getlenght();
     for (int i = 0; i < count; i++) {
-    await sqlDb.deleteData(res[i]['id']);
-    print("cccccccccccccccccccccccccccccccc");
+      await sqlDb.deleteData(res[i]['id']);
     }
   }
 
   Future<void> addUserHistory(xtext, type) {
-
     return _history
         .add({
           'operation': xtext, // add history
@@ -204,7 +194,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     emit(CalculatorExprUpdate());
   }
 
-
   void check() {
     try {
       // print(expr);
@@ -241,7 +230,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
-    if (this.pattern.length >= 2 && startPosition > 0 && this.pattern.length > startPosition) {
+    if (this.pattern.length >= 2 &&
+        startPosition > 0 &&
+        this.pattern.length > startPosition) {
       if ((this.pattern[startPosition - 1] == 'o' &&
               this.pattern[startPosition] == 'o') ||
           startPosition != endPosition) {
@@ -277,6 +268,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(" ", "");
     return s;
   }
+
   String patternGenerator(String s) {
     s = s.replaceAll("NAND", "oooo");
     s = s.replaceAll("AND", "ooo");
@@ -291,11 +283,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
     return s;
   }
-void updatePos (String s,int start,int end) async {
+
+  void updatePos(String s, int start, int end) async {
     startPosition = endPosition = s.length;
-    ClipboardData? tmp = await  Clipboard.getData(Clipboard.kTextPlain);
+    ClipboardData? tmp = await Clipboard.getData(Clipboard.kTextPlain);
     String? t = tmp?.text;
-}
+  }
+
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
@@ -324,11 +318,10 @@ void updatePos (String s,int start,int end) async {
             result = tmp.toString();
           }
       }
-      if(_auth.currentUser?.email!=null) {
+      if (_auth.currentUser?.email != null) {
         addUserHistory(controller.text, curentNumerSystem);
         print("ssssssssssssss");
-      }
-      else{
+      } else {
         addHistoryLocal();
       }
     } else {
@@ -342,7 +335,9 @@ void updatePos (String s,int start,int end) async {
     isResultExist = true;
     explenation.clear();
     explenation = p.explan;
-    explenation.removeAt(0);
+    if (explenation.length > 1) {
+      explenation.removeAt(0);
+    }
     //print(explenation.join('\n'));
     emit(CalculatorResult());
     getHistoryLocal();
@@ -380,7 +375,7 @@ void updatePos (String s,int start,int end) async {
             int end = startPosition - 1;
             int start = startPosition - 1;
             while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-              if(pattern[end + 1] == ' ') {
+              if (pattern[end + 1] == ' ') {
                 end++;
                 break;
               }
@@ -388,7 +383,7 @@ void updatePos (String s,int start,int end) async {
               if (end + 1 >= pattern.length - 1) break;
             }
             while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-              if(pattern[start - 1] == ' ') {
+              if (pattern[start - 1] == ' ') {
                 start--;
                 break;
               }
@@ -428,7 +423,7 @@ void updatePos (String s,int start,int end) async {
       if (pattern[endPosition - 1] == 'o') {
         if (end < pattern.length - 1) {
           while (pattern[end + 1] == 'o' || pattern[end + 1] == ' ') {
-            if(pattern[end + 1] == ' ') {
+            if (pattern[end + 1] == ' ') {
               end++;
               break;
             }
@@ -440,7 +435,7 @@ void updatePos (String s,int start,int end) async {
 
       if (pattern[startPosition] == 'o') {
         while (pattern[start - 1] == 'o' || pattern[start - 1] == ' ') {
-          if(pattern[start - 1] == ' ') {
+          if (pattern[start - 1] == ' ') {
             start--;
             break;
           }
@@ -505,14 +500,13 @@ void updatePos (String s,int start,int end) async {
     BuildContext context,
     String theme,
   ) async {
-    if(_auth.currentUser?.email!=null) {
+    if (_auth.currentUser?.email != null) {
       await updatehistory();
     }
-    if(_auth.currentUser?.email!=null) {
+    if (_auth.currentUser?.email != null) {
       await getHistoryData();
-    }
-    else{
-     await getHistoryLocal();
+    } else {
+      await getHistoryLocal();
     }
 
     showModalBottomSheet(
@@ -551,15 +545,15 @@ void updatePos (String s,int start,int end) async {
                         ),
                         TextButton(
                           onPressed: () async {
-                            if(_auth.currentUser?.email!=null) {
+                            if (_auth.currentUser?.email != null) {
                               await deleteHistoryData(
                                   testCalculatorHistory[index]['expr']!);
-                            }
-                            else{
-                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
+                            } else {
+                              await deleteHistoryLocal(
+                                  testCalculatorHistory[index]['expr']!);
                             }
                             testCalculatorHistory.removeWhere((element) =>
-                            element["expr"] ==
+                                element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(CalculatorHistoryUpdate());
                             Navigator.of(context).pop();
@@ -642,10 +636,9 @@ void updatePos (String s,int start,int end) async {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          if(_auth.currentUser?.email!=null) {
+                          if (_auth.currentUser?.email != null) {
                             await cleareHistoryData();
-                          }
-                          else{
+                          } else {
                             await clearHistoryLocal();
                           }
                           await cleareHistoryData();
@@ -674,162 +667,212 @@ void updatePos (String s,int start,int end) async {
     );
   }
 
-
   void showExplanation(BuildContext context, String theme) {
     Color textColor = theme == 'light'
         ? ThemeColors.lightBlackText
         : ThemeColors.darkWhiteText;
     Color focusedTextColor = ThemeColors.blueColor;
     Color resultFocusedTextColor = ThemeColors.redColor;
-    showDialog(
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.9),
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor:
-            theme == 'light' ? ThemeColors.lightCanvas : ThemeColors.darkCanvas,
-        title: Text(
-          'Explanation',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: theme == 'light'
-                ? ThemeColors.lightForegroundTeal
-                : ThemeColors.darkForegroundTeal,
+      builder: (context) => Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeConfig.widthBlock! * 5,
+          vertical: SizeConfig.heightBlock! * 2.5,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
           ),
+          color: theme == 'light'
+              ? ThemeColors.lightCanvas
+              : ThemeColors.darkCanvas,
         ),
-        titleTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 24,
-          color: textColor,
-        ),
-        content: SizedBox(
-          height: SizeConfig.heightBlock! * 50,
-          width: SizeConfig.widthBlock! * 75,
-          child: ListView.builder(
-            itemCount: explenation.length,
-            itemBuilder: (context, index) {
-              String spaces = '           ';
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: 'Step ${index + 1}: ',
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: explenation[index]
-                              .expr
-                              .substring(0, explenation[index].start),
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: explenation[index].expr.substring(
-                              explenation[index].start, explenation[index].end),
-                          style: TextStyle(
-                            color: focusedTextColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: explenation[index]
-                              .expr
-                              .substring(explenation[index].end),
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                'Explanation',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  color: theme == 'light'
+                      ? ThemeColors.lightForegroundTeal
+                      : ThemeColors.darkForegroundTeal,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: SizeConfig.heightBlock! * 2,
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (int i = 0; i < explenation.length; i++)
+                      createStep(
+                        i,
+                        textColor,
+                        focusedTextColor,
+                        resultFocusedTextColor,
+                        '        ',
                       ),
+                    SizedBox(
+                      height: SizeConfig.heightBlock! * 2,
                     ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: spaces,
-                      children: [
-                        TextSpan(
-                          text: explenation[index].updatedPart,
-                        ),
-                        const TextSpan(
-                          text: ' = ',
-                        ),
-                        TextSpan(
-                          text: explenation[index].result.toString(),
-                          style: TextStyle(
-                            color: resultFocusedTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    await Clipboard.setData(
+                        ClipboardData(text: getExplinationStr()));
+                  },
+                  child: Text(
+                    'Copy',
                     style: TextStyle(
-                      color: textColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: theme == 'light'
+                          ? ThemeColors.lightForegroundTeal
+                          : ThemeColors.darkForegroundTeal,
                     ),
                   ),
-                  Text.rich(
-                    TextSpan(
-                      text: '$spaces ==> ',
-                      children: [
-                        TextSpan(
-                            text: explenation[index]
-                                .expr
-                                .substring(0, explenation[index].start)),
-                        TextSpan(
-                          text: explenation[index].result.toString(),
-                          style: TextStyle(
-                            color: resultFocusedTextColor,
-                          ),
-                        ),
-                        TextSpan(
-                            text: explenation[index]
-                                .expr
-                                .substring(explenation[index].end)),
-                      ],
-                    ),
+                ),
+                IconButton(
+                  onPressed: () async =>
+                      await sendEmailMessage(getExplinationStr()),
+                  icon: Icon(
+                    Icons.mail_outlined,
+                    color: theme == 'light'
+                        ? ThemeColors.lightForegroundTeal
+                        : ThemeColors.darkForegroundTeal,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async =>
+                      await sendWhatsAppMessage(getExplinationStr()),
+                  child: Text(
+                    'WhatsApp',
                     style: TextStyle(
-                      color: textColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: theme == 'light'
+                          ? ThemeColors.lightForegroundTeal
+                          : ThemeColors.darkForegroundTeal,
                     ),
                   ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  )
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: getExplinationStr()));
-            },
-            child: const Text('Copy'),
-          ),
-          IconButton(
-            onPressed: () async => await sendEmailMessage(getExplinationStr()),
-            icon: Icon(
-              Icons.mail_outlined,
-              color: theme == 'light'
-                  ? ThemeColors.lightForegroundTeal
-                  : ThemeColors.darkForegroundTeal,
+      ),
+    );
+  }
+
+  Widget createStep(int index, Color textColor, Color focusedTextColor,
+      Color resultFocusedTextColor, String spaces) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(
+            text: 'Step ${index + 1}: ',
+            children: <TextSpan>[
+              TextSpan(
+                text: explenation[index]
+                    .expr
+                    .substring(0, explenation[index].start),
+                style: TextStyle(
+                  color: textColor,
+                ),
+              ),
+              TextSpan(
+                text: explenation[index].expr.substring(
+                    explenation[index].start, explenation[index].end),
+                style: TextStyle(
+                  color: focusedTextColor,
+                ),
+              ),
+              TextSpan(
+                text: explenation[index].expr.substring(explenation[index].end),
+                style: TextStyle(
+                  color: textColor,
+                ),
+              ),
+            ],
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
-          TextButton(
-            onPressed: () async =>
-                await sendWhatsAppMessage(getExplinationStr()),
-            child: const Text('WhatsApp'),
+        ),
+        Text.rich(
+          TextSpan(
+            text: spaces,
+            children: [
+              TextSpan(
+                text: explenation[index].updatedPart,
+              ),
+              const TextSpan(
+                text: ' = ',
+              ),
+              TextSpan(
+                text: explenation[index].result.toString(),
+                style: TextStyle(
+                  color: resultFocusedTextColor,
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          )
-        ],
-      ),
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        Text.rich(
+          TextSpan(
+            text: '$spaces ==> ',
+            children: [
+              TextSpan(
+                  text: explenation[index]
+                      .expr
+                      .substring(0, explenation[index].start)),
+              TextSpan(
+                text: explenation[index].result.toString(),
+                style: TextStyle(
+                  color: resultFocusedTextColor,
+                ),
+              ),
+              TextSpan(
+                  text: explenation[index]
+                      .expr
+                      .substring(explenation[index].end)),
+            ],
+          ),
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        SizedBox(
+          height: SizeConfig.heightBlock! * 2,
+        ),
+      ],
     );
   }
 
@@ -863,7 +906,6 @@ void updatePos (String s,int start,int end) async {
     }
     return exp;
   }
-
 }
 
 class SqlDb {
