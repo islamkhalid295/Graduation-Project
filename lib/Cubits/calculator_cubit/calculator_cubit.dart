@@ -335,9 +335,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = true;
     explenation.clear();
     explenation = p.explan;
-    if (explenation.length > 1) {
-      explenation.removeAt(0);
-    }
+    explenation.removeAt(0);
+
     //print(explenation.join('\n'));
     emit(CalculatorResult());
     getHistoryLocal();
