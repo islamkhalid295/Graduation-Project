@@ -709,25 +709,27 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             SizedBox(
               height: SizeConfig.heightBlock! * 2,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+            Expanded(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (int i = 0; i < explenation.length; i++)
-                      createStep(
-                        i,
-                        textColor,
-                        focusedTextColor,
-                        resultFocusedTextColor,
-                        '        ',
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (int i = 0; i < explenation.length; i++)
+                        createStep(
+                          i,
+                          textColor,
+                          focusedTextColor,
+                          resultFocusedTextColor,
+                          '        ',
+                        ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
                       ),
-                    SizedBox(
-                      height: SizeConfig.heightBlock! * 2,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
