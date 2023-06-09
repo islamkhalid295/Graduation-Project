@@ -23,6 +23,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
+  int noBits = 16;
   String expr = '';
   String pattern = '';
   String result = '0';
@@ -211,10 +212,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           hexResult = tmp.toRadixString(16).toString();
           octResult = tmp.toRadixString(8).toString();
         } else {
-          binResult = BigInt.from(tmp).toUnsigned(64).toRadixString(2);
+          binResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(2);
           decResult = tmp.toString();
-          hexResult = BigInt.from(tmp).toUnsigned(64).toRadixString(16);
-          octResult = BigInt.from(tmp).toUnsigned(64).toRadixString(8);
+          hexResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(16);
+          octResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(8);
         }
       }
     } catch (e) {
@@ -335,9 +336,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     isResultExist = true;
     explenation.clear();
     explenation = p.explan;
-    if (explenation.length > 1) {
-      explenation.removeAt(0);
-    }
+    explenation.removeAt(0);
+
     //print(explenation.join('\n'));
     emit(CalculatorResult());
     getHistoryLocal();
@@ -709,25 +709,27 @@ class CalculatorCubit extends Cubit<CalculatorState> {
             SizedBox(
               height: SizeConfig.heightBlock! * 2,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+            Expanded(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (int i = 0; i < explenation.length; i++)
-                      createStep(
-                        i,
-                        textColor,
-                        focusedTextColor,
-                        resultFocusedTextColor,
-                        '        ',
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (int i = 0; i < explenation.length; i++)
+                        createStep(
+                          i,
+                          textColor,
+                          focusedTextColor,
+                          resultFocusedTextColor,
+                          '        ',
+                        ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
                       ),
-                    SizedBox(
-                      height: SizeConfig.heightBlock! * 2,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

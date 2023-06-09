@@ -532,8 +532,9 @@ void main() {
   // int.parse("7", radix: 2);
   //// print(int.parse(s.toRadixString(2)));
   //// print(tmp.toRadixString(2).);
-  s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
-  print(s);
+  //s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
+
+  //print(BigInt.from(-5).toSigned(16).toRadixString(2));
   //// print(BigInt.from(~1).toUnsigned(1).toRadixString(2));
   //// print((6).toRadixString(2));
   //// print((BigInt.from(-5).toUnsigned(64).decToBinary()));
