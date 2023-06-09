@@ -127,7 +127,7 @@ class KeyboardOptions extends StatelessWidget {
               key: BlocProvider.of<CalculatorCubit>(context).explanationKey,
               title: 'Explanation Button',
               description:
-                  'To change the number system to signed or to unsigned number system.',
+                  'To show the detailed explanation steps for the result.',
               child: BlocBuilder<CalculatorCubit, CalculatorState>(
                 buildWhen: (previous, current) => current is CalculatorResult,
                 builder: (context, state) {
@@ -158,7 +158,7 @@ class KeyboardOptions extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                'Explenation',
+                                'Explanation',
                                 style: TextStyle(
                                   color: (theme == 'light')
                                       ? (BlocProvider.of<CalculatorCubit>(

@@ -85,7 +85,8 @@ class SimplificationCubit extends Cubit<SimplificationState> {
           'operation': xtext, // add history
           'user': _auth.currentUser?.email //currentuser
         })
-        .then((value) => print("User History Added ${_auth.currentUser?.email}"))
+        .then(
+            (value) => print("User History Added ${_auth.currentUser?.email}"))
         .catchError((error) {
           print("Failed to add user History: ");
           addHistoryLocalSimlification();
@@ -107,16 +108,18 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       });
     });
   }
-  Future<void> deleteHistoryLocal(String expr)async{
+
+  Future<void> deleteHistoryLocal(String expr) async {
     List<Map> res = await sqlDbSimlification.readData();
     int count = await sqlDbSimlification.getlenght();
     for (int i = 0; i < count; i++) {
-      if(res[i]['operation']==expr){
+      if (res[i]['operation'] == expr) {
         await sqlDbSimlification.deleteData(res[i]['id']);
         print("dddddddddddddddddddddddddddddddddddddddd");
       }
     }
   }
+
   Future<void> cleareHistoryDataSimlification() async {
     CollectionReference HistroyData =
         FirebaseFirestore.instance.collection('simplification');
@@ -131,7 +134,8 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       });
     });
   }
-  Future<void> clearHistoryLocal()async{
+
+  Future<void> clearHistoryLocal() async {
     List<Map> res = await sqlDbSimlification.readData();
     int count = await sqlDbSimlification.getlenght();
     for (int i = 0; i < count; i++) {
@@ -139,6 +143,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       print("cccccccccccccccccccccccccccccccc");
     }
   }
+
   Future<void> getHistoryDataSimlification() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
@@ -156,6 +161,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     });
     emit(SimplificationHistoryUpdate());
   }
+
   Future<void> getHistoryLocal() async {
     testCalculatorHistory.clear();
     List<Map> res = await sqlDbSimlification.readData();
@@ -166,6 +172,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     }
     print("res= $res");
   }
+
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
     if (isResultExist) clearAll();
@@ -218,14 +225,12 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     v.validat();
     if (v.error == false) {
       result = simplifier.simpilify();
-      if(_auth.currentUser?.email!=null) {
+      if (_auth.currentUser?.email != null) {
         addUserHistorySimlification(controller.text);
-      print("ssssssssssssss");
-      }
-      else{
+        print("ssssssssssssss");
+      } else {
         addHistoryLocalSimlification();
       }
-
     } else {
       result = "invalid Expression";
     }
@@ -356,17 +361,15 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   }
 
   void showHistory(
-
-      BuildContext context,
-      String theme,
-      ) async {
-    if(_auth.currentUser?.email!=null) {
+    BuildContext context,
+    String theme,
+  ) async {
+    if (_auth.currentUser?.email != null) {
       updatehistorySimplification();
     }
-    if(_auth.currentUser?.email!=null) {
+    if (_auth.currentUser?.email != null) {
       await getHistoryDataSimlification();
-    }
-    else{
+    } else {
       await getHistoryLocal();
     }
 
@@ -408,16 +411,16 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            if(_auth.currentUser?.email!=null) {
+                            if (_auth.currentUser?.email != null) {
                               await deleteHistoryDataSimlification(
                                   testCalculatorHistory[index]['expr']!);
-                            }
-                            else{
-                              await deleteHistoryLocal(testCalculatorHistory[index]['expr']!);
+                            } else {
+                              await deleteHistoryLocal(
+                                  testCalculatorHistory[index]['expr']!);
                             }
 
                             testCalculatorHistory.removeWhere((element) =>
-                            element["expr"] ==
+                                element["expr"] ==
                                 testCalculatorHistory[index]['expr']!);
                             emit(SimplificationHistoryUpdate());
                             Navigator.of(context).pop();
@@ -500,10 +503,9 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       TextButton(
                         onPressed: () async {
                           testCalculatorHistory.clear();
-                          if(_auth.currentUser?.email!=null) {
+                          if (_auth.currentUser?.email != null) {
                             await cleareHistoryDataSimlification();
-                          }
-                          else{
+                          } else {
                             await clearHistoryLocal();
                           }
 
@@ -611,242 +613,253 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       simplifier.comparisonSteps.last.forEach(
         (element) => finalTerms.add(element['som']),
       );
-      showDialog(
+      showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.black.withOpacity(0.9),
         context: context,
-        builder: (context) => AlertDialog(
-          scrollable: true,
-          backgroundColor: theme == 'light'
-              ? ThemeColors.lightCanvas
-              : ThemeColors.darkCanvas,
-          title: Text(
-            'Explanation',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: theme == 'light'
-                  ? ThemeColors.lightForegroundTeal
-                  : ThemeColors.darkForegroundTeal,
+        builder: (context) => Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.widthBlock! * 5,
+            vertical: SizeConfig.heightBlock! * 2.5,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
             ),
+            color: theme == 'light'
+                ? ThemeColors.lightCanvas
+                : ThemeColors.darkCanvas,
           ),
-          titleTextStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: textColor,
-          ),
-          content: SizedBox(
-            height: SizeConfig.heightBlock! * 50,
-            width: SizeConfig.widthBlock! * 75,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: "First: ",
-                      children: [
-                        TextSpan(
-                          text: "We Calculate the Truth Table",
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    textAlign: TextAlign.start,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  'Explanation',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    color: theme == 'light'
+                        ? ThemeColors.lightForegroundTeal
+                        : ThemeColors.darkForegroundTeal,
                   ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Center(
-                    child: createTT(simplifier, table, theme),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "The Sum Of Minterms (SOM) is: ",
-                      children: [
-                        TextSpan(
-                          text: soms.join(', '),
-                          style: TextStyle(
-                            color: resultFocusedTextColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    height: 40,
-                    thickness: 2,
-                    indent: 20,
-                    endIndent: 20,
-                    color: (theme == 'light')
-                        ? ThemeColors.lightBlackText.withOpacity(0.25)
-                        : ThemeColors.darkWhiteText.withOpacity(0.25),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "Second: ",
-                      children: [
-                        TextSpan(
-                          text: "We Apply the tabular method:-",
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  ...steps
-                      .map(
-                        (step) => Center(child: createQuineTable(step, theme)!),
-                      )
-                      .toList(),
-                  Divider(
-                    height: 40,
-                    thickness: 2,
-                    indent: 20,
-                    endIndent: 20,
-                    color: (theme == 'light')
-                        ? ThemeColors.lightBlackText.withOpacity(0.25)
-                        : ThemeColors.darkWhiteText.withOpacity(0.25),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "Third: ",
-                      children: [
-                        TextSpan(
-                          text: "We choose only the independent rows:-",
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Center(
-                    child: createDependancyTeble(
-                        simplifier.comparisonSteps.last, soms, theme),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "Third: ",
-                      children: [
-                        TextSpan(
-                          text: "We choose only the independent rows",
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "We have The terms: ",
-                      children: [
-                        TextSpan(
-                          text: '{ ${finalTerms.join(' ,  ')} }',
-                          style: TextStyle(
-                            color: resultFocusedTextColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    height: 40,
-                    thickness: 2,
-                    indent: 20,
-                    endIndent: 20,
-                    color: (theme == 'light')
-                        ? ThemeColors.lightBlackText.withOpacity(0.25)
-                        : ThemeColors.darkWhiteText.withOpacity(0.25),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: "Fourth: ",
-                      children: [
-                        TextSpan(
-                          text:
-                              "We convert theas terms into a new simplified expression (ignore -, 0 is the complement):",
-                          style: TextStyle(
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                      style: TextStyle(
-                        color: focusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: SizeConfig.heightBlock! * 2,
-                  ),
-                  Center(
-                    child: Text(
-                      BlocProvider.of<SimplificationCubit>(context).result,
-                      style: TextStyle(
-                        color: resultFocusedTextColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: SizeConfig.heightBlock! * 2,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          text: "First: ",
+                          children: [
+                            TextSpan(
+                              text: "We Calculate the Truth Table",
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Center(
+                        child: createTT(simplifier, table, theme),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "The Sum Of Minterms (SOM) is: ",
+                          children: [
+                            TextSpan(
+                              text: soms.join(', '),
+                              style: TextStyle(
+                                color: resultFocusedTextColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 40,
+                        thickness: 2,
+                        indent: 20,
+                        endIndent: 20,
+                        color: (theme == 'light')
+                            ? ThemeColors.lightBlackText.withOpacity(0.25)
+                            : ThemeColors.darkWhiteText.withOpacity(0.25),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "Second: ",
+                          children: [
+                            TextSpan(
+                              text: "We Apply the tabular method:-",
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      ...steps
+                          .map(
+                            (step) =>
+                                Center(child: createQuineTable(step, theme)!),
+                          )
+                          .toList(),
+                      Divider(
+                        height: 40,
+                        thickness: 2,
+                        indent: 20,
+                        endIndent: 20,
+                        color: (theme == 'light')
+                            ? ThemeColors.lightBlackText.withOpacity(0.25)
+                            : ThemeColors.darkWhiteText.withOpacity(0.25),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "Third: ",
+                          children: [
+                            TextSpan(
+                              text: "We choose only the independent rows:-",
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Center(
+                        child: createDependancyTeble(
+                            simplifier.comparisonSteps.last, soms, theme),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "Third: ",
+                          children: [
+                            TextSpan(
+                              text: "We choose only the independent rows",
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "We have The terms: ",
+                          children: [
+                            TextSpan(
+                              text: '{ ${finalTerms.join(' ,  ')} }',
+                              style: TextStyle(
+                                color: resultFocusedTextColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 40,
+                        thickness: 2,
+                        indent: 20,
+                        endIndent: 20,
+                        color: (theme == 'light')
+                            ? ThemeColors.lightBlackText.withOpacity(0.25)
+                            : ThemeColors.darkWhiteText.withOpacity(0.25),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "Fourth: ",
+                          children: [
+                            TextSpan(
+                              text:
+                                  "We convert theas terms into a new simplified expression (ignore -, 0 is the complement):",
+                              style: TextStyle(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            color: focusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.heightBlock! * 2,
+                      ),
+                      Center(
+                        child: Text(
+                          BlocProvider.of<SimplificationCubit>(context).result,
+                          style: TextStyle(
+                            color: resultFocusedTextColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            )
-          ],
         ),
       );
     } else {
