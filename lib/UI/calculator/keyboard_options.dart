@@ -158,7 +158,7 @@ class KeyboardOptions extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                'Explenation',
+                                'Explanation',
                                 style: TextStyle(
                                   color: (theme == 'light')
                                       ? (BlocProvider.of<CalculatorCubit>(
