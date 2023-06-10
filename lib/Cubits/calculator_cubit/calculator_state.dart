@@ -13,4 +13,6 @@ class CalculatorNumberSystemChange extends CalculatorState {}
 
 class CalculatorIsSignedChange extends CalculatorState {}
 
+class NoOfBitsChange extends CalculatorState {}
+
 class CalculatorHistoryUpdate extends CalculatorState {}

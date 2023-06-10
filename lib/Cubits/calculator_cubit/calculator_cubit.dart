@@ -23,7 +23,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
-  int noBits = 16;
+  int noBits = 16; //values 8, 16, 32, 64
   String expr = '';
   String pattern = '';
   String result = '0';
@@ -56,20 +56,12 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   final _auth = FirebaseAuth.instance;
   late User signInUser; //this get current user
   final _history = FirebaseFirestore.instance.collection('history');
-  @override
 
-  /*void getCurrentUser(){
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        signInUser = user;
-        print(user.email);
-      }
-    }catch(e){
-      print(e);
-    }
+  void changeNoBits(int bits) {
+    noBits = bits;
+    emit(NoOfBitsChange());
   }
-   */
+
   Future<void> sendWhatsAppMessage(String text) async {
     final Uri _url = Uri.parse('whatsapp://send?+02?&text=$text');
     if (!await launchUrl(_url)) {
@@ -198,6 +190,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void check() {
     try {
       // print(expr);
+      expr = expGenerator(controller.text);
       Parser p = Parser(expr, curentNumerSystem);
       tmp = p.sampleParser();
       if (p.error) {
@@ -239,18 +232,16 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           startPosition != endPosition) {
         del();
       }
+      pattern = patternGenerator(controller.text);
     }
-
+    int pos = controller.text.length;
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
+    pos = controller.text.length;
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
-
-    // 0110
-    this.pattern = this.pattern.substring(0, startPosition) +
-        pattern +
-        this.pattern.substring(endPosition);
-    startPosition = endPosition = pattern.length + endPosition;
+    pattern = patternGenerator(controller.text);
+    startPosition = endPosition = pos;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     expr = expGenerator(controller.text);
@@ -285,16 +276,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     return s;
   }
 
-  void updatePos(String s, int start, int end) async {
-    startPosition = endPosition = s.length;
-    ClipboardData? tmp = await Clipboard.getData(Clipboard.kTextPlain);
-    String? t = tmp?.text;
-  }
-
   void getResult() {
     focusNode.requestFocus();
     // print(() => _auth.currentUser?.email);
-    pattern = patternGenerator(controller.text);
     Parser p = Parser(expGenerator(controller.text), curentNumerSystem);
     tmp = p.sampleParser();
     if (!(p.error)) {
@@ -361,6 +345,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
 
   void del() {
     focusNode.requestFocus();
+    if (controller.text.isEmpty) return;
+    pattern = patternGenerator(controller.text);
+    print('pattern: $pattern\ntext: ${controller.text}');
     int start_t = 0;
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {

@@ -94,17 +94,23 @@ class KeyboardKeys extends StatelessWidget {
               type: 'opr',
             ),
             createButton(
-              child: const Text('LSH'),
+              child: const Text('NOT'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('<<', ' << ', ' oo '),
+                  .updateExpr('~', ' NOT ', ' ooo '),
               type: 'opr',
             ),
-            createButton(
-              child: const Text('RSH'),
-              onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('>>', ' >> ', ' oo '),
-              type: 'opr',
-            ),
+            // createButton(
+            //   child: const Text('LSH'),
+            //   onPressed: () => BlocProvider.of<SimplificationCubit>(context)
+            //       .updateExpr('<<', ' << ', ' oo '),
+            //   type: 'opr',
+            // ),
+            // createButton(
+            //   child: const Text('RSH'),
+            //   onPressed: () => BlocProvider.of<SimplificationCubit>(context)
+            //       .updateExpr('>>', ' >> ', ' oo '),
+            //   type: 'opr',
+            // ),
             //========================= 4th Row ================================//
             createButton(
               child: const Text('A'),
@@ -124,12 +130,7 @@ class KeyboardKeys extends StatelessWidget {
                   .updateExpr('C', 'C', 'n'),
               type: 'letter',
             ),
-            createButton(
-              child: const Text('NOT'),
-              onPressed: () => BlocProvider.of<SimplificationCubit>(context)
-                  .updateExpr('~', ' NOT ', ' ooo '),
-              type: 'opr',
-            ),
+
             //========================= 5th Row ================================//
             createButton(
               child: const Text('D'),
@@ -268,6 +269,7 @@ class KeyboardKeys extends StatelessWidget {
                   .updateExpr('Y', 'Y', 'n'),
               type: 'letter',
             ),
+            const SizedBox(),
             createButton(
               child: const Text('Z'),
               onPressed: () => BlocProvider.of<SimplificationCubit>(context)
@@ -295,6 +297,7 @@ class KeyboardKeys extends StatelessWidget {
                 type: '=',
               ),
             ),
+            const SizedBox(),
           ],
         ),
       ),

@@ -82,20 +82,20 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   Future<void> addUserHistorySimlification(xtext) {
     return _historySimp
         .add({
-      'operation': xtext, // add history
-      'user': _auth.currentUser?.email //currentuser
-    })
+          'operation': xtext, // add history
+          'user': _auth.currentUser?.email //currentuser
+        })
         .then(
             (value) => print("User History Added ${_auth.currentUser?.email}"))
         .catchError((error) {
-      print("Failed to add user History: ");
-      addHistoryLocalSimlification();
-    });
+          print("Failed to add user History: ");
+          addHistoryLocalSimlification();
+        });
   }
 
   Future<void> deleteHistoryDataSimlification(String oper) async {
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('simplification');
+        FirebaseFirestore.instance.collection('simplification');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .where("operation", isEqualTo: oper)
         .get()
@@ -122,7 +122,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   Future<void> cleareHistoryDataSimlification() async {
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('simplification');
+        FirebaseFirestore.instance.collection('simplification');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -147,7 +147,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   Future<void> getHistoryDataSimlification() async {
     testCalculatorHistory.clear();
     CollectionReference HistroyData =
-    FirebaseFirestore.instance.collection('simplification');
+        FirebaseFirestore.instance.collection('simplification');
     await HistroyData.where("user", isEqualTo: _auth.currentUser?.email)
         .get()
         .then((value) {
@@ -175,33 +175,34 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    if (isResultExist) clearAll();
+    //if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
+    print('(Start: $startPosition, End: $endPosition)');
     if (this.pattern.length >= 2) {
       if ((this.pattern[startPosition - 1] == 'o' &&
-          this.pattern[startPosition] == 'o') ||
+              this.pattern[startPosition] == 'o') ||
           startPosition != endPosition) {
         del();
       }
     }
+    int pos = controller.text.length;
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
+    pos = controller.text.length;
     print('text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
     userExpr = controller.text;
-    // 0110
-    this.pattern = this.pattern.substring(0, startPosition) +
-        pattern +
-        this.pattern.substring(endPosition);
-    startPosition = endPosition = pattern.length + endPosition;
+    pattern = patternGenerator(controller.text);
+    startPosition = endPosition = pos;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(SimplificationExprUpdate());
   }
+
   String patternGenerator(String s) {
     s = s.replaceAll("NAND", "oooo");
     s = s.replaceAll("AND", "ooo");
@@ -216,6 +217,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
     s = s.replaceAll(RegExp(r'[a-np-zA-NP-Z0-9]'), 'n');
     return s;
   }
+
   String expGenerator(String s) {
     s = s.replaceAll("NAND", "!&");
     s = s.replaceAll("AND", "&");
@@ -269,6 +271,9 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   void del() {
     focusNode.requestFocus();
+    if (controller.text.isEmpty) return;
+    pattern = patternGenerator(controller.text);
+    print('pattern: $pattern\ntext: ${controller.text}');
     int start_t = 0;
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
@@ -374,9 +379,9 @@ class SimplificationCubit extends Cubit<SimplificationState> {
   }
 
   void showHistory(
-      BuildContext context,
-      String theme,
-      ) async {
+    BuildContext context,
+    String theme,
+  ) async {
     if (_auth.currentUser?.email != null) {
       updatehistorySimplification();
     }
@@ -390,160 +395,160 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       context: context,
       builder: (context) =>
           BlocBuilder<SimplificationCubit, SimplificationState>(
-            buildWhen: (previous, current) =>
+        buildWhen: (previous, current) =>
             current is SimplificationHistoryUpdate,
-            builder: (context, state) => Container(
-              color: theme == 'light'
-                  ? ThemeColors.lightCanvas
-                  : ThemeColors.darkCanvas,
-              child: Column(children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: testCalculatorHistory.length,
-                    itemBuilder: (context, index) => Dismissible(
-                      key: Key('cal$index'),
-                      direction: DismissDirection.startToEnd,
-                      onDismissed: (direction) =>
-                          testCalculatorHistory.removeAt(index),
-                      confirmDismiss: (direction) => showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          content:
+        builder: (context, state) => Container(
+          color: theme == 'light'
+              ? ThemeColors.lightCanvas
+              : ThemeColors.darkCanvas,
+          child: Column(children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: testCalculatorHistory.length,
+                itemBuilder: (context, index) => Dismissible(
+                  key: Key('cal$index'),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) =>
+                      testCalculatorHistory.removeAt(index),
+                  confirmDismiss: (direction) => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content:
                           const Text('Are you sure ,you want to delete it?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: theme == 'light'
-                                    ? ThemeColors.lightBlackText
-                                    : ThemeColors.darkWhiteText,
-                              ),
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                if (_auth.currentUser?.email != null) {
-                                  await deleteHistoryDataSimlification(
-                                      testCalculatorHistory[index]['expr']!);
-                                } else {
-                                  await deleteHistoryLocal(
-                                      testCalculatorHistory[index]['expr']!);
-                                }
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme == 'light'
+                                ? ThemeColors.lightBlackText
+                                : ThemeColors.darkWhiteText,
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            if (_auth.currentUser?.email != null) {
+                              await deleteHistoryDataSimlification(
+                                  testCalculatorHistory[index]['expr']!);
+                            } else {
+                              await deleteHistoryLocal(
+                                  testCalculatorHistory[index]['expr']!);
+                            }
 
-                                testCalculatorHistory.removeWhere((element) =>
+                            testCalculatorHistory.removeWhere((element) =>
                                 element["expr"] ==
-                                    testCalculatorHistory[index]['expr']!);
-                                emit(SimplificationHistoryUpdate());
-                                Navigator.of(context).pop();
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: ThemeColors.redColor,
-                              ),
-                              child: const Text('Delete'),
-                            ),
-                          ],
+                                testCalculatorHistory[index]['expr']!);
+                            emit(SimplificationHistoryUpdate());
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: ThemeColors.redColor,
+                          ),
+                          child: const Text('Delete'),
                         ),
-                      ),
-                      background: Container(
-                        color: ThemeColors.redColor,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: SizeConfig.widthBlock! * 2,
-                            ),
-                            const Icon(
-                              Icons.delete,
-                              color: ThemeColors.darkWhiteText,
-                            ),
-                          ],
-                        ),
-                      ),
-                      secondaryBackground: Container(
-                        color: ThemeColors.redColor,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: SizeConfig.widthBlock! * 2,
-                            ),
-                            const Icon(
-                              Icons.delete,
-                              color: ThemeColors.darkWhiteText,
-                            ),
-                          ],
-                        ),
-                      ),
-                      child: ListTile(
-                        onTap: () {
-                          setExpr(testCalculatorHistory[index]['expr']!);
-                          Navigator.of(context).pop();
-                        },
-                        title: Text(
-                          testCalculatorHistory[index]['expr']!,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          softWrap: true,
-                        ),
-                        textColor: (theme == 'light')
-                            ? ThemeColors.lightForegroundTeal
-                            : ThemeColors.darkForegroundTeal,
-                        tileColor: (theme == 'light')
-                            ? ThemeColors.lightCanvas
-                            : ThemeColors.darkCanvas,
-                      ),
+                      ],
                     ),
                   ),
+                  background: Container(
+                    color: ThemeColors.redColor,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.widthBlock! * 2,
+                        ),
+                        const Icon(
+                          Icons.delete,
+                          color: ThemeColors.darkWhiteText,
+                        ),
+                      ],
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    color: ThemeColors.redColor,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.widthBlock! * 2,
+                        ),
+                        const Icon(
+                          Icons.delete,
+                          color: ThemeColors.darkWhiteText,
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      setExpr(testCalculatorHistory[index]['expr']!);
+                      Navigator.of(context).pop();
+                    },
+                    title: Text(
+                      testCalculatorHistory[index]['expr']!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      softWrap: true,
+                    ),
+                    textColor: (theme == 'light')
+                        ? ThemeColors.lightForegroundTeal
+                        : ThemeColors.darkForegroundTeal,
+                    tileColor: (theme == 'light')
+                        ? ThemeColors.lightCanvas
+                        : ThemeColors.darkCanvas,
+                  ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: Text('Are you sure ,you want to clear History?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: theme == 'light'
-                                  ? ThemeColors.lightBlackText
-                                  : ThemeColors.darkWhiteText,
-                            ),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              testCalculatorHistory.clear();
-                              if (_auth.currentUser?.email != null) {
-                                await cleareHistoryDataSimlification();
-                              } else {
-                                await clearHistoryLocal();
-                              }
-
-                              emit(SimplificationHistoryUpdate());
-                              Navigator.of(context).pop();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: ThemeColors.redColor,
-                            ),
-                            child: const Text('Clear'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: Text('Clear All'),
-                  style: TextButton.styleFrom(
-                      foregroundColor: ThemeColors.redColor,
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
-              ]),
+              ),
             ),
-          ),
+            TextButton(
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: Text('Are you sure ,you want to clear History?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme == 'light'
+                              ? ThemeColors.lightBlackText
+                              : ThemeColors.darkWhiteText,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          testCalculatorHistory.clear();
+                          if (_auth.currentUser?.email != null) {
+                            await cleareHistoryDataSimlification();
+                          } else {
+                            await clearHistoryLocal();
+                          }
+
+                          emit(SimplificationHistoryUpdate());
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: ThemeColors.redColor,
+                        ),
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text('Clear All'),
+              style: TextButton.styleFrom(
+                  foregroundColor: ThemeColors.redColor,
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  )),
+            ),
+          ]),
+        ),
+      ),
     );
   }
 
@@ -558,7 +563,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
           context: context,
           builder: (context) {
             List<Map<String, dynamic>> table =
-            List.from(simplifier.getTruthTableData(expr)['table']!);
+                List.from(simplifier.getTruthTableData(expr)['table']!);
             return Container(
               padding: const EdgeInsets.all(5),
               child: Column(children: [
@@ -617,14 +622,14 @@ class SimplificationCubit extends Cubit<SimplificationState> {
       Simplifier simplifier = Simplifier(expr: expr);
       simplifier.simpilify();
       List<Map<String, dynamic>> table =
-      List.from(simplifier.getTruthTableData(expr)['table']!);
+          List.from(simplifier.getTruthTableData(expr)['table']!);
       List<int> soms = List.from(simplifier.getTruthTableData(expr)['soms']!);
       List<List<Map<String, dynamic>>> steps = List.from(simplifier
           .comparisonSteps
           .sublist(0, simplifier.comparisonSteps.length - 1));
       List<String> finalTerms = List.empty(growable: true);
       simplifier.comparisonSteps.last.forEach(
-            (element) => finalTerms.add(element['som']),
+        (element) => finalTerms.add(element['som']),
       );
       showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -747,8 +752,8 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                       ...steps
                           .map(
                             (step) =>
-                            Center(child: createQuineTable(step, theme)!),
-                      )
+                                Center(child: createQuineTable(step, theme)!),
+                          )
                           .toList(),
                       Divider(
                         height: 40,
@@ -841,7 +846,7 @@ class SimplificationCubit extends Cubit<SimplificationState> {
                           children: [
                             TextSpan(
                               text:
-                              "We convert theas terms into a new simplified expression (ignore -, 0 is the complement):",
+                                  "We convert theas terms into a new simplified expression (ignore -, 0 is the complement):",
                               style: TextStyle(
                                 color: textColor,
                               ),
@@ -915,56 +920,56 @@ class SimplificationCubit extends Cubit<SimplificationState> {
             columns: [
               DataColumn(
                   label: Text(
-                    'Index',
-                    textAlign: TextAlign.center,
-                    style: headerStyle,
-                  )),
+                'Index',
+                textAlign: TextAlign.center,
+                style: headerStyle,
+              )),
               ...simplifier.vars
                   .map((e) => DataColumn(
-                  label: Text(
-                    e,
-                    textAlign: TextAlign.center,
-                    style: headerStyle,
-                  )))
+                          label: Text(
+                        e,
+                        textAlign: TextAlign.center,
+                        style: headerStyle,
+                      )))
                   .toList(),
               DataColumn(
                   label: Text(
-                    'Result',
-                    textAlign: TextAlign.center,
-                    style: headerStyle,
-                  )),
+                'Result',
+                textAlign: TextAlign.center,
+                style: headerStyle,
+              )),
             ],
             rows: table
                 .map(
                   (e) => DataRow(cells: [
-                DataCell(
-                  Center(
-                    child: Text(
-                      e['index'].toString(),
-                      textAlign: TextAlign.center,
-                      style: (e['functionResult'] != 1) ? style : somStyle,
+                    DataCell(
+                      Center(
+                        child: Text(
+                          e['index'].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                for (int i = 0; i < simplifier.vars.length; i++)
-                  DataCell(Center(
-                    child: Text(
-                      e['bin'][i].toString(),
-                      textAlign: TextAlign.center,
-                      style: (e['functionResult'] != 1) ? style : somStyle,
+                    for (int i = 0; i < simplifier.vars.length; i++)
+                      DataCell(Center(
+                        child: Text(
+                          e['bin'][i].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
+                      )),
+                    DataCell(
+                      Center(
+                        child: Text(
+                          e['functionResult'].toString(),
+                          textAlign: TextAlign.center,
+                          style: (e['functionResult'] != 1) ? style : somStyle,
+                        ),
+                      ),
                     ),
-                  )),
-                DataCell(
-                  Center(
-                    child: Text(
-                      e['functionResult'].toString(),
-                      textAlign: TextAlign.center,
-                      style: (e['functionResult'] != 1) ? style : somStyle,
-                    ),
-                  ),
-                ),
-              ]),
-            )
+                  ]),
+                )
                 .toList(),
           ),
         ),
@@ -1021,30 +1026,30 @@ class SimplificationCubit extends Cubit<SimplificationState> {
             rows: step
                 .map(
                   (e) => DataRow(
-                cells: [
-                  DataCell(Center(
-                    child: Text(
-                      e['soms'].toString(),
-                      style: style,
-                    ),
-                  )),
-                  DataCell(Center(
-                    child: Text(
-                      e['som'],
-                      style: style,
-                    ),
-                  )),
-                  DataCell(e['click']
-                      ? const Center(
-                    child: Icon(
-                      Icons.check,
-                      color: ThemeColors.redColor,
-                    ),
-                  )
-                      : const Text('')),
-                ],
-              ),
-            )
+                    cells: [
+                      DataCell(Center(
+                        child: Text(
+                          e['soms'].toString(),
+                          style: style,
+                        ),
+                      )),
+                      DataCell(Center(
+                        child: Text(
+                          e['som'],
+                          style: style,
+                        ),
+                      )),
+                      DataCell(e['click']
+                          ? const Center(
+                              child: Icon(
+                                Icons.check,
+                                color: ThemeColors.redColor,
+                              ),
+                            )
+                          : const Text('')),
+                    ],
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -1090,31 +1095,31 @@ class SimplificationCubit extends Cubit<SimplificationState> {
               ),
               ...soms
                   .map((e) => DataColumn(
-                  label: Text(
-                    e.toString(),
-                    style: headerStyle,
-                  )))
+                          label: Text(
+                        e.toString(),
+                        style: headerStyle,
+                      )))
                   .toList(),
             ],
             rows: finalStep
                 .map(
                   (e) => DataRow(
-                cells: [
-                  DataCell(Text(
-                    e['som'],
-                    style: style,
-                  )),
-                  ...soms
-                      .map((v) => DataCell((e['soms'] as Set).contains(v)
-                      ? const Icon(
-                    Icons.check,
-                    color: ThemeColors.redColor,
-                  )
-                      : const Text('')))
-                      .toList()
-                ],
-              ),
-            )
+                    cells: [
+                      DataCell(Text(
+                        e['som'],
+                        style: style,
+                      )),
+                      ...soms
+                          .map((v) => DataCell((e['soms'] as Set).contains(v)
+                              ? const Icon(
+                                  Icons.check,
+                                  color: ThemeColors.redColor,
+                                )
+                              : const Text('')))
+                          .toList()
+                    ],
+                  ),
+                )
                 .toList(),
           ),
         ),
