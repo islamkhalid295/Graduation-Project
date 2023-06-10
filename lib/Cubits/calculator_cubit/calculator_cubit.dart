@@ -240,8 +240,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     pos = controller.text.length;
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
-
-    // 0110
     pattern = patternGenerator(controller.text);
     startPosition = endPosition = pos;
     controller.selection =

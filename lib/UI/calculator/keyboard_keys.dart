@@ -267,7 +267,8 @@ class KeyboardKeys extends StatelessWidget {
                 ),
                 createButton(
                   child: const Text('='),
-                  onPressed: BlocProvider.of<CalculatorCubit>(context).getResult,
+                  onPressed:
+                      BlocProvider.of<CalculatorCubit>(context).getResult,
                   type: '=',
                   isEnabled: true,
                 ),

@@ -80,11 +80,12 @@ class Documentation extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView(
-                    children: documentation
-                        .map(
-                          (e) => createDocElement(e),
-                        )
-                        .toList(),
+                    children: documentation.map(
+                      (e) {
+                        print(e.title);
+                        return createDocElement(e);
+                      },
+                    ).toList(),
                   ),
                 ),
               ],
@@ -168,6 +169,23 @@ class Documentation extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
+          if (element.title != 'LSH Operator' &&
+              element.title != 'RSH Operator')
+            const SizedBox(
+              height: 5,
+            ),
+          if (element.title != 'LSH Operator' &&
+              element.title != 'RSH Operator')
+            Container(
+              width: 290,
+              alignment: Alignment.center,
+              child: element.showTT(theme!),
+            ),
+          if (element.title != 'LSH Operator' &&
+              element.title != 'RSH Operator')
+            const SizedBox(
+              height: 5,
+            ),
           Container(
             alignment: AlignmentDirectional.centerStart,
             child: Text('Examples:',
