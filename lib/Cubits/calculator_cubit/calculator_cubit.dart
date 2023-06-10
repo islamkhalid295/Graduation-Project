@@ -23,6 +23,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     testCalculatorHistory = List.empty(growable: true);
     explenation = List.empty(growable: true);
   }
+  int noBits = 16;
   String expr = '';
   String pattern = '';
   String result = '0';
@@ -211,10 +212,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
           hexResult = tmp.toRadixString(16).toString();
           octResult = tmp.toRadixString(8).toString();
         } else {
-          binResult = BigInt.from(tmp).toUnsigned(64).toRadixString(2);
+          binResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(2);
           decResult = tmp.toString();
-          hexResult = BigInt.from(tmp).toUnsigned(64).toRadixString(16);
-          octResult = BigInt.from(tmp).toUnsigned(64).toRadixString(8);
+          hexResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(16);
+          octResult = BigInt.from(tmp).toUnsigned(noBits).toRadixString(8);
         }
       }
     } catch (e) {
