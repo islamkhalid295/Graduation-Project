@@ -175,12 +175,13 @@ class SimplificationCubit extends Cubit<SimplificationState> {
 
   void updateExpr(String str, String userStr, String pattern) {
     focusNode.requestFocus();
-    if (isResultExist) clearAll();
+    //if (isResultExist) clearAll();
     if (startPosition != controller.selection.start ||
         endPosition != controller.selection.end) {
       startPosition = controller.selection.start;
       endPosition = controller.selection.end;
     }
+    print('(Start: $startPosition, End: $endPosition)');
     if (this.pattern.length >= 2) {
       if ((this.pattern[startPosition - 1] == 'o' &&
               this.pattern[startPosition] == 'o') ||
@@ -188,16 +189,15 @@ class SimplificationCubit extends Cubit<SimplificationState> {
         del();
       }
     }
+    int pos = controller.text.length;
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
+    pos = controller.text.length;
     print('text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
     userExpr = controller.text;
-    // 0110
-    this.pattern = this.pattern.substring(0, startPosition) +
-        pattern +
-        this.pattern.substring(endPosition);
-    startPosition = endPosition = pattern.length + endPosition;
+    pattern = patternGenerator(controller.text);
+    startPosition = endPosition = pos;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     emit(SimplificationExprUpdate());

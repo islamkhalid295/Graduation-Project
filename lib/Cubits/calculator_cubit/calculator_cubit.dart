@@ -234,17 +234,16 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       }
       pattern = patternGenerator(controller.text);
     }
-
+    int pos = controller.text.length;
     String temp = controller.text.substring(endPosition);
     controller.text = controller.text.substring(0, startPosition) + userStr;
+    pos = controller.text.length;
     print(() => 'text+str: ${controller.text}, ($startPosition, $endPosition)');
     controller.text += temp;
 
     // 0110
-    this.pattern = this.pattern.substring(0, startPosition) +
-        pattern +
-        this.pattern.substring(endPosition);
-    startPosition = endPosition = pattern.length + endPosition;
+    pattern = patternGenerator(controller.text);
+    startPosition = endPosition = pos;
     controller.selection =
         TextSelection.fromPosition(TextPosition(offset: endPosition));
     expr = expGenerator(controller.text);
